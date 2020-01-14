@@ -1,0 +1,81 @@
+
+service: march-madness-calcutta-api
+
+package:
+  individually: true
+
+plugins:
+  - serverless-bundle
+  - serverless-offline
+  - serverless-dotenv-plugin
+
+custom:
+  secrets: ${file(secrets.json)}
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  timeout: 30
+  stage: ${self:custom.secrets.NODE_ENV}
+  environment:
+    NODE_ENV: ${self:custom.secrets.NODE_ENV}
+    DB_NAME: ${self:custom.secrets.DB_NAME}
+    DB_USER: ${self:custom.secrets.DB_USER}
+    DB_PASSWORD: ${self:custom.secrets.DB_PASSWORD}
+    DB_HOST: ${self:custom.secrets.DB_HOST}
+    DB_PORT: ${self:custom.secrets.DB_PORT}
+  vpc:
+    securityGroupIds:
+      - ${self:custom.secrets.SECURITY_GROUP_ID}
+    subnetIds:
+      - ${self:custom.secrets.SUBNET1_ID}
+      - ${self:custom.secrets.SUBNET2_ID}
+      - ${self:custom.secrets.SUBNET3_ID}
+      - ${self:custom.secrets.SUBNET4_ID}
+
+functions:
+  testLambda:
+    handler: handler.testLambda
+    events:
+      - http:
+          path: testLambda
+          method: get
+          cors: true
+
+  updateLastHeartbeat:
+    handler: handler.updateLastHeartbeat
+    events:
+      - cognitoUserPool:
+          pool: ${self:custom.secrets.COGNITO_POOL}
+          trigger: PostAuthentication
+          existing: true
+
+  addUserAfterSignup:
+    handler: auth/signup.addUserAfterSignup
+    events:
+      - cognitoUserPool:
+          pool: ${self:custom.secrets.COGNITO_POOL}
+          trigger: PostConfirmation
+          existing: true
+
+  verifyTokenTest:
+    handler: handler.verifyTokenTest
+    events:
+      - http:
+          path: verifyToken
+          method: get
+          cors:
+            origin: '*'
+            headers:
+              - Content-Type
+              - X-Amz-Date
+              - Authorization
+              - X-Api-Key
+              - X-Amz-Security-Token
+              - X-Amz-User-Agent
+              - x-cognito-token
+            allowCredentials: true
+
+
+resources:
+  - ${file(resources/api-gateway-errors.yml)}
