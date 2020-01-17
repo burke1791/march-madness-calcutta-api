@@ -58,6 +58,23 @@ functions:
           trigger: PostConfirmation
           existing: true
 
+  createLeague:
+    handler: createLeague.createLeague
+    events:
+      - http:
+          path: createLeague
+          method: post
+          cors:
+            origin: '*'
+            headers:
+              - Content-Type
+              - X-Amz-Date
+              - Authorization
+              - X-Api-Key
+              - X-Amz-Security-Token
+              - X-Amz-User-Agent
+              - x-cognito-token
+
   verifyTokenTest:
     handler: handler.verifyTokenTest
     events:
