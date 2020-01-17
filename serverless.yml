@@ -75,6 +75,23 @@ functions:
               - X-Amz-User-Agent
               - x-cognito-token
 
+  getLeagueSummaries:
+    handler: getLeagueSummaries.getLeagueSummaries
+    events:
+      - http:
+          path: getLeagueSummaries
+          method: get
+          cors:
+            origin: '*'
+            headers:
+              - Content-Type
+              - X-Amz-Date
+              - Authorization
+              - X-Api-Key
+              - X-Amz-Security-Token
+              - X-Amz-User-Agent
+              - x-cognito-token
+
   verifyTokenTest:
     handler: handler.verifyTokenTest
     events:
