@@ -16,7 +16,18 @@ provider:
   name: aws
   runtime: nodejs12.x
   timeout: 30
+  region: us-east-1
   stage: ${self:custom.secrets.NODE_ENV}
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - 'dynamodb:PutItem'
+        - 'dynamodb:GetItem'
+        - 'dynamodb:UpdateItem'
+        - 'dynamodb:DeleteItem'
+        - 'dynamodb:Query'
+        - 'dynamodb:Scan'
+      Resource: 'arn:aws:dynamodb:us-east-1:*:*'
   webSocketApiName: auction-api
   webSocketApiRouteSelectionExpression: $request.body.action
   environment:
@@ -26,6 +37,9 @@ provider:
     DB_PASSWORD: ${self:custom.secrets.DB_PASSWORD}
     DB_HOST: ${self:custom.secrets.DB_HOST}
     DB_PORT: ${self:custom.secrets.DB_PORT}
+    AUCTION_CONNECTIONS: ${self:custom.secrets.AUCTION_CONNECTIONS}
+    # AUCTION_CHAT: ${self:custom.secrets.AUCTION_CHAT}
+    # AUCTION_BID: ${self:custom.secrets.AUCTION_BID}
   vpc:
     securityGroupIds:
       - ${self:custom.secrets.SECURITY_GROUP_ID}

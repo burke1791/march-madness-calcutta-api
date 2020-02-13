@@ -1,43 +1,46 @@
 import { success } from '../libraries/response-lib';
 import AWS from 'aws-sdk';
+import * as dynamodb from '../libraries/dynamodb-lib';
 
-const sql = require('mssql');
-const connection = require('../db').connection;
 const verifyToken = require('../libraries/verify').verifyToken;
 import { generateAllow, generateDeny } from '../utilities/generatePolicy';
 
 export async function connectionManager(event, context, callback) {
-  context.callbackWaitsForEmptyEventLoop = false;
+  // context.callbackWaitsForEmptyEventLoop = false;
 
   console.log(event);
 
-  let cognitoSub = event.requestContext.authorizer.cognitoSub;
+  // let cognitoSub = event.requestContext.authorizer.cognitoSub;
   let connectionId = event.requestContext.connectionId;
+  let leagueId = event.queryStringParameters.leagueId;
   let eventType = event.requestContext.eventType;
-
-  if (!connection.isConnected) {
-    await connection.createConnection();
-  }
 
   if (eventType == 'CONNECT') {
     console.log('connect requested');
+    let params = {
+      TableName: process.env.auctionConnections,
+      Item: {
+        leagueId: leagueId,
+        connectionId: connectionId
+      }
+    };
 
-    let leagueId = event.queryStringParameters.leagueId;
-
-    const request = new sql.Request();
-    request.input('cognitoSub', sql.VarChar(256), cognitoSub);
-    request.input('leagueId', sql.BigInt(), leagueId);
-    request.input('connectionId', sql.VarChar(128), connectionId);
-    let result = await request.execute('dbo.up_updateAuctionConnection');
-    console.log(result);
+    // add connectionId to dynamodb
+    await dynamodb.call('put', params);
 
     callback(null, success({ message: 'connected' }));
   } else if (eventType == 'DISCONNECT') {
     console.log('disconnect requested');
+    let params = {
+      TableName: process.env.auctionConnections,
+      Key: {
+        leagueId: leagueId,
+        connectionId: connectionId
+      }
+    }
 
-    let query = `Delete dbo.auctionConnections Where connectionId = '${connectionId}'`;
-    let result = await connection.pool.request().query(query);
-    console.log(result);
+    // remove connectionId from dynamodb
+    await dynamodb.call('delete', params);
 
     callback(null, success({ message: 'disconnected' }));
   }
@@ -68,21 +71,11 @@ export async function sendMessage(event, context, callback) {
   const data = JSON.parse(event.body);
   const leagueId = data.leagueId;
 
-  if (!connection.isConnected) {
-    await connection.createConnection();
-  }
-
-  let query = `Select ac.connectionId From dbo.auctionConnections ac Where ac.leagueId = ${leagueId}`;
-  console.log(query);
-  const sockets = await connection.pool.request().query(query);
-
-  console.log(sockets);
-
   const client = new AWS.ApiGatewayManagementApi({
     apiVersion: '2018-11-29',
-    endpoint: `https://${event.requestContext.domainName}/${event.requestContext.stage}`
+    endpoint: `${event.requestContext.domainName}/${event.requestContext.stage}`
   });
-  console.log('new');
+
   try {
     await client.postToConnection({
       ConnectionId: event.requestContext.connectionId,
