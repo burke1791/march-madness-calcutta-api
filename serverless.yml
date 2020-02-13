@@ -17,6 +17,8 @@ provider:
   runtime: nodejs12.x
   timeout: 30
   stage: ${self:custom.secrets.NODE_ENV}
+  webSocketApiName: auction-api
+  webSocketApiRouteSelectionExpression: $request.body.action
   environment:
     NODE_ENV: ${self:custom.secrets.NODE_ENV}
     DB_NAME: ${self:custom.secrets.DB_NAME}
@@ -34,14 +36,6 @@ provider:
       - ${self:custom.secrets.SUBNET4_ID}
 
 functions:
-  testLambda:
-    handler: handler.testLambda
-    events:
-      - http:
-          path: testLambda
-          method: get
-          cors: true
-
   updateLastHeartbeat:
     handler: handler.updateLastHeartbeat
     events:
@@ -144,6 +138,28 @@ functions:
               - x-cognito-token
             allowCredentials: true
 
+  authWebsocket:
+    handler: auction/connect.authWebsocket
+    cors: true
+
+  connectionManager:
+    handler: auction/connect.connectionManager
+    events:
+      - websocket: 
+          route: $connect
+          authorizer:
+            name: authWebsocket
+            identitySource:
+              - 'route.request.querystring.Authorizer'
+          cognitoSub: $context.authorizer.cognitoSub
+      - websocket:
+          route: $disconnect
+
+  sendMessage:
+    handler: auction/connect.sendMessage
+    events:
+      - websocket:
+          route: MESSAGE
 
 resources:
   - ${file(resources/api-gateway-errors.yml)}

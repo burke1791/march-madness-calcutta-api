@@ -6,9 +6,11 @@
   "dependencies": {
     "jsonwebtoken": "^8.5.1",
     "jwk-to-pem": "^2.0.2",
-    "mssql": "^6.0.1"
+    "mssql": "^6.0.1",
+    "uuid": "^3.4.0"
   },
   "devDependencies": {
+    "aws-sdk": "^2.606.0",
     "serverless-bundle": "^1.2.5",
     "serverless-dotenv-plugin": "^2.1.1",
     "serverless-offline": "^5.12.1"

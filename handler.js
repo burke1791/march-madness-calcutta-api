@@ -1,33 +1,11 @@
 import { success, failure } from './libraries/response-lib';
 
-const sql = require('mssql');
+const VarChar = require('mssql').VarChar;
+const Request = require('mssql').Request;
 
 const connection = require('./db').connection;
 const verifyToken = require('./libraries/verify').verifyToken;
 
-export async function testLambda(event) {
-  try {
-    if (!connection.isConnected) {
-      await connection.createConnection();
-    }
-
-    let result = await connection.pool.request().query('Insert Into testLambda (name) Values (\'Burkcules2\')');
-
-    return {
-      statusCode: 200,
-      body: JSON.stringify(result)
-    };
-  } catch (error) {
-    console.log(error);
-  }
-
-  return {
-    statusCode: 500,
-    body: {
-      error: 'ERROR!'
-    }
-  };
-}
 
 export async function updateLastHeartbeat(event, context, callback) {
   try {
@@ -42,10 +20,10 @@ export async function updateLastHeartbeat(event, context, callback) {
 
     //let result = await connection.pool.request().query('Update dbo.users Set lastHeartbeat = GetDate() Where cognitoSub = \'' + cognitoSub + '\'');
 
-    const request = new sql.Request();
-    request.input('email', sql.VarChar(50), email);
-    request.input('alias', sql.VarChar(256), alias);
-    request.input('cognitoSub', sql.VarChar(256), cognitoSub);
+    const request = new Request();
+    request.input('email', VarChar(50), email);
+    request.input('alias', VarChar(256), alias);
+    request.input('cognitoSub', VarChar(256), cognitoSub);
     let result = await request.execute('dbo.up_updateUsers');
 
     console.log(result);
