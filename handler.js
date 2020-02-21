@@ -4,7 +4,6 @@ const VarChar = require('mssql').VarChar;
 const Request = require('mssql').Request;
 
 const connection = require('./db').connection;
-const verifyToken = require('./libraries/verify').verifyToken;
 
 
 export async function updateLastHeartbeat(event, context, callback) {
@@ -27,26 +26,7 @@ export async function updateLastHeartbeat(event, context, callback) {
     let result = await request.execute('dbo.up_updateUsers');
 
     console.log(result);
-    callback(null, event);
-  } catch (error) {
-    console.log(error);
-    callback(null, failure({ message: 'ERROR!' }));
-  }
-}
-
-export async function verifyTokenTest(event, context, callback) {
-  try {
-    context.callbackWaitsForEmptyEventLoop = false;
-
-    let cognitoUsername = await verifyToken(event.headers['x-cognito-token']);
-
-    if (!connection.isConnected) {
-      await connection.createConnection();
-    }
-
-    let result = await connection.pool.request().query('Select * From dbo.users Where cognitoSub = \'' + cognitoUsername + '\'');
-
-    callback(null, success(result.recordset));
+    callback(null, success({ message: 'heartbeat updated' }));
   } catch (error) {
     console.log(error);
     callback(null, failure({ message: 'ERROR!' }));

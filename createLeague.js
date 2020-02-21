@@ -1,3 +1,4 @@
+
 import { success, failure } from './libraries/response-lib';
 
 const sql = require('mssql');
@@ -13,7 +14,8 @@ export async function createLeague(event, context, callback) {
     let name = body.name;
     let password = body.password;
     let year = body.year;
-    let auctionId = 'placeholder'; // @TODO: replace this with the uid from dynamo
+    let auctionId = 'placeholder';
+
     let cognitoSub = await verifyToken(event.headers['x-cognito-token']);
 
     if (!connection.isConnected) {
@@ -27,9 +29,9 @@ export async function createLeague(event, context, callback) {
     request.input('year', sql.SmallInt(), year);
     request.input('auctionId', sql.VarChar(256), auctionId);
 
-    let result = await request.execute('dbo.up_createLeague');
-    console.log(result);
-    callback(null, success({ message: 'success!' }));
+    await request.execute('dbo.up_createLeague');
+
+    callback(null, success({ message: 'league created' }));
   } catch (error) {
     console.log(error);
     callback(null, failure({ message: 'ERROR!' }));

@@ -11,25 +11,16 @@ plugins:
 
 custom:
   secrets: ${file(secrets.json)}
-
+  auctionConnections: 'AuctionConnections'
+        
 provider:
   name: aws
   runtime: nodejs12.x
-  timeout: 30
+  timeout: 15
   region: us-east-1
   stage: ${self:custom.secrets.NODE_ENV}
-  iamRoleStatements:
-    - Effect: Allow
-      Action:
-        - 'dynamodb:PutItem'
-        - 'dynamodb:GetItem'
-        - 'dynamodb:UpdateItem'
-        - 'dynamodb:DeleteItem'
-        - 'dynamodb:Query'
-        - 'dynamodb:Scan'
-      Resource: 'arn:aws:dynamodb:us-east-1:*:*'
-  webSocketApiName: auction-api
-  webSocketApiRouteSelectionExpression: $request.body.action
+  websocketsApiName: calcutta-websockets-api-{self:provider.stage}
+  websocketsApiRouteSelectionExpression: $request.body.action
   environment:
     NODE_ENV: ${self:custom.secrets.NODE_ENV}
     DB_NAME: ${self:custom.secrets.DB_NAME}
@@ -37,9 +28,7 @@ provider:
     DB_PASSWORD: ${self:custom.secrets.DB_PASSWORD}
     DB_HOST: ${self:custom.secrets.DB_HOST}
     DB_PORT: ${self:custom.secrets.DB_PORT}
-    AUCTION_CONNECTIONS: ${self:custom.secrets.AUCTION_CONNECTIONS}
-    # AUCTION_CHAT: ${self:custom.secrets.AUCTION_CHAT}
-    # AUCTION_BID: ${self:custom.secrets.AUCTION_BID}
+    AUCTION_CONNECTIONS_TABLE: ${self:custom.auctionConnections}
   vpc:
     securityGroupIds:
       - ${self:custom.secrets.SECURITY_GROUP_ID}
@@ -134,46 +123,23 @@ functions:
               - X-Amz-User-Agent
               - x-cognito-token
 
-  verifyTokenTest:
-    handler: handler.verifyTokenTest
+  onConnect:
+    handler: auction/websocket.onConnect
     events:
-      - http:
-          path: verifyToken
-          method: get
-          cors:
-            origin: '*'
-            headers:
-              - Content-Type
-              - X-Amz-Date
-              - Authorization
-              - X-Api-Key
-              - X-Amz-Security-Token
-              - X-Amz-User-Agent
-              - x-cognito-token
-            allowCredentials: true
-
-  authWebsocket:
-    handler: auction/connect.authWebsocket
-    cors: true
-
-  connectionManager:
-    handler: auction/connect.connectionManager
-    events:
-      - websocket: 
+      - websocket:
           route: $connect
-          authorizer:
-            name: authWebsocket
-            identitySource:
-              - 'route.request.querystring.Authorizer'
-          cognitoSub: $context.authorizer.cognitoSub
+  onDisconnect:
+    handler: auction/websocket.onDisconnect
+    events:
       - websocket:
           route: $disconnect
-
   sendMessage:
-    handler: auction/connect.sendMessage
+    handler: auction/websocket.sendMessage
     events:
       - websocket:
-          route: MESSAGE
+          route: $default
+
+
 
 resources:
   - ${file(resources/api-gateway-errors.yml)}

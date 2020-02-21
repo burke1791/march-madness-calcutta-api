@@ -15,16 +15,17 @@ const generatePolicy = function (principalId, effect, resource, cognitoSub) {
     statementOne.Action = "execute-api:Invoke";
     statementOne.Effect = effect;
     statementOne.Resource = resource;
+
     policyDocument.Statement[0] = statementOne;
     authResponse.policyDocument = policyDocument;
   }
   return authResponse;
 };
 
-export const generateAllow = function (principalId, resource, cognitoSub) {
+export const generateAllow = function(principalId, resource, cognitoSub) {
   return generatePolicy(principalId, "Allow", resource, cognitoSub);
 };
 
-export const generateDeny = function (principalId, resource) {
+export const generateDeny = function(principalId, resource) {
   return generatePolicy(principalId, "Deny", resource);
 };
