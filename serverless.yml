@@ -29,6 +29,14 @@ provider:
     DB_HOST: ${self:custom.secrets.DB_HOST}
     DB_PORT: ${self:custom.secrets.DB_PORT}
     AUCTION_CONNECTIONS_TABLE: ${self:custom.auctionConnections}
+    WEBSOCKET_ENDPOINT:
+      Fn::Join:
+        - ''
+        - - Ref: WebsocketsApi
+          - .execute-api.
+          - Ref: AWS::Region
+          - .amazonaws.com/
+          - ${self:provider.stage}
   vpc:
     securityGroupIds:
       - ${self:custom.secrets.SECURITY_GROUP_ID}
@@ -36,7 +44,6 @@ provider:
       - ${self:custom.secrets.SUBNET1_ID}
       - ${self:custom.secrets.SUBNET2_ID}
       - ${self:custom.secrets.SUBNET3_ID}
-      - ${self:custom.secrets.SUBNET4_ID}
 
 functions:
   updateLastHeartbeat:
@@ -123,6 +130,61 @@ functions:
               - X-Amz-User-Agent
               - x-cognito-token
 
+  getAuctionTeams:
+    handler: getAuctionTeams.getAuctionTeams
+    events:
+      - http:
+          path: getAuctionTeams/{leagueId}
+          method: get
+          cors:
+            origin: '*'
+            headers:
+              - x-cognito-token
+
+  getAuctionMemberBuyIns:
+    handler: getAuctionMemberBuyIns.getAuctionMemberBuyIns
+    events:
+      - http:
+          path: getAuctionMemberBuyIns/{leagueId}
+          method: get
+          cors:
+            origin: '*'
+            headers:
+              - x-cognito-token
+
+  getAllChatMessages:
+    handler: auction/chat.getAllMessages
+    events:
+      - http:
+          path: getAllChatMessages/{leagueId}
+          method: get
+          cors:
+            origin: '*'
+            headers:
+              - x-cognito-token
+
+  getAuctionStatus:
+    handler: getAuctionStatus.getAuctionStatus
+    events:
+      - http:
+          path: getAuctionStatus/{leagueId}
+          method: get
+          cors:
+            origin: '*'
+            headers:
+              - x-cognito-token
+
+  # startAuction:
+  #   handler: startAuction.startAuction
+  #   events:
+  #     - http:
+  #         path: startAuction/{leagueId}
+  #         method: get
+  #         cors:
+  #           origin: '*'
+  #           headers:
+  #             - x-cognito-token
+
   onConnect:
     handler: auction/websocket.onConnect
     events:
@@ -133,8 +195,8 @@ functions:
     events:
       - websocket:
           route: $disconnect
-  sendMessage:
-    handler: auction/websocket.sendMessage
+  handleMessage:
+    handler: auction/websocket.handleMessage
     events:
       - websocket:
           route: $default

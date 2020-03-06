@@ -111,6 +111,12 @@ export async function handleMessage(event, context, callback) {
     let result = await request.execute('dbo.up_sendAuctionChat');
     console.log(result);
     let connectionIds = result.recordset;
+    let newMessage = result.recordsets[1][0];
+
+    let payload = {
+      msgObj: newMessage,
+      msgType: 'chat'
+    };
 
     const apig = new AWS.ApiGatewayManagementApi({
       apiVersion: '2018-11-29',
@@ -121,7 +127,7 @@ export async function handleMessage(event, context, callback) {
       console.log(obj);
       var params = {
         ConnectionId: obj.connectionId,
-        Data: content
+        Data: JSON.stringify(payload)
       };
       try {
         await apig.postToConnection(params).promise();
