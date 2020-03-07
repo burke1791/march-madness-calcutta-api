@@ -114,6 +114,52 @@ export async function setItemComplete(event, context, callback) {
   }
 }
 
+export async function placeBid(event, context, callback) {
+  context.callbackWaitsForEmptyEventLoop = false;
+
+  console.log(event);
+  let data = JSON.parse(event.body);
+  let leagueId = data.leagueId;
+  let connectionId = event.requestContext.connectionId;
+  let amount = data.amount;
+
+  if (!connection.isConnected) {
+    await connection.createConnection();
+  }
+
+  const request = new sql.Request();
+  request.input('connectionId', sql.VarChar(128), connectionId);
+  request.input('leagueId', sql.BigInt(), leagueId);
+  request.input('bidVal', sql.Decimal(8, 2), amount);
+
+  try {
+    let result = await request.execute('dbo.up_placeBid');
+    console.log(result);
+
+    let connectionIds = result.recordset;
+    let auctionStatus = result.recordsets[1][0];
+    console.log(auctionStatus);
+
+    let payload = {
+      msgObj: auctionStatus,
+      msgType: 'auction'
+    };
+
+    await sendWebsocketPayloads(connectionIds, payload, event.requestContext.domainName, event.requestContext.stage, callback);
+
+    callback(null, {
+      statusCode: 200,
+      body: JSON.stringify({ message: 'messages not sent' })
+    });
+  } catch (error) {
+    console.log(error);
+    callback(null, {
+      statusCode: 500,
+      body: JSON.stringify({ message: 'messages not sent' })
+    });
+  }
+}
+
 async function sendWebsocketPayloads(connectionIds, payload, domainName, stage) {
   console.log(domainName, stage);
 

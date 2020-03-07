@@ -218,6 +218,11 @@ functions:
     events:
       - websocket:
           route: ITEM_COMPLETE
+  placeBid:
+    handler: auction/admin.placeBid
+    events:
+      - websocket:
+          route: PLACE_BID
 
 
 
