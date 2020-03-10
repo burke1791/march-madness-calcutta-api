@@ -23,8 +23,15 @@ export async function getAllMessages(event, context, callback) {
     From dbo.auctionChat c
     Inner Join dbo.users u
     On c.userId = u.id
-    Where u.cognitoSub = '${cognitoSub}'
-    And c.leagueId = ${leagueId}
+    Where c.leagueId = ${leagueId}
+    And Exists (
+      Select *
+      From dbo.leagueMemberships lm
+      Inner Join dbo.users u
+      On lm.userId = u.id
+      Where lm.leagueId = ${leagueId}
+      And u.cognitoSub = '${cognitoSub}'
+    )
     Order By c.[timestamp]`;
 
     let result = await connection.pool.request().query(query);
