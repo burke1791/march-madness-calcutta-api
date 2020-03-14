@@ -233,6 +233,11 @@ functions:
     events:
       - websocket:
           route: START_AUCTION
+  closeAuction:
+    handler: auction/admin.closeAuction
+    events:
+      - websocket:
+          route: CLOSE_AUCTION
 
 
 
