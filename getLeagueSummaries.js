@@ -14,7 +14,26 @@ export async function getLeagueSummaries(event, context, callback) {
     }
 
     // I hate this, I hate everything about it.  Get your damn ORM implemented!
-    let result = await connection.pool.request().query('Select lm.userId, lm.leagueId, l.name, lm.roleId, [role] = lr.name, lm.naturalBuyIn, lm.taxBuyIn, lm.totalReturn From dbo.leagueMemberships lm Inner Join dbo.leagues l On lm.leagueId = l.id Inner Join dbo.leagueRoles lr On lm.roleId = lr.id Inner Join dbo.users u On lm.userId = u.id Where u.cognitoSub = \'' + cognitoSub + '\'');
+    let result = await connection.pool.request().query(`
+    Select lm.userId
+      , lm.leagueId
+      , l.name
+      , [tournamentName] = t.name
+      , lm.roleId
+      , [role] = lr.name
+      , lm.naturalBuyIn
+      , lm.taxBuyIn
+      , lm.totalReturn 
+      From dbo.leagueMemberships lm 
+      Inner Join dbo.leagues l 
+      On lm.leagueId = l.id 
+      Inner Join dbo.tournaments t
+      On l.tournamentId = t.id
+      Inner Join dbo.leagueRoles lr 
+      On lm.roleId = lr.id 
+      Inner Join dbo.users u 
+      On lm.userId = u.id 
+      Where u.cognitoSub = '${cognitoSub}'`);
 
     callback(null, success(result.recordset));
   } catch (error) {
