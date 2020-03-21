@@ -15,30 +15,9 @@ export async function getLeagueUserSummaries(event, context, callback) {
     }
 
     let query = `
-    Select [leagueId] = l.id
-      , l.name
-      , [tournamentName] = t.name
-      , l.statusId
-      , [status] = ls.name
-      , [userId] = u.id
-      , u.alias
-      , lm.naturalBuyIn
-      , lm.taxBuyIn
-      , lm.totalReturn
-      , lm.roleId
-      , [role] = lr.name 
-      From dbo.leagues l 
-      Inner Join dbo.leagueMemberships lm 
-      On l.id = lm.leagueId
-      Inner Join dbo.tournaments t
-      On l.tournamentId = t.id
-      Inner Join dbo.leagueStatus ls 
-      On l.statusId = ls.id 
-      Inner Join dbo.leagueRoles lr 
-      On lm.roleId = lr.id 
-      Inner Join dbo.users u 
-      On lm.userId = u.id 
-      Where l.id = ${leagueId} 
+      Select *
+      From dbo.LeagueUserSummaries lus
+      Where lus.leagueId = ${leagueId} 
       And Exists (
         Select * 
         From dbo.users u2 
