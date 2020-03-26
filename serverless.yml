@@ -152,6 +152,14 @@ functions:
             headers:
               - x-cognito-token
 
+  getRemainingGamesCount:
+    handler: getRemainingGamesCount.getRemainingGamesCount
+    events:
+      - http:
+          path: 'getRemainingGamesCount/{tournamentId}'
+          method: get
+          cors: true
+
   getLeagueUserTeams:
     handler: getLeagueUserTeams.getLeagueUserTeams
     events:
