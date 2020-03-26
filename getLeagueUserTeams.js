@@ -6,8 +6,6 @@ const verifyToken = require('./libraries/verify').verifyToken;
 export async function getLeagueUserTeams(event, context, callback) {
   context.callbackWaitsForEmptyEventLoop = false;
 
-  console.log(event);
-
   try {
     let cognitoSub = await verifyToken(event.headers['x-cognito-token']);
     let leagueId = event.pathParameters.leagueId;
