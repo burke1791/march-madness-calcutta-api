@@ -18,6 +18,7 @@ export async function getLeagueSummaries(event, context, callback) {
     Select lm.userId
       , lm.leagueId
       , l.name
+      , [tournamentId] = t.id
       , [tournamentName] = t.name
       , lm.roleId
       , [role] = lr.name
