@@ -141,6 +141,25 @@ functions:
               - X-Amz-User-Agent
               - x-cognito-token
 
+  getUpcomingGames:
+    handler: getUpcomingGames.getUpcomingGames
+    events:
+      - http:
+          path: getUpcomingGames/{leagueId}
+          method: get
+          cors:
+            origin: '*'
+            headers:
+              - x-cognito-token
+
+  getRemainingGamesCount:
+    handler: getRemainingGamesCount.getRemainingGamesCount
+    events:
+      - http:
+          path: 'getRemainingGamesCount/{tournamentId}'
+          method: get
+          cors: true
+
   getLeagueUserTeams:
     handler: getLeagueUserTeams.getLeagueUserTeams
     events:
