@@ -31,7 +31,7 @@ export async function joinLeague(event, context, callback) {
     , 3
     From dbo.users u
     Cross Join cte
-    Where u.cognitoSub = '${cognitoSub}`);
+    Where u.cognitoSub = '${cognitoSub}'`);
 
     callback(null, success(result.recordset));
   } catch (error) {
