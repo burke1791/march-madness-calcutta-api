@@ -18,11 +18,11 @@ provider:
   runtime: nodejs12.x
   timeout: 15
   region: us-east-1
-  stage: ${self:custom.secrets.NODE_ENV}
+  # stage: ${self:custom.secrets.NODE_ENV}
   websocketsApiName: calcutta-websockets-api-{self:provider.stage}
   websocketsApiRouteSelectionExpression: $request.body.action
   environment:
-    NODE_ENV: ${self:custom.secrets.NODE_ENV}
+    NODE_ENV: ${self:provider.stage}
     DB_NAME: ${self:custom.secrets.DB_NAME}
     DB_USER: ${self:custom.secrets.DB_USER}
     DB_PASSWORD: ${self:custom.secrets.DB_PASSWORD}
