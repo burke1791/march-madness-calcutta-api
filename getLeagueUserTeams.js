@@ -23,6 +23,7 @@ export async function getLeagueUserTeams(event, context, callback) {
       , lt.price
       , [payout] = lt.[return]
       , lm.taxBuyIn
+      , tt.alive
     From dbo.leagueTeams lt
     Inner Join dbo.leagues l
     On lt.leagueId = l.id
