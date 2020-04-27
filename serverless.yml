@@ -215,6 +215,17 @@ functions:
             headers:
               - x-cognito-token
 
+  getTournamentGamesForBracket:
+    handler: getTournamentGamesForBracket.getTournamentGamesForBracket
+    events:
+      - http:
+          path: getTournamentGamesForBracket/{leagueId}
+          method: get
+          cors:
+            origin: '*'
+            headers:
+              - x-cognito-token
+
   getServerTime:
     handler: getServerTime.getServerTime
     events:
