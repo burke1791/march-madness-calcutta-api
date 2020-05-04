@@ -1,14 +1,12 @@
-import { success, failure } from './libraries/response-lib';
 
 const connection = require('./db').connection;
-const verifyToken = require('./libraries/verify').verifyToken;
 
 export async function getTournamentOptions(event, context, callback) {
   context.callbackWaitsForEmptyEventLoop = false;
 
-  try {
-    let cognitoSub = await verifyToken(event.headers['x-cognito-token']);
+  let cognitoSub = event.cognitoPoolClaims.sub;
 
+  try {
     if (!connection.isConnected) {
       await connection.createConnection();
     }
@@ -32,9 +30,9 @@ export async function getTournamentOptions(event, context, callback) {
     let result = await connection.pool.request().query(query);
     console.log(result);
 
-    callback(null, success(result.recordset));
+    callback(null, result.recordset);
   } catch (error) {
     console.log(error);
-    callback(null, failure({ message: 'ERROR!' }));
+    callback(null, { message: 'ERROR!' });
   }
 }

@@ -1,19 +1,16 @@
 
-import { success, failure } from './libraries/response-lib';
-
 const connection = require('./db').connection;
-const verifyToken = require('./libraries/verify').verifyToken;
 
 export async function createLeague(event, context, callback) {
-  try {
-    context.callbackWaitsForEmptyEventLoop = false;
+  context.callbackWaitsForEmptyEventLoop = false;
 
-    let body = JSON.parse(event.body);
+  let cognitoSub = event.cognitoPoolClaims.sub;
+
+  try {
+    let body = event.body;
     let name = body.name;
     let password = body.password;
     let tournamentId = Number(body.tournamentId);
-
-    let cognitoSub = await verifyToken(event.headers['x-cognito-token']);
 
     if (!connection.isConnected) {
       await connection.createConnection();
@@ -23,9 +20,9 @@ export async function createLeague(event, context, callback) {
 
     await connection.pool.request().query(query);
 
-    callback(null, success({ message: 'league created' }));
+    callback(null, { message: 'league created' });
   } catch (error) {
     console.log(error);
-    callback(null, failure({ message: 'ERROR!' }));
+    callback(null, { message: 'ERROR!' });
   }
 }

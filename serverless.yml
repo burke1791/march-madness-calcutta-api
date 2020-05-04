@@ -68,6 +68,13 @@ functions:
       - http:
           path: getTournamentOptions
           method: get
+          integration: lambda
+          authorizer:
+            name: authorizer
+            arn: ${self:custom.secrets.USER_POOL_ARN}
+            identitySource: method.request.header.x-cognito-token
+            claims:
+              - sub
           cors:
             origin: '*'
             headers:
@@ -79,15 +86,17 @@ functions:
       - http:
           path: createLeague
           method: post
+          integration: lambda
+          authorizer:
+            name: authorizer
+            arn: ${self:custom.secrets.USER_POOL_ARN}
+            identitySource: method.request.header.x-cognito-token
+            claims:
+              - sub
           cors:
             origin: '*'
             headers:
               - Content-Type
-              - X-Amz-Date
-              - Authorization
-              - X-Api-Key
-              - X-Amz-Security-Token
-              - X-Amz-User-Agent
               - x-cognito-token
 
   joinLeague:
@@ -96,15 +105,17 @@ functions:
       - http:
           path: joinLeague
           method: post
+          integration: lambda
+          authorizer:
+            name: authorizer
+            arn: ${self:custom.secrets.USER_POOL_ARN}
+            identitySource: method.request.header.x-cognito-token
+            claims:
+              - sub
           cors:
             origin: '*'
             headers:
               - Content-Type
-              - X-Amz-Date
-              - Authorization
-              - X-Api-Key
-              - X-Amz-Security-Token
-              - X-Amz-User-Agent
               - x-cognito-token
 
   getLeagueSummaries:
@@ -113,15 +124,16 @@ functions:
       - http:
           path: getLeagueSummaries
           method: get
+          integration: lambda
+          authorizer:
+            name: authorizer
+            arn: ${self:custom.secrets.USER_POOL_ARN}
+            identitySource: method.request.header.x-cognito-token
+            claims:
+              - sub
           cors:
             origin: '*'
             headers:
-              - Content-Type
-              - X-Amz-Date
-              - Authorization
-              - X-Api-Key
-              - X-Amz-Security-Token
-              - X-Amz-User-Agent
               - x-cognito-token
 
   getLeagueUserSummaries:
@@ -130,15 +142,16 @@ functions:
       - http:
           path: getLeagueUserSummaries/{leagueId}
           method: get
+          integration: lambda
+          authorizer:
+            name: authorizer
+            arn: ${self:custom.secrets.USER_POOL_ARN}
+            identitySource: method.request.header.x-cognito-token
+            claims:
+              - sub
           cors:
             origin: '*'
             headers:
-              - Content-Type
-              - X-Amz-Date
-              - Authorization
-              - X-Api-Key
-              - X-Amz-Security-Token
-              - X-Amz-User-Agent
               - x-cognito-token
 
   getUpcomingGames:
@@ -147,6 +160,13 @@ functions:
       - http:
           path: getUpcomingGames/{leagueId}
           method: get
+          integration: lambda
+          authorizer:
+            name: authorizer
+            arn: ${self:custom.secrets.USER_POOL_ARN}
+            identitySource: method.request.header.x-cognito-token
+            claims:
+              - sub
           cors:
             origin: '*'
             headers:
@@ -158,7 +178,17 @@ functions:
       - http:
           path: 'getRemainingGamesCount/{tournamentId}'
           method: get
-          cors: true
+          integration: lambda
+          authorizer:
+            name: authorizer
+            arn: ${self:custom.secrets.USER_POOL_ARN}
+            identitySource: method.request.header.x-cognito-token
+            claims:
+              - sub
+          cors:
+            origin: '*'
+            headers:
+              - x-cognito-token
 
   getLeagueUserTeams:
     handler: getLeagueUserTeams.getLeagueUserTeams
@@ -166,6 +196,13 @@ functions:
       - http:
           path: getLeagueUserTeams/{leagueId}/{userId}
           method: get
+          integration: lambda
+          authorizer:
+            name: authorizer
+            arn: ${self:custom.secrets.USER_POOL_ARN}
+            identitySource: method.request.header.x-cognito-token
+            claims:
+              - sub
           cors:
             origin: '*'
             headers:
@@ -177,6 +214,13 @@ functions:
       - http:
           path: getAuctionTeams/{leagueId}
           method: get
+          integration: lambda
+          authorizer:
+            name: authorizer
+            arn: ${self:custom.secrets.USER_POOL_ARN}
+            identitySource: method.request.header.x-cognito-token
+            claims:
+              - sub
           cors:
             origin: '*'
             headers:
@@ -188,6 +232,13 @@ functions:
       - http:
           path: getAuctionMemberBuyIns/{leagueId}
           method: get
+          integration: lambda
+          authorizer:
+            name: authorizer
+            arn: ${self:custom.secrets.USER_POOL_ARN}
+            identitySource: method.request.header.x-cognito-token
+            claims:
+              - sub
           cors:
             origin: '*'
             headers:
@@ -199,6 +250,13 @@ functions:
       - http:
           path: getAllChatMessages/{leagueId}
           method: get
+          integration: lambda
+          authorizer:
+            name: authorizer
+            arn: ${self:custom.secrets.USER_POOL_ARN}
+            identitySource: method.request.header.x-cognito-token
+            claims:
+              - sub
           cors:
             origin: '*'
             headers:
@@ -210,6 +268,13 @@ functions:
       - http:
           path: getAuctionStatus/{leagueId}
           method: get
+          integration: lambda
+          authorizer:
+            name: authorizer
+            arn: ${self:custom.secrets.USER_POOL_ARN}
+            identitySource: method.request.header.x-cognito-token
+            claims:
+              - sub
           cors:
             origin: '*'
             headers:
@@ -221,6 +286,13 @@ functions:
       - http:
           path: getTournamentGamesForBracket/{leagueId}
           method: get
+          integration: lambda
+          authorizer:
+            name: authorizer
+            arn: ${self:custom.secrets.USER_POOL_ARN}
+            identitySource: method.request.header.x-cognito-token
+            claims:
+              - sub
           cors:
             origin: '*'
             headers:
@@ -232,7 +304,17 @@ functions:
       - http:
           path: getServerTime
           method: get
-          cors: true
+          integration: lambda
+          authorizer:
+            name: authorizer
+            arn: ${self:custom.secrets.USER_POOL_ARN}
+            identitySource: method.request.header.x-cognito-token
+            claims:
+              - sub
+          cors:
+            origin: '*'
+            headers:
+              - x-cognito-token
 
   onConnect:
     handler: auction/websocket.onConnect
