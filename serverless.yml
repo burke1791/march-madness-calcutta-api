@@ -18,11 +18,11 @@ provider:
   runtime: nodejs12.x
   timeout: 15
   region: us-east-1
-  stage: ${self:custom.secrets.NODE_ENV}
+  # stage: ${self:custom.secrets.NODE_ENV}
   websocketsApiName: calcutta-websockets-api-{self:provider.stage}
   websocketsApiRouteSelectionExpression: $request.body.action
   environment:
-    NODE_ENV: ${self:custom.secrets.NODE_ENV}
+    NODE_ENV: ${self:provider.stage}
     DB_NAME: ${self:custom.secrets.DB_NAME}
     DB_USER: ${self:custom.secrets.DB_USER}
     DB_PASSWORD: ${self:custom.secrets.DB_PASSWORD}
@@ -68,6 +68,13 @@ functions:
       - http:
           path: getTournamentOptions
           method: get
+          integration: lambda
+          authorizer:
+            name: authorizer
+            arn: ${self:custom.secrets.USER_POOL_ARN}
+            identitySource: method.request.header.x-cognito-token
+            claims:
+              - sub
           cors:
             origin: '*'
             headers:
@@ -79,15 +86,17 @@ functions:
       - http:
           path: createLeague
           method: post
+          integration: lambda
+          authorizer:
+            name: authorizer
+            arn: ${self:custom.secrets.USER_POOL_ARN}
+            identitySource: method.request.header.x-cognito-token
+            claims:
+              - sub
           cors:
             origin: '*'
             headers:
               - Content-Type
-              - X-Amz-Date
-              - Authorization
-              - X-Api-Key
-              - X-Amz-Security-Token
-              - X-Amz-User-Agent
               - x-cognito-token
 
   joinLeague:
@@ -96,15 +105,17 @@ functions:
       - http:
           path: joinLeague
           method: post
+          integration: lambda
+          authorizer:
+            name: authorizer
+            arn: ${self:custom.secrets.USER_POOL_ARN}
+            identitySource: method.request.header.x-cognito-token
+            claims:
+              - sub
           cors:
             origin: '*'
             headers:
               - Content-Type
-              - X-Amz-Date
-              - Authorization
-              - X-Api-Key
-              - X-Amz-Security-Token
-              - X-Amz-User-Agent
               - x-cognito-token
 
   getLeagueSummaries:
@@ -113,15 +124,16 @@ functions:
       - http:
           path: getLeagueSummaries
           method: get
+          integration: lambda
+          authorizer:
+            name: authorizer
+            arn: ${self:custom.secrets.USER_POOL_ARN}
+            identitySource: method.request.header.x-cognito-token
+            claims:
+              - sub
           cors:
             origin: '*'
             headers:
-              - Content-Type
-              - X-Amz-Date
-              - Authorization
-              - X-Api-Key
-              - X-Amz-Security-Token
-              - X-Amz-User-Agent
               - x-cognito-token
 
   getLeagueUserSummaries:
@@ -130,15 +142,70 @@ functions:
       - http:
           path: getLeagueUserSummaries/{leagueId}
           method: get
+          integration: lambda
+          authorizer:
+            name: authorizer
+            arn: ${self:custom.secrets.USER_POOL_ARN}
+            identitySource: method.request.header.x-cognito-token
+            claims:
+              - sub
           cors:
             origin: '*'
             headers:
-              - Content-Type
-              - X-Amz-Date
-              - Authorization
-              - X-Api-Key
-              - X-Amz-Security-Token
-              - X-Amz-User-Agent
+              - x-cognito-token
+
+  getUpcomingGames:
+    handler: getUpcomingGames.getUpcomingGames
+    events:
+      - http:
+          path: getUpcomingGames/{leagueId}
+          method: get
+          integration: lambda
+          authorizer:
+            name: authorizer
+            arn: ${self:custom.secrets.USER_POOL_ARN}
+            identitySource: method.request.header.x-cognito-token
+            claims:
+              - sub
+          cors:
+            origin: '*'
+            headers:
+              - x-cognito-token
+
+  getRemainingGamesCount:
+    handler: getRemainingGamesCount.getRemainingGamesCount
+    events:
+      - http:
+          path: 'getRemainingGamesCount/{tournamentId}'
+          method: get
+          integration: lambda
+          authorizer:
+            name: authorizer
+            arn: ${self:custom.secrets.USER_POOL_ARN}
+            identitySource: method.request.header.x-cognito-token
+            claims:
+              - sub
+          cors:
+            origin: '*'
+            headers:
+              - x-cognito-token
+
+  getLeagueUserTeams:
+    handler: getLeagueUserTeams.getLeagueUserTeams
+    events:
+      - http:
+          path: getLeagueUserTeams/{leagueId}/{userId}
+          method: get
+          integration: lambda
+          authorizer:
+            name: authorizer
+            arn: ${self:custom.secrets.USER_POOL_ARN}
+            identitySource: method.request.header.x-cognito-token
+            claims:
+              - sub
+          cors:
+            origin: '*'
+            headers:
               - x-cognito-token
 
   getAuctionTeams:
@@ -147,6 +214,13 @@ functions:
       - http:
           path: getAuctionTeams/{leagueId}
           method: get
+          integration: lambda
+          authorizer:
+            name: authorizer
+            arn: ${self:custom.secrets.USER_POOL_ARN}
+            identitySource: method.request.header.x-cognito-token
+            claims:
+              - sub
           cors:
             origin: '*'
             headers:
@@ -158,6 +232,13 @@ functions:
       - http:
           path: getAuctionMemberBuyIns/{leagueId}
           method: get
+          integration: lambda
+          authorizer:
+            name: authorizer
+            arn: ${self:custom.secrets.USER_POOL_ARN}
+            identitySource: method.request.header.x-cognito-token
+            claims:
+              - sub
           cors:
             origin: '*'
             headers:
@@ -169,6 +250,13 @@ functions:
       - http:
           path: getAllChatMessages/{leagueId}
           method: get
+          integration: lambda
+          authorizer:
+            name: authorizer
+            arn: ${self:custom.secrets.USER_POOL_ARN}
+            identitySource: method.request.header.x-cognito-token
+            claims:
+              - sub
           cors:
             origin: '*'
             headers:
@@ -180,6 +268,31 @@ functions:
       - http:
           path: getAuctionStatus/{leagueId}
           method: get
+          integration: lambda
+          authorizer:
+            name: authorizer
+            arn: ${self:custom.secrets.USER_POOL_ARN}
+            identitySource: method.request.header.x-cognito-token
+            claims:
+              - sub
+          cors:
+            origin: '*'
+            headers:
+              - x-cognito-token
+
+  getTournamentGamesForBracket:
+    handler: getTournamentGamesForBracket.getTournamentGamesForBracket
+    events:
+      - http:
+          path: getTournamentGamesForBracket/{leagueId}
+          method: get
+          integration: lambda
+          authorizer:
+            name: authorizer
+            arn: ${self:custom.secrets.USER_POOL_ARN}
+            identitySource: method.request.header.x-cognito-token
+            claims:
+              - sub
           cors:
             origin: '*'
             headers:
@@ -191,7 +304,17 @@ functions:
       - http:
           path: getServerTime
           method: get
-          cors: true
+          integration: lambda
+          authorizer:
+            name: authorizer
+            arn: ${self:custom.secrets.USER_POOL_ARN}
+            identitySource: method.request.header.x-cognito-token
+            claims:
+              - sub
+          cors:
+            origin: '*'
+            headers:
+              - x-cognito-token
 
   onConnect:
     handler: auction/websocket.onConnect
@@ -233,7 +356,11 @@ functions:
     events:
       - websocket:
           route: START_AUCTION
-
+  closeAuction:
+    handler: auction/admin.closeAuction
+    events:
+      - websocket:
+          route: CLOSE_AUCTION
 
 
 resources:

@@ -1,10 +1,11 @@
 const sql = require('mssql');
 import AWS from 'aws-sdk';
+import { callbackWaitsForEmptyEventLoopFalse } from '../utilities/common';
 
 import { connection } from '../db';
 
 export async function resetClock(event, context, callback) {
-  context.callbackWaitsForEmptyEventLoop = false;
+  callbackWaitsForEmptyEventLoopFalse(context);
 
   console.log(event);
   let data = JSON.parse(event.body);
@@ -71,7 +72,7 @@ export async function resetClock(event, context, callback) {
 }
 
 export async function setItemComplete(event, context, callback) {
-  context.callbackWaitsForEmptyEventLoop = false;
+  callbackWaitsForEmptyEventLoopFalse(context);
 
   console.log(event);
   let data = JSON.parse(event.body);
@@ -115,7 +116,7 @@ export async function setItemComplete(event, context, callback) {
 }
 
 export async function placeBid(event, context, callback) {
-  context.callbackWaitsForEmptyEventLoop = false;
+  callbackWaitsForEmptyEventLoopFalse(context);
 
   console.log(event);
   let data = JSON.parse(event.body);
@@ -175,7 +176,7 @@ export async function placeBid(event, context, callback) {
 }
 
 export async function setNextItem(event, context, callback) {
-  context.callbackWaitsForEmptyEventLoop = false;
+  callbackWaitsForEmptyEventLoopFalse(context);
 
   console.log(event);
   let data = JSON.parse(event.body);
@@ -219,7 +220,7 @@ export async function setNextItem(event, context, callback) {
 }
 
 export async function startAuction(event, context, callback) {
-  context.callbackWaitsForEmptyEventLoop = false;
+  callbackWaitsForEmptyEventLoopFalse(context);
 
   console.log(event);
   let data = JSON.parse(event.body);
@@ -236,6 +237,50 @@ export async function startAuction(event, context, callback) {
 
   try {
     let result = await request.execute('dbo.up_startAuction');
+    console.log(result);
+
+    let connectionIds = result.recordset;
+    let auctionStatus = result.recordsets[1][0];
+    console.log(auctionStatus);
+
+    let payload = {
+      msgObj: auctionStatus,
+      msgType: 'auction'
+    };
+
+    await sendWebsocketPayloads(connectionIds, payload, event.requestContext.domainName, event.requestContext.stage, callback);
+
+    callback(null, {
+      statusCode: 200,
+      body: JSON.stringify({ message: 'messages not sent' })
+    });
+  } catch (error) {
+    console.log(error);
+    callback(null, {
+      statusCode: 500,
+      body: JSON.stringify({ message: 'messages not sent' })
+    });
+  }
+}
+
+export async function closeAuction(event, context, callback) {
+  callbackWaitsForEmptyEventLoopFalse(context);
+
+  console.log(event);
+  let data = JSON.parse(event.body);
+  let leagueId = data.leagueId;
+  let connectionId = event.requestContext.connectionId;
+
+  if (!connection.isConnected) {
+    await connection.createConnection();
+  }
+
+  const request = new sql.Request();
+  request.input('connectionId', sql.VarChar(128), connectionId);
+  request.input('leagueId', sql.BigInt(), leagueId);
+
+  try {
+    let result = await request.execute('dbo.up_closeAuction');
     console.log(result);
 
     let connectionIds = result.recordset;

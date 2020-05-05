@@ -1,7 +1,9 @@
 import { callbackWaitsForEmptyEventLoopFalse } from './utilities/common';
+const sql = require('mssql');
+
 const connection = require('./db').connection;
 
-export async function getAuctionMemberBuyIns(event, context, callback) {
+export async function getTournamentGamesForBracket(event, context, callback) {
   callbackWaitsForEmptyEventLoopFalse(context);
 
   let cognitoSub = event.cognitoPoolClaims.sub;
@@ -13,9 +15,12 @@ export async function getAuctionMemberBuyIns(event, context, callback) {
       await connection.createConnection();
     }
 
-    let query = `Select lm.userId, u.alias, lm.naturalBuyIn, lm.taxBuyIn From dbo.leagueMemberships lm Inner Join dbo.users u On lm.userId = u.id Where lm.leagueId = ${leagueId} And Exists (Select * From dbo.leagueMemberships lm2 Inner Join dbo.users u On lm2.userId = u.id Where lm2.leagueId = ${leagueId} And u.cognitoSub = '${cognitoSub}')`;
+    const request = new sql.Request();
+    request.input('leagueId', sql.BigInt(), leagueId);
+    request.input('cognitoSub', sql.VarChar(256), cognitoSub);
 
-    let result = await connection.pool.request().query(query);
+    let result = await request.execute('dbo.up_GetTournamentGamesForBracket');
+    console.log(result);
 
     callback(null, result.recordset);
   } catch (error) {
