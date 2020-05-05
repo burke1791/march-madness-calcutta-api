@@ -1,8 +1,8 @@
-
+import { callbackWaitsForEmptyEventLoopFalse } from '../utilities/common';
 import { connection } from '../db';
 
 export async function getAllMessages(event, context, callback) {
-  context.callbackWaitsForEmptyEventLoop = false;
+  callbackWaitsForEmptyEventLoopFalse(context);
 
   let cognitoSub = event.cognitoPoolClaims.sub;
 

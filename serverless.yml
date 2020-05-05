@@ -363,6 +363,5 @@ functions:
           route: CLOSE_AUCTION
 
 
-
 resources:
   - ${file(resources/api-gateway-errors.yml)}

@@ -1,12 +1,13 @@
 const sql = require('mssql');
 import AWS from 'aws-sdk';
+import { callbackWaitsForEmptyEventLoopFalse } from '../utilities/common';
 
 const verifyToken = require('../libraries/verify').verifyToken;
 import { generateAllow, generateDeny } from '../utilities/generatePolicy';
 import { connection } from '../db';
 
 export async function onConnect(event, context, callback) {
-  context.callbackWaitsForEmptyEventLoop = false;
+  callbackWaitsForEmptyEventLoopFalse(context);
   console.log(event);
 
   let connectionId = event.requestContext.connectionId;
@@ -48,7 +49,7 @@ export async function onConnect(event, context, callback) {
 }
 
 export async function onDisconnect(event, context, callback) {
-  context.callbackWaitsForEmptyEventLoop = false;
+  callbackWaitsForEmptyEventLoopFalse(context);
   console.log(event);
 
   let connectionId = event.requestContext.connectionId;
@@ -83,7 +84,7 @@ export async function onDisconnect(event, context, callback) {
 }
 
 export async function handleMessage(event, context, callback) {
-  context.callbackWaitsForEmptyEventLoop = false;
+  callbackWaitsForEmptyEventLoopFalse(context);
 
   await generateAllow('me', event.methodArn);
 
