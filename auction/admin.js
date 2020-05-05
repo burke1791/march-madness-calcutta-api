@@ -1,10 +1,11 @@
 const sql = require('mssql');
 import AWS from 'aws-sdk';
+import { callbackWaitsForEmptyEventLoopFalse } from '../utilities/common';
 
 import { connection } from '../db';
 
 export async function resetClock(event, context, callback) {
-  context.callbackWaitsForEmptyEventLoop = false;
+  callbackWaitsForEmptyEventLoopFalse(context);
 
   console.log(event);
   let data = JSON.parse(event.body);
@@ -71,7 +72,7 @@ export async function resetClock(event, context, callback) {
 }
 
 export async function setItemComplete(event, context, callback) {
-  context.callbackWaitsForEmptyEventLoop = false;
+  callbackWaitsForEmptyEventLoopFalse(context);
 
   console.log(event);
   let data = JSON.parse(event.body);
@@ -115,7 +116,7 @@ export async function setItemComplete(event, context, callback) {
 }
 
 export async function placeBid(event, context, callback) {
-  context.callbackWaitsForEmptyEventLoop = false;
+  callbackWaitsForEmptyEventLoopFalse(context);
 
   console.log(event);
   let data = JSON.parse(event.body);
@@ -175,7 +176,7 @@ export async function placeBid(event, context, callback) {
 }
 
 export async function setNextItem(event, context, callback) {
-  context.callbackWaitsForEmptyEventLoop = false;
+  callbackWaitsForEmptyEventLoopFalse(context);
 
   console.log(event);
   let data = JSON.parse(event.body);
@@ -219,7 +220,7 @@ export async function setNextItem(event, context, callback) {
 }
 
 export async function startAuction(event, context, callback) {
-  context.callbackWaitsForEmptyEventLoop = false;
+  callbackWaitsForEmptyEventLoopFalse(context);
 
   console.log(event);
   let data = JSON.parse(event.body);
@@ -263,7 +264,7 @@ export async function startAuction(event, context, callback) {
 }
 
 export async function closeAuction(event, context, callback) {
-  context.callbackWaitsForEmptyEventLoop = false;
+  callbackWaitsForEmptyEventLoopFalse(context);
 
   console.log(event);
   let data = JSON.parse(event.body);

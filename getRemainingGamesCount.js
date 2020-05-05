@@ -1,12 +1,14 @@
-import { success, failure } from './libraries/response-lib';
-
+import { callbackWaitsForEmptyEventLoopFalse } from './utilities/common';
 const connection = require('./db').connection;
 
 export async function getRemainingGamesCount(event, context, callback) {
-  context.callbackWaitsForEmptyEventLoop = false;
+  callbackWaitsForEmptyEventLoopFalse(context);
+
+  // in case we need it for future refactoring
+  // let cognitoSub = event.cognitoPoolClaims.sub;
 
   try {
-    let tournamentId = event.pathParameters.tournamentId;
+    let tournamentId = event.path.tournamentId;
 
     if (!connection.isConnected) {
       await connection.createConnection();
@@ -23,9 +25,9 @@ export async function getRemainingGamesCount(event, context, callback) {
 
     console.log(result);
 
-    callback(null, success(result.recordset));
+    callback(null, result.recordset);
   } catch (error) {
     console.log(error);
-    callback(null, failure({ message: 'ERROR' }));
+    callback(null, { message: 'ERROR' });
   }
 }

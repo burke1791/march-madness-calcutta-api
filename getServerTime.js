@@ -1,11 +1,13 @@
-import { success, failure } from './libraries/response-lib';
-
+import { callbackWaitsForEmptyEventLoopFalse } from './utilities/common';
 const connection = require('./db').connection;
 
 export async function getServerTime(event, context, callback) {
-  try {
-    context.callbackWaitsForEmptyEventLoop = false;
+  callbackWaitsForEmptyEventLoopFalse(context);
 
+  // in case we need it for future refactoring
+  // let cognitoSub = event.cognitoPoolClaims.sub;
+
+  try {
     if (!connection.isConnected) {
       await connection.createConnection();
     }
@@ -14,9 +16,9 @@ export async function getServerTime(event, context, callback) {
 
     let result = await connection.pool.request().query(query);
 
-    callback(null, success(result.recordset));
+    callback(null, result.recordset);
   } catch (error) {
     console.log(error);
-    callback(null, failure({ message: 'ERROR!' }));
+    callback(null, { message: 'ERROR!' });
   }
 }

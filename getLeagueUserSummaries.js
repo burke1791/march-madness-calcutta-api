@@ -1,14 +1,13 @@
-import { success, failure } from './libraries/response-lib';
-
+import { callbackWaitsForEmptyEventLoopFalse } from './utilities/common';
 const connection = require('./db').connection;
-const verifyToken = require('./libraries/verify').verifyToken;
 
 export async function getLeagueUserSummaries(event, context, callback) {
-  try {
-    context.callbackWaitsForEmptyEventLoop = false;
+  callbackWaitsForEmptyEventLoopFalse(context);
 
-    let cognitoSub = await verifyToken(event.headers['x-cognito-token']);
-    let leagueId = event.pathParameters.leagueId;
+  let cognitoSub = event.cognitoPoolClaims.sub;
+
+  try {
+    let leagueId = event.path.leagueId;
 
     if (!connection.isConnected) {
       await connection.createConnection();
@@ -29,9 +28,9 @@ export async function getLeagueUserSummaries(event, context, callback) {
 
     let result = await connection.pool.request().query(query);
 
-    callback(null, success(result.recordset));
+    callback(null, result.recordset);
   } catch (error) {
     console.log(error);
-    callback(null, failure({ message: 'ERROR!' }));
+    callback(null, { message: 'ERROR!' });
   }
 }

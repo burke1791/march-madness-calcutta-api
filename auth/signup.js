@@ -1,7 +1,8 @@
+import { callbackWaitsForEmptyEventLoopFalse } from '../utilities/common';
 const connection = require('../db').connection;
 
 export async function addUserAfterSignup(event, context, callback) {
-  context.callbackWaitsForEmptyEventLoop = false;
+  callbackWaitsForEmptyEventLoopFalse(context);
 
   console.log(event.request.userAttributes);
 

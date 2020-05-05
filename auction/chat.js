@@ -1,14 +1,13 @@
-import { success, failure } from '../libraries/response-lib';
-
+import { callbackWaitsForEmptyEventLoopFalse } from '../utilities/common';
 import { connection } from '../db';
-import { verifyToken } from '../libraries/verify';
 
 export async function getAllMessages(event, context, callback) {
-  try {
-    context.callbackWaitsForEmptyEventLoop = false;
+  callbackWaitsForEmptyEventLoopFalse(context);
 
-    let cognitoSub = await verifyToken(event.headers['x-cognito-token']);
-    let leagueId = event.pathParameters.leagueId;
+  let cognitoSub = event.cognitoPoolClaims.sub;
+
+  try {
+    let leagueId = event.path.leagueId;
 
     if (!connection.isConnected) {
       await connection.createConnection();
@@ -36,9 +35,9 @@ export async function getAllMessages(event, context, callback) {
 
     let result = await connection.pool.request().query(query);
 
-    callback(null, success(result.recordset));
+    callback(null, result.recordset);
   } catch (error) {
     console.log(error);
-    callback(null, failure(error));
+    callback(null, error);
   }
 }
