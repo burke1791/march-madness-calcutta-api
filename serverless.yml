@@ -11,14 +11,18 @@ plugins:
 
 custom:
   secrets: ${file(secrets.json)}
-  auctionConnections: 'AuctionConnections'
+  stage: ${opt:stage, self:provider.stage}
+  profile:
+    prod: default
+    dev: dev
         
 provider:
   name: aws
   runtime: nodejs12.x
   timeout: 15
   region: us-east-1
-  # stage: ${self:custom.secrets.NODE_ENV}
+  stage: dev
+  profile: ${self:custom.profile.${self:custom.stage}}
   websocketsApiName: calcutta-websockets-api-{self:provider.stage}
   websocketsApiRouteSelectionExpression: $request.body.action
   environment:
@@ -28,7 +32,6 @@ provider:
     DB_PASSWORD: ${self:custom.secrets.DB_PASSWORD}
     DB_HOST: ${self:custom.secrets.DB_HOST}
     DB_PORT: ${self:custom.secrets.DB_PORT}
-    AUCTION_CONNECTIONS_TABLE: ${self:custom.auctionConnections}
     WEBSOCKET_ENDPOINT:
       Fn::Join:
         - ''
