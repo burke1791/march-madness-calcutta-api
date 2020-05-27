@@ -27,11 +27,11 @@ provider:
   websocketsApiRouteSelectionExpression: $request.body.action
   environment:
     NODE_ENV: ${self:provider.stage}
-    DB_NAME: ${self:custom.secrets.DB_NAME}
-    DB_USER: ${self:custom.secrets.DB_USER}
-    DB_PASSWORD: ${self:custom.secrets.DB_PASSWORD}
-    DB_HOST: ${self:custom.secrets.DB_HOST}
-    DB_PORT: ${self:custom.secrets.DB_PORT}
+    DB_NAME: ${self:custom.secrets.${self:custom.stage}.DB_NAME}
+    DB_USER: ${self:custom.secrets.${self:custom.stage}.DB_USER}
+    DB_PASSWORD: ${self:custom.secrets.${self:custom.stage}.DB_PASSWORD}
+    DB_HOST: ${self:custom.secrets.${self:custom.stage}.DB_HOST}
+    DB_PORT: ${self:custom.secrets.${self:custom.stage}.DB_PORT}
     WEBSOCKET_ENDPOINT:
       Fn::Join:
         - ''
@@ -42,11 +42,11 @@ provider:
           - ${self:provider.stage}
   vpc:
     securityGroupIds:
-      - ${self:custom.secrets.SECURITY_GROUP_ID}
+      - ${self:custom.secrets.${self:custom.stage}.SECURITY_GROUP_ID}
     subnetIds:
-      - ${self:custom.secrets.SUBNET1_ID}
-      - ${self:custom.secrets.SUBNET2_ID}
-      - ${self:custom.secrets.SUBNET3_ID}
+      - ${self:custom.secrets.${self:custom.stage}.SUBNET1_ID}
+      - ${self:custom.secrets.${self:custom.stage}.SUBNET2_ID}
+      - ${self:custom.secrets.${self:custom.stage}.SUBNET3_ID}
 
 functions:
   updateLastHeartbeat:
