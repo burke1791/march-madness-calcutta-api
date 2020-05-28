@@ -23,10 +23,10 @@ provider:
   region: us-east-1
   stage: dev
   profile: ${self:custom.profile.${self:custom.stage}}
-  websocketsApiName: calcutta-websockets-api-{self:provider.stage}
+  websocketsApiName: calcutta-websockets-api-{self:custom.stage}
   websocketsApiRouteSelectionExpression: $request.body.action
   environment:
-    NODE_ENV: ${self:provider.stage}
+    NODE_ENV: ${self:custom.stage}
     DB_NAME: ${self:custom.secrets.${self:custom.stage}.DB_NAME}
     DB_USER: ${self:custom.secrets.${self:custom.stage}.DB_USER}
     DB_PASSWORD: ${self:custom.secrets.${self:custom.stage}.DB_PASSWORD}
@@ -39,7 +39,7 @@ provider:
           - .execute-api.
           - Ref: AWS::Region
           - .amazonaws.com/
-          - ${self:provider.stage}
+          - ${self:custom.stage}
   vpc:
     securityGroupIds:
       - ${self:custom.secrets.${self:custom.stage}.SECURITY_GROUP_ID}
