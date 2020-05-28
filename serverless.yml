@@ -49,19 +49,21 @@ provider:
       - ${self:custom.secrets.${self:custom.stage}.SUBNET3_ID}
 
 functions:
-  updateLastHeartbeat:
-    handler: handler.updateLastHeartbeat
-    events:
-      - cognitoUserPool:
-          pool: ${self:custom.secrets.COGNITO_POOL}
-          trigger: PostAuthentication
-          existing: true
+  # updateLastHeartbeat:
+  #   handler: handler.updateLastHeartbeat
+  #   events:
+  #     - cognitoUserPool:
+  #         pool: 
+  #           - Fn::GetAtt: [ CognitoUserPool, UserPoolName ]
+  #         trigger: PostAuthentication
+  #         existing: true
 
   addUserAfterSignup:
     handler: auth/signup.addUserAfterSignup
     events:
       - cognitoUserPool:
-          pool: ${self:custom.secrets.COGNITO_POOL}
+          pool: 
+            - Fn::GetAtt: [ CognitoUserPool, UserPoolName ]
           trigger: PostConfirmation
           existing: true
 
@@ -74,7 +76,8 @@ functions:
           integration: lambda
           authorizer:
             name: authorizer
-            arn: ${self:custom.secrets.USER_POOL_ARN}
+            arn:
+              - Fn::GetAtt: [ CognitoUserPool, Arn ]
             identitySource: method.request.header.x-cognito-token
             claims:
               - sub
@@ -92,7 +95,8 @@ functions:
           integration: lambda
           authorizer:
             name: authorizer
-            arn: ${self:custom.secrets.USER_POOL_ARN}
+            arn: 
+              - Fn::GetAtt: [ CognitoUserPool, Arn ]
             identitySource: method.request.header.x-cognito-token
             claims:
               - sub
@@ -111,7 +115,8 @@ functions:
           integration: lambda
           authorizer:
             name: authorizer
-            arn: ${self:custom.secrets.USER_POOL_ARN}
+            arn: 
+              - Fn::GetAtt: [ CognitoUserPool, Arn ]
             identitySource: method.request.header.x-cognito-token
             claims:
               - sub
@@ -130,7 +135,8 @@ functions:
           integration: lambda
           authorizer:
             name: authorizer
-            arn: ${self:custom.secrets.USER_POOL_ARN}
+            arn: 
+              - Fn::GetAtt: [ CognitoUserPool, Arn ]
             identitySource: method.request.header.x-cognito-token
             claims:
               - sub
@@ -148,7 +154,8 @@ functions:
           integration: lambda
           authorizer:
             name: authorizer
-            arn: ${self:custom.secrets.USER_POOL_ARN}
+            arn: 
+              - Fn::GetAtt: [ CognitoUserPool, Arn ]
             identitySource: method.request.header.x-cognito-token
             claims:
               - sub
@@ -166,7 +173,8 @@ functions:
           integration: lambda
           authorizer:
             name: authorizer
-            arn: ${self:custom.secrets.USER_POOL_ARN}
+            arn: 
+              - Fn::GetAtt: [ CognitoUserPool, Arn ]
             identitySource: method.request.header.x-cognito-token
             claims:
               - sub
@@ -184,7 +192,8 @@ functions:
           integration: lambda
           authorizer:
             name: authorizer
-            arn: ${self:custom.secrets.USER_POOL_ARN}
+            arn: 
+              - Fn::GetAtt: [ CognitoUserPool, Arn ]
             identitySource: method.request.header.x-cognito-token
             claims:
               - sub
@@ -202,7 +211,8 @@ functions:
           integration: lambda
           authorizer:
             name: authorizer
-            arn: ${self:custom.secrets.USER_POOL_ARN}
+            arn: 
+              - Fn::GetAtt: [ CognitoUserPool, Arn ]
             identitySource: method.request.header.x-cognito-token
             claims:
               - sub
@@ -220,7 +230,8 @@ functions:
           integration: lambda
           authorizer:
             name: authorizer
-            arn: ${self:custom.secrets.USER_POOL_ARN}
+            arn: 
+              - Fn::GetAtt: [ CognitoUserPool, Arn ]
             identitySource: method.request.header.x-cognito-token
             claims:
               - sub
@@ -238,7 +249,8 @@ functions:
           integration: lambda
           authorizer:
             name: authorizer
-            arn: ${self:custom.secrets.USER_POOL_ARN}
+            arn: 
+              - Fn::GetAtt: [ CognitoUserPool, Arn ]
             identitySource: method.request.header.x-cognito-token
             claims:
               - sub
@@ -256,7 +268,8 @@ functions:
           integration: lambda
           authorizer:
             name: authorizer
-            arn: ${self:custom.secrets.USER_POOL_ARN}
+            arn: 
+              - Fn::GetAtt: [ CognitoUserPool, Arn ]
             identitySource: method.request.header.x-cognito-token
             claims:
               - sub
@@ -274,7 +287,8 @@ functions:
           integration: lambda
           authorizer:
             name: authorizer
-            arn: ${self:custom.secrets.USER_POOL_ARN}
+            arn: 
+              - Fn::GetAtt: [ CognitoUserPool, Arn ]
             identitySource: method.request.header.x-cognito-token
             claims:
               - sub
@@ -292,7 +306,8 @@ functions:
           integration: lambda
           authorizer:
             name: authorizer
-            arn: ${self:custom.secrets.USER_POOL_ARN}
+            arn: 
+              - Fn::GetAtt: [ CognitoUserPool, Arn ]
             identitySource: method.request.header.x-cognito-token
             claims:
               - sub
@@ -310,7 +325,8 @@ functions:
           integration: lambda
           authorizer:
             name: authorizer
-            arn: ${self:custom.secrets.USER_POOL_ARN}
+            arn: 
+              - Fn::GetAtt: [ CognitoUserPool, Arn ]
             identitySource: method.request.header.x-cognito-token
             claims:
               - sub
@@ -368,3 +384,4 @@ functions:
 
 resources:
   - ${file(resources/api-gateway-errors.yml)}
+  - ${file(resources/cognito-user-pool.yml)}
