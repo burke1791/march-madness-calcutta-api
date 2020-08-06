@@ -1,0 +1,92 @@
+Resources:
+  LambdaSubnet1:
+    Type: AWS::EC2::Subnet
+    Properties:
+      AvailabilityZone: us-east-1a
+      CidrBlock: 10.0.0.0/24
+      MapPublicIpOnLaunch: True
+      VpcId:
+        Ref: CalcuttaVPC
+      Tags:
+        - Key: Name
+          Value: lambda
+
+  LambdaSubnet2:
+    Type: AWS::EC2::Subnet
+    Properties:
+      AvailabilityZone: us-east-1b
+      CidrBlock: 10.0.1.0/24
+      MapPublicIpOnLaunch: True
+      VpcId:
+        Ref: CalcuttaVPC
+      Tags:
+        - Key: Name
+          Value: lambda
+
+  LambdaSubnet3:
+    Type: AWS::EC2::Subnet
+    Properties:
+      AvailabilityZone: us-east-1c
+      CidrBlock: 10.0.2.0/24
+      MapPublicIpOnLaunch: True
+      VpcId:
+        Ref: CalcuttaVPC
+      Tags:
+        - Key: Name
+          Value: lambda
+
+  NatSubnet1:
+    Type: AWS::EC2::Subnet
+    Properties:
+      AvailabilityZone: us-east-1d
+      CidrBlock: 10.0.3.0/24
+      MapPublicIpOnLaunch: True
+      VpcId:
+        Ref: CalcuttaVPC
+      Tags:
+        - Key: Name
+          Value: 'NAT GW'
+
+  NatSubnet2:
+    Type: AWS::EC2::Subnet
+    Properties:
+      AvailabilityZone: us-east-1e
+      CidrBlock: 10.0.4.0/24
+      MapPublicIpOnLaunch: True
+      VpcId:
+        Ref: CalcuttaVPC
+      Tags:
+        - Key: Name
+          Value: 'NAT GW'
+
+  NatSubnet3:
+    Type: AWS::EC2::Subnet
+    Properties:
+      AvailabilityZone: us-east-1f
+      CidrBlock: 10.0.5.0/24
+      MapPublicIpOnLaunch: True
+      VpcId:
+        Ref: CalcuttaVPC
+      Tags:
+        - Key: Name
+          Value: 'NAT GW'
+
+Outputs:
+  LambdaSubnet1Id:
+    Description: 'LambdaSubnet1 Id'
+    Value:
+      Ref: LambdaSubnet1
+    Export:
+      Name: calcutta-lambda-subnet1-${self:custom.stage}
+  LambdaSubnet2Id:
+    Description: 'LambdaSubnet2 Id'
+    Value:
+      Ref: LambdaSubnet2
+    Export:
+      Name: calcutta-lambda-subnet2-${self:custom.stage}
+  LambdaSubnet3Id:
+    Description: 'LambdaSubnet3 Id'
+    Value:
+      Ref: LambdaSubnet3
+    Export:
+      Name: calcutta-lambda-subnet3-${self:custom.stage}

@@ -13,7 +13,7 @@ custom:
   secrets: ${file(secrets.json)}
   stage: ${opt:stage, self:provider.stage}
   profile:
-    prod: default
+    prod: burke03
     dev: dev
         
 provider:
@@ -23,15 +23,18 @@ provider:
   region: us-east-1
   stage: dev
   profile: ${self:custom.profile.${self:custom.stage}}
-  websocketsApiName: calcutta-websockets-api-{self:provider.stage}
+  websocketsApiName: calcutta-websockets-api-${self:custom.stage}
   websocketsApiRouteSelectionExpression: $request.body.action
   environment:
-    NODE_ENV: ${self:provider.stage}
+    NODE_ENV: ${self:custom.stage}
+    APP_ENV: ${self:custom.stage}
     DB_NAME: ${self:custom.secrets.${self:custom.stage}.DB_NAME}
     DB_USER: ${self:custom.secrets.${self:custom.stage}.DB_USER}
     DB_PASSWORD: ${self:custom.secrets.${self:custom.stage}.DB_PASSWORD}
-    DB_HOST: ${self:custom.secrets.${self:custom.stage}.DB_HOST}
-    DB_PORT: ${self:custom.secrets.${self:custom.stage}.DB_PORT}
+    DB_HOST:
+      Fn::GetAtt: [ CalcuttaDB, Endpoint.Address ]
+    DB_PORT:
+      Fn::GetAtt: [ CalcuttaDB, Endpoint.Port ]
     WEBSOCKET_ENDPOINT:
       Fn::Join:
         - ''
@@ -39,34 +42,17 @@ provider:
           - .execute-api.
           - Ref: AWS::Region
           - .amazonaws.com/
-          - ${self:provider.stage}
+          - ${self:custom.stage}
   vpc:
     securityGroupIds:
-      - ${self:custom.secrets.${self:custom.stage}.SECURITY_GROUP_ID}
+      - Ref: LambdaSG
     subnetIds:
-      - ${self:custom.secrets.${self:custom.stage}.SUBNET1_ID}
-      - ${self:custom.secrets.${self:custom.stage}.SUBNET2_ID}
-      - ${self:custom.secrets.${self:custom.stage}.SUBNET3_ID}
+      - Ref: LambdaSubnet1
+      - Ref: LambdaSubnet2
+      - Ref: LambdaSubnet3
+
 
 functions:
-  # updateLastHeartbeat:
-  #   handler: handler.updateLastHeartbeat
-  #   events:
-  #     - cognitoUserPool:
-  #         pool: 
-  #           - Fn::GetAtt: [ CognitoUserPool, UserPoolName ]
-  #         trigger: PostAuthentication
-  #         existing: true
-
-  addUserAfterSignup:
-    handler: auth/signup.addUserAfterSignup
-    events:
-      - cognitoUserPool:
-          pool: 
-            - Fn::GetAtt: [ CognitoUserPool, UserPoolName ]
-          trigger: PostConfirmation
-          existing: true
-
   getTournamentOptions:
     handler: getTournamentOptions.getTournamentOptions
     events:
@@ -75,12 +61,9 @@ functions:
           method: get
           integration: lambda
           authorizer:
-            name: authorizer
-            arn:
-              - Fn::GetAtt: [ CognitoUserPool, Arn ]
-            identitySource: method.request.header.x-cognito-token
-            claims:
-              - sub
+            type: COGNITO_USER_POOLS
+            authorizerId:
+              Ref: ApiGatewayAuthorizer
           cors:
             origin: '*'
             headers:
@@ -94,12 +77,9 @@ functions:
           method: post
           integration: lambda
           authorizer:
-            name: authorizer
-            arn: 
-              - Fn::GetAtt: [ CognitoUserPool, Arn ]
-            identitySource: method.request.header.x-cognito-token
-            claims:
-              - sub
+            type: COGNITO_USER_POOLS
+            authorizerId:
+              Ref: ApiGatewayAuthorizer
           cors:
             origin: '*'
             headers:
@@ -114,12 +94,9 @@ functions:
           method: post
           integration: lambda
           authorizer:
-            name: authorizer
-            arn: 
-              - Fn::GetAtt: [ CognitoUserPool, Arn ]
-            identitySource: method.request.header.x-cognito-token
-            claims:
-              - sub
+            type: COGNITO_USER_POOLS
+            authorizerId:
+              Ref: ApiGatewayAuthorizer
           cors:
             origin: '*'
             headers:
@@ -134,12 +111,9 @@ functions:
           method: get
           integration: lambda
           authorizer:
-            name: authorizer
-            arn: 
-              - Fn::GetAtt: [ CognitoUserPool, Arn ]
-            identitySource: method.request.header.x-cognito-token
-            claims:
-              - sub
+            type: COGNITO_USER_POOLS
+            authorizerId:
+              Ref: ApiGatewayAuthorizer
           cors:
             origin: '*'
             headers:
@@ -153,12 +127,9 @@ functions:
           method: get
           integration: lambda
           authorizer:
-            name: authorizer
-            arn: 
-              - Fn::GetAtt: [ CognitoUserPool, Arn ]
-            identitySource: method.request.header.x-cognito-token
-            claims:
-              - sub
+            type: COGNITO_USER_POOLS
+            authorizerId:
+              Ref: ApiGatewayAuthorizer
           cors:
             origin: '*'
             headers:
@@ -172,12 +143,9 @@ functions:
           method: get
           integration: lambda
           authorizer:
-            name: authorizer
-            arn: 
-              - Fn::GetAtt: [ CognitoUserPool, Arn ]
-            identitySource: method.request.header.x-cognito-token
-            claims:
-              - sub
+            type: COGNITO_USER_POOLS
+            authorizerId:
+              Ref: ApiGatewayAuthorizer
           cors:
             origin: '*'
             headers:
@@ -191,12 +159,9 @@ functions:
           method: get
           integration: lambda
           authorizer:
-            name: authorizer
-            arn: 
-              - Fn::GetAtt: [ CognitoUserPool, Arn ]
-            identitySource: method.request.header.x-cognito-token
-            claims:
-              - sub
+            type: COGNITO_USER_POOLS
+            authorizerId:
+              Ref: ApiGatewayAuthorizer
           cors:
             origin: '*'
             headers:
@@ -210,12 +175,9 @@ functions:
           method: get
           integration: lambda
           authorizer:
-            name: authorizer
-            arn: 
-              - Fn::GetAtt: [ CognitoUserPool, Arn ]
-            identitySource: method.request.header.x-cognito-token
-            claims:
-              - sub
+            type: COGNITO_USER_POOLS
+            authorizerId:
+              Ref: ApiGatewayAuthorizer
           cors:
             origin: '*'
             headers:
@@ -229,12 +191,9 @@ functions:
           method: get
           integration: lambda
           authorizer:
-            name: authorizer
-            arn: 
-              - Fn::GetAtt: [ CognitoUserPool, Arn ]
-            identitySource: method.request.header.x-cognito-token
-            claims:
-              - sub
+            type: COGNITO_USER_POOLS
+            authorizerId:
+              Ref: ApiGatewayAuthorizer
           cors:
             origin: '*'
             headers:
@@ -248,12 +207,9 @@ functions:
           method: get
           integration: lambda
           authorizer:
-            name: authorizer
-            arn: 
-              - Fn::GetAtt: [ CognitoUserPool, Arn ]
-            identitySource: method.request.header.x-cognito-token
-            claims:
-              - sub
+            type: COGNITO_USER_POOLS
+            authorizerId:
+              Ref: ApiGatewayAuthorizer
           cors:
             origin: '*'
             headers:
@@ -267,12 +223,9 @@ functions:
           method: get
           integration: lambda
           authorizer:
-            name: authorizer
-            arn: 
-              - Fn::GetAtt: [ CognitoUserPool, Arn ]
-            identitySource: method.request.header.x-cognito-token
-            claims:
-              - sub
+            type: COGNITO_USER_POOLS
+            authorizerId:
+              Ref: ApiGatewayAuthorizer
           cors:
             origin: '*'
             headers:
@@ -286,12 +239,9 @@ functions:
           method: get
           integration: lambda
           authorizer:
-            name: authorizer
-            arn: 
-              - Fn::GetAtt: [ CognitoUserPool, Arn ]
-            identitySource: method.request.header.x-cognito-token
-            claims:
-              - sub
+            type: COGNITO_USER_POOLS
+            authorizerId:
+              Ref: ApiGatewayAuthorizer
           cors:
             origin: '*'
             headers:
@@ -305,12 +255,9 @@ functions:
           method: get
           integration: lambda
           authorizer:
-            name: authorizer
-            arn: 
-              - Fn::GetAtt: [ CognitoUserPool, Arn ]
-            identitySource: method.request.header.x-cognito-token
-            claims:
-              - sub
+            type: COGNITO_USER_POOLS
+            authorizerId:
+              Ref: ApiGatewayAuthorizer
           cors:
             origin: '*'
             headers:
@@ -324,16 +271,17 @@ functions:
           method: get
           integration: lambda
           authorizer:
-            name: authorizer
-            arn: 
-              - Fn::GetAtt: [ CognitoUserPool, Arn ]
-            identitySource: method.request.header.x-cognito-token
-            claims:
-              - sub
+            type: COGNITO_USER_POOLS
+            authorizerId:
+              Ref: ApiGatewayAuthorizer
           cors:
             origin: '*'
             headers:
               - x-cognito-token
+
+  # websocketAuthorizer:
+  #   handler: utilities/authorizer.websocketAuthorizer
+  #   events
 
   onConnect:
     handler: auction/websocket.onConnect
@@ -383,5 +331,14 @@ functions:
 
 
 resources:
+  - ${file(resources/vpc.yml)}
+  - ${file(resources/subnets.yml)}
+  - ${file(resources/route-tables.yml)}
+  - ${file(resources/subnet-route-table-associations.yml)}
+  - ${file(resources/internet-gateways.yml)}
+  - ${file(resources/routes.yml)}
+  - ${file(resources/security-groups.yml)}
+  - ${file(resources/rds.yml)}
+  - ${file(resources/roles.yml)}
   - ${file(resources/api-gateway-errors.yml)}
-  - ${file(resources/cognito-user-pool.yml)}
+  - ${file(resources/api-gateway-authorizer.yml)}

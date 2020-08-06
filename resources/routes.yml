@@ -1,0 +1,24 @@
+Resources:
+  LambdaRoute:
+    Type: AWS::EC2::Route
+    DependsOn: 
+      - CalcuttaInternetGateway
+      - CalcuttaGatewayAttachment
+    Properties:
+      RouteTableId:
+        Ref: LambdaRouteTable
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId:
+        Ref: CalcuttaInternetGateway
+
+  CalcuttaPeeringRoute:
+    Type: AWS::EC2::Route
+    Properties:
+      RouteTableId:
+        Ref: LambdaRouteTable
+      DestinationCidrBlock: 10.1.0.0/16
+      VpcPeeringConnectionId:
+        Ref: CalcuttaPeeringConnection
+
+# For now we will create the NatRoute manually on demand because
+# elastic IPs cost money

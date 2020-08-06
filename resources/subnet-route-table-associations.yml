@@ -1,0 +1,48 @@
+Resources:
+  AssocLambda1:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId:
+        Ref: LambdaRouteTable
+      SubnetId:
+        Ref: NatSubnet1
+
+  AssocLambda2:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId:
+        Ref: LambdaRouteTable
+      SubnetId:
+        Ref: NatSubnet2
+
+  AssocLambda3:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId:
+        Ref: LambdaRouteTable
+      SubnetId:
+        Ref: NatSubnet3
+
+  AssocNat1:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId:
+        Ref: NatRouteTable
+      SubnetId:
+        Ref: LambdaSubnet1
+
+  AssocNat2:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId:
+        Ref: NatRouteTable
+      SubnetId:
+        Ref: LambdaSubnet2
+
+  AssocNat3:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId:
+        Ref: NatRouteTable
+      SubnetId:
+        Ref: LambdaSubnet3
