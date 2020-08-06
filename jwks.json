@@ -1,20 +1,62 @@
 {
-  "keys": [
-    {
-      "alg": "RS256",
-      "e": "AQAB",
-      "kid": "b80fwKhnP8bqV2l5clfR0ldKGwM3F9sFysugNBrj9Sc=",
-      "kty": "RSA",
-      "n": "u_rSaZhtrn-1yZl2FOUbnm5LgOZj18xkAWsnsqY0aUyHTS9Wh16VYjWmR1KQ9XAQeVthR_ICX_rtCWsxV6pGiImAPYJ6IbtQOD5uOGdZ5lldN07C1FjKVmuG0yCATULGW1bd1ijK1Rppxvb8vWgIfTS8pGL62ba900IV_pT6kFLnxiS6skr3tVcUbD0u3pS060y_3rUyofph0wM4AGDRW7Xv5CqWDPZStQO7rcH4nxfvDs8x6xb-maDwRY8NxAAGz0UZ6X0lw4-e4ZPEpTcUS1A-hqum5cGMHEYLBTguSIk_KMmkyrc2wvIACksJaU3FYfnPwe5V1lW-MXOlQ66ylw",
-      "use": "sig"
-    },
-    {
-      "alg": "RS256",
-      "e": "AQAB",
-      "kid": "Sg3eSHY36tX/fJZiMkDa9jcOdE+1bUrPsRXsxRt5bDc=",
-      "kty": "RSA",
-      "n": "h1vLWwBFfr_IDLWwbmRvol4Y7ZYBZLtUdtFh-AZ746ytERgAfPl2eOg14Q8T_Zmo-n9WmroOinclBfOvsnydZ4mOKoeGzmjrhH8QCtU7LiapOMx2oQ9DXHoajtQICOkCWFRmcZkXcpMjKhCdadYCG7puPzM4Rgs6C8GbYQZ0QZWZN95Wo4jjPVU_-X5K1wicmC1TIKbSAODTzMm1al35KGZmNmDT9SJEfFaGI5BTxokyWRu8Pl25-BHlEIH9hv7S39ohX9o9f9yUdRqQ6HIc7W3XmITFVgZRJ2McMYn8wGhM7qcf3pnU6aQmEhRAQTuTMpjXwjeSEmhG53jp7AnOvQ",
-      "use": "sig"
-    }
-  ]
+  "dev": {
+    "keys": [
+      {
+        "alg": "RS256",
+        "e": "AQAB",
+        "kid": "3lD0qT0cHwtxLgYwTi/to2jKOKeZLfuxOdDLaQjbzKE=",
+        "kty": "RSA",
+        "n": "kd8IZ9mir0-juWtZPNsysh8Q-4hKuHTKpCR4GmOP8zzTR7ZbkBGF2XN1SL720CrFASCdspP998M80wnLbNjfyuztyBgQoY-SUYf_Xvi60E5Ocg76hTF1Sjb_Y7pVDYtFQd3l7QR31TANZzusaUQ1O4Ym2-ULo9DF3BMkkusjMth83stPVoy2YgYh3xS16RLOXAGDertrm2X6vC5C7mtpproBLV3erXMmjeva1-i6ZBdmSpw-DWFku8nsBkQTA9jYuQTtW-nIsIOXsp3AVWPb7hV7wQPz92r6wrvqy2uWdkBRX8SVXnj4l0_wQSqOLF0U7uGQnf3QYuh2b9KaPPPEGw",
+        "use": "sig"
+      },
+      {
+        "alg": "RS256",
+        "e": "AQAB",
+        "kid": "1UODVgSrSJc5ZM2oa0FOoMVCLdAGaJf+FXvWL6BzVYo=",
+        "kty": "RSA",
+        "n": "oK4wPQYTanAu-lwMpT97Dhf3OvuZ2J9zMgN7Z5RlmKIsmuFaecOTwL2BxbLbU0ai2QLSztieq3g3o3QOq5jhh02hFm3iDmwZ1OL7cWZuQ-mBWZqUFljd6Ga2Ik_rfgCZei7mhCvETGVkp7T8RHIjVQj_jOcm5ZFCv4KQ1kH3kRgOsoJXxPDmTIIaENCvvdwdRZZ9yz3cm_mPzy-e4NFTb3cU4lESPoNhVGlZqbKhRUF00BcB5JZp_R0BqX0bLj85smCy6YVuwcdelmBAMRuDV58tXQbaoXIMuKsEVSx6tW2sl5XBkoJxX_VfIvd3gxcbb7dNHBVSH3eRgsh3wPpnqw",
+        "use": "sig"
+      }
+    ]
+  },
+  "prod": {
+    "keys": [
+      {
+        "alg": "RS256",
+        "e": "AQAB",
+        "kid": "3QXv1U0u6LMd7B4Pqnp0JI/vmkuK/AM37ZYOFJWTqEQ=",
+        "kty": "RSA",
+        "n": "rPxaPakOpS-soUSayy7Fsfcnz4ySqbOs4-GbtXubTzdtdql3-aH1YROqMXcvtz_1MKsB-3QgxmZya5Hc1JqntkkgredUDcADCUfW4fABpRoq_eyV3eS88opmnA34SUPLzizLrxDLsFQFLriw1HnGj4a51L_95T7mdpGcTruvt4V0bSL01xiJIJwu2WWSH5X8HBSvW_0DMu4d7J88cMaueYR1b847XRFzRKBC_GGVMt-fLogsByDEjsciJPYIt4XsIm2s3Mf2k4OyYRUpMywwCufNCa1kmOEJJw9-EELJTUBEr82eOPItUc4BMkQIeODBLtR6uaQZPS6UHtGTKdlIyQ",
+        "use": "sig"
+      },
+      {
+        "alg": "RS256",
+        "e": "AQAB",
+        "kid": "U5bsiu2MJsKTLiig275dc9hfH0DdoTNpTHCIkxNICHk=",
+        "kty": "RSA",
+        "n": "kIo6oePx_Z7obKWqry0Xc9FjqEx2ZWZw_3KlUMHAPwrGtinJE8cUDKolasEcYVzDgjsKkrY5fAvX_3pevtHTdezpQdNC_gn5SN7jn6uui5GnbjavlpZ2yGJXijhiNt_RDzvNTQYRvnRB-lMJdl8-hPh3h2uAWTna2UN8L5KHIITKULYgexPaNZyEhbPrkNisuIoP3WBtHBG5HdE5OUEucSYGiES9j1lhpmdP1re5Ul7IrXyKO0jYdZQbkw5johZPOiUzJ5Q25Kc60nVJ59yZwzBqGnkYv1Oav_fmzMj1d0YUvRSWksnnevH8CaLryxJJ-zw5FpJ8zd4NB-2ff2xQjw",
+        "use": "sig"
+      }
+    ]
+  },
+  "old_prod": {
+    "keys": [
+      {
+        "alg": "RS256",
+        "e": "AQAB",
+        "kid": "b80fwKhnP8bqV2l5clfR0ldKGwM3F9sFysugNBrj9Sc=",
+        "kty": "RSA",
+        "n": "u_rSaZhtrn-1yZl2FOUbnm5LgOZj18xkAWsnsqY0aUyHTS9Wh16VYjWmR1KQ9XAQeVthR_ICX_rtCWsxV6pGiImAPYJ6IbtQOD5uOGdZ5lldN07C1FjKVmuG0yCATULGW1bd1ijK1Rppxvb8vWgIfTS8pGL62ba900IV_pT6kFLnxiS6skr3tVcUbD0u3pS060y_3rUyofph0wM4AGDRW7Xv5CqWDPZStQO7rcH4nxfvDs8x6xb-maDwRY8NxAAGz0UZ6X0lw4-e4ZPEpTcUS1A-hqum5cGMHEYLBTguSIk_KMmkyrc2wvIACksJaU3FYfnPwe5V1lW-MXOlQ66ylw",
+        "use": "sig"
+      },
+      {
+        "alg": "RS256",
+        "e": "AQAB",
+        "kid": "Sg3eSHY36tX/fJZiMkDa9jcOdE+1bUrPsRXsxRt5bDc=",
+        "kty": "RSA",
+        "n": "h1vLWwBFfr_IDLWwbmRvol4Y7ZYBZLtUdtFh-AZ746ytERgAfPl2eOg14Q8T_Zmo-n9WmroOinclBfOvsnydZ4mOKoeGzmjrhH8QCtU7LiapOMx2oQ9DXHoajtQICOkCWFRmcZkXcpMjKhCdadYCG7puPzM4Rgs6C8GbYQZ0QZWZN95Wo4jjPVU_-X5K1wicmC1TIKbSAODTzMm1al35KGZmNmDT9SJEfFaGI5BTxokyWRu8Pl25-BHlEIH9hv7S39ohX9o9f9yUdRqQ6HIc7W3XmITFVgZRJ2McMYn8wGhM7qcf3pnU6aQmEhRAQTuTMpjXwjeSEmhG53jp7AnOvQ",
+        "use": "sig"
+      }
+    ]
+  }
 }

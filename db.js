@@ -17,6 +17,7 @@ const connection = {
         this.pool = await sql.connect(config);
         this.isConnected = true;
       } catch (error) {
+        console.log(error);
         this.isConnected = false;
         this.pool = null;
       }

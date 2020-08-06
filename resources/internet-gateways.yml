@@ -1,0 +1,15 @@
+Resources:
+  CalcuttaInternetGateway:
+    Type: AWS::EC2::InternetGateway
+    Properties:
+      Tags:
+        - Key: Name
+          Value: 'Calcutta IGW'
+
+  CalcuttaGatewayAttachment:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      VpcId:
+        Ref: CalcuttaVPC
+      InternetGatewayId:
+        Ref: CalcuttaInternetGateway

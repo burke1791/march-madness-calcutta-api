@@ -1,0 +1,73 @@
+Resources:
+  CalcuttaDB:
+    Type: AWS::RDS::DBInstance
+    DependsOn:
+      - CalcuttaGatewayAttachment
+    Properties:
+      DBInstanceClass: db.t2.micro
+      DBInstanceIdentifier: calcutta-${self:custom.stage}
+      AvailabilityZone: us-east-1d # this must be one of the three subnets with the internet gateway
+      StorageType: gp2
+      AllocatedStorage: '20'
+      Engine: sqlserver-ex
+      LicenseModel: license-included
+      EngineVersion: '14.00.3281.6.v1'
+      MasterUsername: ${self:custom.secrets.${self:custom.stage}.DB_MASTER_USER}
+      MasterUserPassword: ${self:custom.secrets.${self:custom.stage}.DB_MASTER_PASSWORD}
+      AutoMinorVersionUpgrade: True
+      BackupRetentionPeriod: 0
+      DBSubnetGroupName:
+        Ref: CalcuttaSubnetGroup
+      OptionGroupName:
+        Ref: CalcuttaOptionGroup
+      PreferredMaintenanceWindow: 'sun:06:00-sun:06:30'
+      PubliclyAccessible: True
+      VPCSecurityGroups:
+        - Ref: DBSG
+      
+      
+  CalcuttaSubnetGroup:
+    Type: AWS::RDS::DBSubnetGroup
+    Properties:
+      DBSubnetGroupDescription: 'Subnet group for calcutta DB'
+      DBSubnetGroupName: calcutta-${self:custom.stage}-subnet-group
+      SubnetIds:
+        - Ref: LambdaSubnet1
+        - Ref: LambdaSubnet2
+        - Ref: LambdaSubnet3
+        - Ref: NatSubnet1
+        - Ref: NatSubnet2
+        - Ref: NatSubnet3
+
+  CalcuttaOptionGroup:
+    Type: AWS::RDS::OptionGroup
+    DependsOn:
+      - RDSOptionRole
+    Properties:
+      EngineName: sqlserver-ex
+      MajorEngineVersion: '14.00'
+      OptionConfigurations:
+        - OptionName: SQLSERVER_BACKUP_RESTORE
+          OptionSettings:
+            - Name: IAM_ROLE_ARN
+              Value: 
+                Fn::GetAtt: [ RDSOptionRole, Arn ]
+      OptionGroupDescription: 'Allows native backup/restore'
+      Tags:
+        - Key: Name
+          Value: sql-server-backup
+
+Outputs:
+  CalcuttaDBAddress:
+    Description: 'Server address for the database'
+    Value:
+      Fn::GetAtt: [ CalcuttaDB, Endpoint.Address ]
+    Export:
+      Name: calcutta-db-${self:custom.stage}-address
+  CalcuttaDBPort:
+    Description: 'Server port for the database'
+    Value:
+      Fn::GetAtt: [ CalcuttaDB, Endpoint.Port ]
+    Export:
+      Name: calcutta-db-${self:custom.stage}-port
+  
