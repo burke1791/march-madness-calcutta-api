@@ -151,11 +151,11 @@ functions:
             headers:
               - x-cognito-token
 
-  getRemainingGamesCount:
-    handler: getRemainingGamesCount.getRemainingGamesCount
+  getRemainingTeamsCount:
+    handler: getRemainingTeamsCount.getRemainingTeamsCount
     events:
       - http:
-          path: 'getRemainingGamesCount/{tournamentId}'
+          path: 'getRemainingTeamsCount/{tournamentId}'
           method: get
           integration: lambda
           authorizer:
