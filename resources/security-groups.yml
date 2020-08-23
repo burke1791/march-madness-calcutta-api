@@ -1,0 +1,41 @@
+Resources:
+  LambdaSG:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: 'Lambda access to RDS'
+      GroupName: LambdaDMZ
+      SecurityGroupEgress:
+        - IpProtocol: -1
+          CidrIp: 0.0.0.0/0
+      VpcId:
+        Ref: CalcuttaVPC
+
+  DBSG:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: 'RDS Security Group'
+      GroupName: sql-server-calcutta
+      SecurityGroupEgress:
+        - IpProtocol: -1
+          CidrIp: 0.0.0.0/0
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          SourceSecurityGroupId:
+            Ref: LambdaSG
+          FromPort: 1433
+          ToPort: 1433
+        - IpProtocol: tcp
+          SourceSecurityGroupId: ${self:custom.secrets.${self:custom.stage}.AWS_COGNITO_LAMBDA_SG_ID}
+          SourceSecurityGroupOwnerId: ${self:custom.secrets.AWS_COGNITO_ACCOUNT_ID}
+          FromPort: 1433
+          ToPort: 1433
+      VpcId:
+        Ref: CalcuttaVPC
+
+Outputs:
+  LambdaSGId:
+    Description: 'LambdaDMZ security group'
+    Value:
+      Ref: LambdaSG
+    Export:
+      Name: calcutta-lambdaSG-${self:custom.stage}

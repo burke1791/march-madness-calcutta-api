@@ -1,21 +1,51 @@
 language: node_js
 node_js:
-- stable
-cache:
-  directories:
-  - node_modules
+  - stable
+
 branches:
   only:
-  - master
-install:
-- npm install -g serverless
-- travis_retry npm install
-script: serverless deploy -s dev
+    - master
+    - develop
 notifications:
   email:
     on_failure: change
     on_success: change
-env:
-  global:
-  - secure: Wg0XL/jn6J+sMZMWVgd8N84dj/dAhV94hUIqbmok4DUSjDlL/XkuoagZI1NXrBNqDfbuvPx6n9DXnP9hGYfksafDxeKadivRSZMDnmiA0vzVCqSgSRd2s0PYQpE+zASpoT2dgOfrzcHa1qW1Rd7QXJ2v2OTP0G5KzY52Fz6qZ/3S8/FWxVLn4L7oiqK2IhusIOPQtZ/KTxtWijs7fU+6XaJs18iYjsERLIyUcq5lNvC3cbCYgqNrndQcl7KhQij/6vdVxbBCkSJ+TApMXv7Z8AO2ZMVKSryucJQmuhnEH9v7+VrGXs72gapguQUrYCD0NCN3aSBv4MmIXs/ROZtmHrUMS5SHhPVdnWDKmXLS9btpkF45srP/McpP9Q20j5EH5qjL6/l9scs5PQgnIJEq7vF9yU0fogyfE0grUTj7ObgVsCS9tUCx0E56aAhgClEq9pE5Gu6pa63ZiBErvtnyX555zX4d+RvTJJC2GFgN/0rmuDZtyYuqbBU4R9w2slaxu5ah33Wy9VB5bXLymH9hJzhwafd/AMJtkWCtw9JKTy2top8CFtlCGsvKFHMQRVTfjhFlal2uGFr9Bzr6KxrqZNF2Sv3SMqOj4A0vACobQhvNZvG15BZp1oB2l18mFSLNHyc76LQ7HsA3KRapeclyVW97NSDACNZh3Rk7i33+OwU=
-  - secure: cY8MUoci1S0QOSA9CgT4lvRgQnXConz9NG35nT1DwTgTlJS6KpegpjmCqrs1mAxrfQ8zQFETy0P5kVpWNUUz30d4nvUb53PcsHufdd4cvYeyU/liOgBM9WNR4IQy2lyQRhddAYGMVoeJDvoaPaj9OTBWh7Pfp5duUvKbs9UvHURbRXZaw+GYH0y1Sx4tpmsg0r3Kq1TI60C9Cpt7f76yfcAZMRiyqW7Ic1uJ6MPTyB6YUISNAxPUTU5NuVdS9QxDiCia137Z8sE0LazhJR36VJZ8HBZ7MQtSKD9PeTf5fNrB39ulfueDcicCJlkdD9XJyAwwhArksbP40GvHdssyADEnqehe+nwgvTrHdA8HXnVSJyKg9ZHwAKuUhKP5iXWE7/mDfGKiNBNiodKnobBb31C5OlbUL1LQWCRKFBxl3B4kuQ0NiKGalbmhRnPJmjFeJf8q/TWIa3H5RerKW7vnuzbIrdwxpO1MF6G5DcTNmb2JGHmgF5k7ZSbC2qutNPeYnQCrHy6OXf8Jdww3v++qsm/NlUVNXO/44MeBEWy56LLJgD2uY2BR+P1dw8As5xji8T0vLT3OGil/nsEAj4INzHJbSCxOScCcunLTJotdz3uvUMH+NkD5EzHj+9p1hJLx2oyC6OGkimaQ87fSRFBboflc3QD2rldrz+KgVG8GPzk=
+
+deploy_service_job: &DEPLOY_SERVICE_JOB
+  cache:
+    directories:
+      - node_modules
+
+  install:
+    - npm install -g serverless
+    - travis_retry npm install
+
+  script:
+    - serverless deploy -s ${STAGE_NAME}
+
+environments:
+  - &PRODUCTION_ENV
+    - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID_PROD}
+    - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY_PROD}
+
+  - &DEVELOPMENT_ENV
+    - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID_DEV}
+    - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY_DEV}
+
+jobs:
+  include:
+    # non-master branches deploys to dev
+    - <<: *DEPLOY_SERVICE_JOB
+      name: "Deploy to the dev account"
+      if: type = push AND NOT branch = master
+      env:
+        - STAGE_NAME="dev"
+        - *DEVELOPMENT_ENV
+
+    # master branch deploys to prod
+    - <<: *DEPLOY_SERVICE_JOB
+      name: "Deploy to the prod account"
+      if: type = push AND branch = master
+      env:
+        - STAGE_NAME=prod
+        - *PRODUCTION_ENV

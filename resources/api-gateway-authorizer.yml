@@ -1,0 +1,30 @@
+Resources:
+  ApiGatewayAuthorizer:
+    Type: AWS::ApiGateway::Authorizer
+    Properties:
+      AuthorizerResultTtlInSeconds: 300
+      IdentitySource: method.request.header.x-cognito-token
+      Name: cognito_authorizer
+      RestApiId: { "Ref" : "ApiGatewayRestApi" }
+      Type: COGNITO_USER_POOLS
+      ProviderARNs:
+        - ${self:custom.secrets.${self:custom.stage}.USER_POOL_ARN}
+
+  # WebSocketAuthorizer:
+  #   Type: AWS::ApiGatewayV2::Authorizer
+  #   Properties:
+  #     ApiId: { "Ref": "WebsocketsApi" }
+  #     AuthorizerResultTtlInSeconds: 300
+  #     AuthorizerType: REQUEST
+  #     AuthorizerUri:
+  #       Ref: WebSocketAuthorizerLambdaFunction
+  #     IdentitySource: route.request.queryStringParameters.Authorizer
+  #     Name: cognito_websocket_authorizer
+
+Outputs:
+  AuthorizerId:
+    Description: 'Cognito authorizer'
+    Value:
+      Ref: ApiGatewayAuthorizer
+    Export:
+      Name: calcutta-cognito-authorizer-${self:custom.stage}
