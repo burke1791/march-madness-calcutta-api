@@ -5,7 +5,7 @@ export async function getRemainingTeamsCount(event, context, callback) {
   callbackWaitsForEmptyEventLoopFalse(context);
 
   // in case we need it for future refactoring
-  let cognitoSub = event.cognitoPoolClaims.sub;
+  // let cognitoSub = event.cognitoPoolClaims.sub;
 
   try {
     let tournamentId = event.path.tournamentId;
