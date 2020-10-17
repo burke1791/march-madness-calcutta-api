@@ -8,7 +8,7 @@ Resources:
       RestApiId: { "Ref" : "ApiGatewayRestApi" }
       Type: COGNITO_USER_POOLS
       ProviderARNs:
-        - ${self:custom.secrets.${self:custom.stage}.USER_POOL_ARN}
+        - ${env:USER_POOL_ARN}
 
   # WebSocketAuthorizer:
   #   Type: AWS::ApiGatewayV2::Authorizer

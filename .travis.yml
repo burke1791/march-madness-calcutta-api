@@ -1,51 +1,62 @@
 language: node_js
 node_js:
-  - stable
-
+- stable
 branches:
   only:
-    - master
-    - develop
+  - master
+  - develop
 notifications:
   email:
-    on_failure: change
-    on_success: change
-
-deploy_service_job: &DEPLOY_SERVICE_JOB
-  cache:
+    on_failure: always
+    on_success: always
+deploy_service_job:
+  cache: &1
     directories:
-      - node_modules
-
-  install:
-    - npm install -g serverless
-    - travis_retry npm install
-
-  script:
-    - serverless deploy -s ${STAGE_NAME}
-
-environments:
-  - &PRODUCTION_ENV
+    - node_modules
+    # - "${SERVICE_PATH}/node_modules"
+  install: &2
+  - npm install -g serverless
+  - travis_retry npm install
+  # - cd ${SERVICE_PATH}
+  # - travis_retry npm install
+  # - cd -
+  script: &3
+  # - cd ${SERVICE_PATH}
+  - serverless deploy -s ${STAGE_NAME}
+  # - cd -
+env:
+  prod:
+  - &5
     - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID_PROD}
     - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY_PROD}
-
-  - &DEVELOPMENT_ENV
+  dev:
+  - &4
     - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID_DEV}
     - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY_DEV}
-
+    - secure: B/K6HI3FVulAekUBVbC3Vw+/9I7yT3zTKLRLGRTTZ0eXEpcwh904MSbwKBMYJD1C893fbPwtG579Bko1O+g+3e+ZYfTbdHLQ/1z5WtJQ00ZeU2brnhqowFFY/kem5owowNwHMCJKkdCV593da32K3jBbG5rY2icOkkLVRhKBiVS24OR+l9NukzCWxyhlrybw9XPmZrVC7dMmf3pf1jUfyo944WO+tQIdL4jwUEiEC9uirDCb3Cpu/4nRuEMKzIfQCT5DjwU6kEaap8t2BBa0jMaijBOpCROGrUAzgGFEMU5ojoKnBLfw3EoDkyeXlgFHkuBdllg5uvJCRibUsHzzVPcoWAwi9TSRmmHUgWYYMu6F5sb7dfXxzyfrU6098s2w5wjy0xyZyDLtzoJzjn6ekaimkoPdBPVtpjw/BTUrHfWR2AyKURkyTxpxpFBWkBrQPqQkVfBvN3QIebsGzsYs4LjWkM1o1ODO5gosGNfM9MECBZ3Tq9H8h8QOiz1dMAviI5HoNXMWhBIGe6QNtMHF9A/UpBdw7E4a150mdfK6gIt1lYm7yg2BEgyDZ4BhBjOIPZ9rywdtjr5aPMn0w5N/AnOLJ2i01nyj89RH3dl3x1t/vs69IHph4pZOWicDukXejS7Duo/FVuAOQzZZMQ10xcLdF5ruvgKtNWWoiE8iLok=
+    - secure: GktLFpinYjDOytw2Hu3jDoNviyChulG7t4LZwfK4Fh/GewqQo0/ogLGAi+eiAmbT4iU3La8pJ063U6FAlNNf4YFVcIZppFKt035Y4gsWZLDwHaw4DR2t0zxgRUYRmzcwGd3Yc3VzIAIDwTfel+moDrXgsZcrAIMtIdAse058obeEE0g3FcQRn/Lf7kPVSOXXjUCdDiHCAiJNUjJrNSYdA739jCV8xSYziMmdhS7T3D3f3QNvMPYN5Bz6PTCYEknDN1W0NyigkIpgJzyLeRzCQl4VW61PnRyitTU1wHLFnS91qs3kkxIIQg5vsMrwtQcmwLtoem4w9ZzukRDRO+E2m76LauLDzbCcydQUShc2SvYhHuw+X/eZtOHXQFAIwuoADZUhp/VIZkX6cKtPmisZfBv6t7AmlYnSGA6vBzVnVLU6TA/xYyuTH1cuyyWzgHugfi43ERSP2/DZxTi92/sgLj4MMdamaxzjwDItsIYsu1uJSzOaTtGRjXChViuhSOIb97jd4V1/csx7aZglKRJqcgJEepRVwMQKBWZ0nEkwMgmYq9F6v/nYljZbxuPJy/PNpnEFfHviqJAPVOUdX/S/UXJmgwO4catNvfG7n2zCdNLaa1omyIOyXWxIoDqT2VRGf2Mx8QfaOcWmGt0BjH6qR2LrIITCRfRkdQS22r3Q9qQ=
+    - secure: yffIKFSuf7jaVCPwJ2PS0LHGQUTxYJ0baJWHIktk2kq3i/YH0ok9O66YvgRH+5ljh51GzbayjzTVg1/+SVXOogVrjsEA/QKGIYzt/765A1/qLb7sCwGSP/RbrB0bUtKnNUy5UTw/cTNEL7c+WHUgJlrnpeujBnTPMpBnAPpfvXRH4nZXRJP0Z2Sd4PNEUTskIkpTnvuv/v4z99xv/NBX1H6iKT9+mmU5OUZza9zKMqfy9i4lD9AXVA2gw1Lqc1CEee33L/56/h7WQKotur/+Gj47avh3HE8rr4HBPLIsbT4MsPbjTOTIcqfn6Exr9kH12LtZeYbyb8WIK2vQV2BjsHKZPfXo2LSOsu2p5BRM/uM43r29qeEu0EqNqln4ocPnIF1nAJh9JRcac9mAM6mYR0yUdXAzPjmKmKrqYRsocNDAGka9r9+rrXCdseUEi56PN9Jevs3NUjzgDNaaqOJy9xDocjGH5dY1qQmvWJkg/P4y2wmnw7Ka9asmsN6JIFdjyaTzW8x1LqOZPnGjBI4+dtJyBSlqJx6HxQ/q6bL74kALszLlUZzoNYPyxQxxJkyik7PgeZnvN5S+XW0HI+wB264DZSDPo9VexYGuMYG65SwMrPbqFd+ilufiNi4YlPrPQ1+BMmjPG8G3q/LrTMYGmqI0V2F4o9QlFYSQcQFn/sI=
+    - secure: x09xoyfrBsFYSTQhrRtgwJ8t7sNs+LLfvfwIG7lcMyAt5geaVBfRl0xnBeoPlSAi/EfKV650aKDTXRt79beldzGiel/5qQze13VJew1xgrK2aswL/5z/CWo28jBtStslB5/JV5ly7/rTAaNObUTKbDA0w0SO8LbiBiqvZcIAzWShhigDIRd8ZIwnfVAJE/6iXLYFhtoQ4ZADQtcolImsawLfvMb2AFSSLfi+StzriN12lTcmydTM7UmfsTEdnUSG1yUCQXlHsWq3lptYtz5HRq/kRJJVRXPXA3qogLJT45xLRDvgFZVcFkidCmnEKKldXcJ/u+mmRSKPFGDxuaGXa1QIOaJaHCSaJDd70wed5Eapd2gsCaUgkg/0B0z29ZvoXpT24x1SHwXt3KP46RuTBqYzl85Gj6Z8XO30LFWoTGp8E6MOv2BtiN+JqNY+SVRpWH7czV985w9cKDHs8A1Wpi+iNYX4pyY/5gn2MSeIBIagxU3ULNKqagSy3Sq+R+NuqLy8ZqihP16sJ5qT6gpJMKXApYvmC5vJkKI77yPZNTdnN/QBCwdtX8YPRPWdhLcQjx2yBm8WGIL/edjLdX9p6MM6zdA4J5tCSil9dEY7R61Zc8SNivnOevm/uKonxKIPxHuFsxKoKK+fw3IKwPMD8JfQMwBJJvVZwfdOZ+QH8CE=
+    - secure: Q6/d5UjulLphV4hTNrZLq9bFFgBPft5VJ3dG8kUjiSkaDyw7OpUj28T2O6ld8ydHF14CtRuco0VdReTLzPZ4fg4ZYoc87XvV4jwO7h8z2YF7JKsH2iUgaXXU0XTaQdFxeD7sIF3zP76/OuumfKu/3Tf1H1dD7xcwySKBAnCVvgP22njfs8f+0f5WqWnPQCzE+Jd9h9Yf0oxOQorzFUUNHpW7UNwYUGwcpxSaDSC3a5eG2Uyjbt+A5fcm6e4dkP9jQBNos5IeQhnHHYB5jcE80ZULBIVR71SV6h0doI8ZYUdKmbtz8SIm0nSj0XM6+eA6lvPDisGQHXLfS8m3Jbf0HIhwKExYw9mYWVeo1I/gkiccRbE9BDF+8tSTr9qtL8WzfP46U6ad4nwx+3q5o7yGHJrTGrPKAcvlQRejxtnCERvUEfcaoLPBQUEbrEUBAZHVGDKVdyyZgAb32j7hIhjiyMoWYua9LH79M9sRPdOIZKc9oTxV3mzjqJ1Em6hvLlasDGUTTPuUmmr8mx7n392JYqhYS/Dtl8jZDeWAiT6OkOqPa5yTX4CDDqCO5ZN+Z6f3OwmWgU3y/Q18zSkgcqYk7Dq71ARpdUz3k7Rq4Wtiv9vb9tU0CHpyousl5BqypXw2jag/4Ouw/FBVvHu2QUwk7ysAgNRvAwUlqpIQA9kL4+I=
+    - secure: 3iHeE4DKW7+cUbpxqZuSpe48y4L9EK43xkSDnyICtFAHkJZkOzBTWDDJ7ZO68cUffPo/dcw+1+bWeyIqe9oatmdEi7v4tSZ7DZTMe8EhGkjrKi3WMVm6LWGRCk5bkLriy4Rg1Shrlutkf0VKq/uyaXnvpk5UqOHg5apAztb9DZeafTPGFGb3SHA8qr27jvuwXRbLVYGorXr4I3QxU1puY0mUXkSyLtTj8v5PmsGYsNq4oSooS5iPTc/CqW3SWyfEwmHV/R9kflSZBkpPT3sFHls1k8Nf+7t/02ghLIS8UKRJJ+2czFBAbhdrYZ/B/ALyx6sKrZcjS7s6vDCW3cb/EKa453TX7THJaqn8Fma7+ds1z9jEAT0U2J33NcBtet1NU51getmSHb1fcxaz9z9BcVOWH3lADRvZa95yz6SX6KdxdqroInX7zpTVTqOW1zUsqDSspVhqGcR9bii05iitnO9xidq5cmlY/dhBuLeJcA7u34yNRP7S6O7NtIJEsuR6WiA1FS3ekIMt+OnQ4wostwqzEP73pevfmfU87WXv2JBoXd/vlklAf5EYHC2Gjq7fDCnDCd6pkpBBtnk9uNhTklbQ085/YZbi2GVqgg+Bn5DTCvOAnrTXFL0ovXQMXN8rr8wVi3S6lT509ggmypr7/GZ77eCPISOrfzM6Sk5+YoM=
+    - secure: M44rBGqQ4wKmKpESvWoIOFZeummbnj0eFwRDsR4wFWoiKpUAo1xwubwwdA/94/XAw9KiMwZCrwE+mgavcujUtWNJMgQId8a6uVT9MVJhFGNycRmKX9B6n4rLGLWWN7wgxqTxUwmz39YJJrGCbuohzL7z6VdDvC7IcA6/s4FZgHitXpyjs4Wd0cddLVjM1q8w0okRDM6ZkEaQmhGXXUCg1dKhPP+eG9pD59hRLzFHot3k4rUo8WYkX4UY7ta/bf5HMYLEydFDHDVU2xwXRK/oCH2l1/F1LDnHwt6gCqacJgXOxenQ17tBn1/djEdIMT58eAKh54rJNbiTvXzaweFXl89C1eLIWOKeQN7WDSb1C4OKDcoBPyAKdXcj8YV5brJXhJ0qI0086VoPMl8ks9rHCqVu6wK4V+1aLPiWoJgKEoi8SZ/nFAIIPDmodnbSicK6R5pOGwMjcEG2HcYd+scGrQrrNFF2DT+byr1Qnbh9XtQPHUBWeFVPvsnodIWZ5vzoIPE3C8tDMEC7h1FHuG973qrOQceWThpWmLmCtunJTOKsljQGqZUdoMyfqdjyObAFpqlcgvyeg2irdvsuPLG/tNwx3wHGo91CK96NLaK3ZOwZX5E7X/HIPKRei5CVeAYNcxlHM5d012nCmpfa3CtoommUGyfSo90b6Q0QDW4M9gA=
+    - secure: uOkkIbeTubwXeBUsU+XAeu+DPW/UIEFXG1KlZF00eG32liHibY5Dc34TPTIVa62PegFa2OzcEZRLgOvSllsdpzDjJzyBkCRUgt0NMznpn0QDT4e0MjzzeM4NaFHO5pfNmRQKX4EtxPudyXUsNyWVnafqT4XmVjfFmBHG5PJwr6BtZYDunAXCA9v2g1JNjJxkFoZMfjSjIXebLKYYAi/qF04GusJKNyHRYSfWI+GHuZpeB8GQNk9bJj6ntnfZ8FKEJG5LlP4nhKdSZs6rUeahSVPL4sf2WIqQd2ArP/JYCzuwdyIhZZimlDXpHDWdUD+8drKRQkhWC8jnD1TkMR4LngP6McnraXNB31PTHcdkRr2lQua6jLxjvPpeUL8jc34AjnxkaELOeu2w3jA2Qdtksh/oYZvDBw2t0J+4horne7NaMjV9vT38fYfVaJQHvglT49XjqEvxQlaDzUGCWH+yLXlqowfkyA5Z3GQHNIbOf5nSE9LVPIgJtk1Z/UUSfQcl2zp4f+lksYLeBpRb9Ke4Zm64SgE3LYO04UDajN5L33osMf2Ov8F2XvEM6O0HfIKFnrkD6ljQTccCg/+EM8rGmg92KwuN5/OAiG1guxvjsuiJzg4LXh/0k1jHcOlp/wVvcjsYgdMuYZGylQuZse6+z8rQNiOxTjc9/xs+8QuAFbI=
+    - secure: QVuiCgwwDjKv9eOUQDlyYLq1VRkARr8JeHwVfcPdk1EzXfEJEoCRErYhOY6qnOrwWq233RTCCuIpGBYa8XFPMNy3ihAI32a7l7H3YrmZrB4R0HCyTe6DLEs9kWmipVCzngOKM6g5e8pozRDOgaLYOMvs/s+yqNZIeSm04YgegN8xCaxCVdFgAViABiyQxc7QccYmzWV1r28N8XOezn7sHhrwwBKnhkd7lLqKMI6RA5fevbtFs6H9EB85Eh0StGJ3uiroSw/rmfXBsXt27ZDYKrUIcKhb3rDUNtnem3wHtJM5QixNdGQixAyYICogpa5U+hcu7FagVZF4ZPU8qteMEelP6qR5X73SYD5PKoXgi6N+Wd86hW2uDbDLXMVqr0RbxMbwRmVM8rVjfG/Z4/BXTcmlTXbA7job8LD58gqIiMXhWWmum3mhw+lZVs17kgDOLEWPMaDCwZpIW1CQMPLIkrOZSTo6VHzld4Weo/ZjOZ2ifgKnpFMPl8yFwEmT1VbBA1q8cnO1an1wsLrnsNBg4Wi/CS6Q+4EzLnWjDixvL2UFFqZEgfRzTWvMTpiu2MjGxzatMUe3N2enXBWBH/aChmp6m8z7pnvHoRXWrimd5QmSj9L7EL5OfSz/4CSyss+46CX+bpKlHcL5BhW7OVFqvk+5s7hDnqMll6ozuYD5blA=
 jobs:
   include:
-    # non-master branches deploys to dev
-    - <<: *DEPLOY_SERVICE_JOB
-      name: "Deploy to the dev account"
-      if: type = push AND NOT branch = master
-      env:
-        - STAGE_NAME="dev"
-        - *DEVELOPMENT_ENV
-
-    # master branch deploys to prod
-    - <<: *DEPLOY_SERVICE_JOB
-      name: "Deploy to the prod account"
-      if: type = push AND branch = master
-      env:
-        - STAGE_NAME=prod
-        - *PRODUCTION_ENV
+  - cache: *1
+    install: *2
+    script: *3
+    name: Deploy to the dev account
+    if: type = push AND NOT branch = master
+    env:
+    - STAGE_NAME=dev
+    - *4
+  - cache: *1
+    install: *2
+    script: *3
+    name: Deploy to the prod account
+    if: type = push AND branch = master
+    env:
+    - STAGE_NAME=prod
+    - *5

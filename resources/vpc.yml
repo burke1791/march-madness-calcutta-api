@@ -13,9 +13,9 @@ Resources:
   CalcuttaPeeringConnection:
     Type: AWS::EC2::VPCPeeringConnection
     Properties:
-      PeerOwnerId: ${self:custom.secrets.AWS_COGNITO_ACCOUNT_ID}
-      PeerRoleArn: arn:aws:iam::${self:custom.secrets.AWS_COGNITO_ACCOUNT_ID}:role/calcutta-${self:custom.stage}-peer-role
-      PeerVpcId: ${self:custom.secrets.${self:custom.stage}.AWS_COGNITO_VPC_ID}
+      PeerOwnerId: ${env:AWS_COGNITO_ACCOUNT_ID}
+      PeerRoleArn: arn:aws:iam::${env:AWS_COGNITO_ACCOUNT_ID}:role/calcutta-${self:custom.stage}-peer-role
+      PeerVpcId: ${env:AWS_COGNITO_VPC_ID}
       VpcId:
         Ref: CalcuttaVPC
       Tags:
