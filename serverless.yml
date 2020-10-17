@@ -22,7 +22,7 @@ provider:
   timeout: 15
   region: us-east-1
   stage: dev
-  profile: ${self:custom.profile.${self:custom.stage}}
+  # profile: ${self:custom.profile.${self:custom.stage}}
   websocketsApiName: calcutta-websockets-api-${self:custom.stage}
   websocketsApiRouteSelectionExpression: $request.body.action
   environment:
