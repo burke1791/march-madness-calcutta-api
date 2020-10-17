@@ -22,6 +22,7 @@ deploy_service_job:
   # - cd -
   script: &3
   # - cd ${SERVICE_PATH}
+  - echo ${STAGE_NAME}
   - serverless deploy -s ${STAGE_NAME}
   # - cd -
 env:
@@ -48,7 +49,7 @@ jobs:
     install: *2
     script: *3
     name: Deploy to the dev account
-    if: type = push AND NOT branch = master
+    if: type = push AND branch = develop
     env:
     - STAGE_NAME=dev
     - *4
