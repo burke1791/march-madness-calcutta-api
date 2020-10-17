@@ -12,8 +12,8 @@ Resources:
       Engine: sqlserver-ex
       LicenseModel: license-included
       EngineVersion: '14.00.3281.6.v1'
-      MasterUsername: ${self:custom.secrets.${self:custom.stage}.DB_MASTER_USER}
-      MasterUserPassword: ${self:custom.secrets.${self:custom.stage}.DB_MASTER_PASSWORD}
+      MasterUsername: ${env:DB_MASTER_USER}
+      MasterUserPassword: ${env:DB_MASTER_PASSWORD}
       AutoMinorVersionUpgrade: True
       BackupRetentionPeriod: 0
       DBSubnetGroupName:

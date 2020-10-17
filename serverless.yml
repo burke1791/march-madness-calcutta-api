@@ -10,7 +10,7 @@ plugins:
   - serverless-dotenv-plugin
 
 custom:
-  secrets: ${file(secrets.json)}
+  # secrets: ${file(secrets.json)}
   stage: ${opt:stage, self:provider.stage}
   profile:
     prod: burke03
@@ -28,9 +28,9 @@ provider:
   environment:
     NODE_ENV: ${self:custom.stage}
     APP_ENV: ${self:custom.stage}
-    DB_NAME: ${self:custom.secrets.${self:custom.stage}.DB_NAME}
-    DB_USER: ${self:custom.secrets.${self:custom.stage}.DB_USER}
-    DB_PASSWORD: ${self:custom.secrets.${self:custom.stage}.DB_PASSWORD}
+    DB_NAME: ${env:DB_NAME}
+    DB_USER: ${env:DB_USER}
+    DB_PASSWORD: ${env:DB_PASSWORD}
     DB_HOST:
       Fn::GetAtt: [ CalcuttaDB, Endpoint.Address ]
     DB_PORT:
