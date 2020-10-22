@@ -20,11 +20,3 @@ Resources:
   #       Ref: WebSocketAuthorizerLambdaFunction
   #     IdentitySource: route.request.queryStringParameters.Authorizer
   #     Name: cognito_websocket_authorizer
-
-Outputs:
-  AuthorizerId:
-    Description: 'Cognito authorizer'
-    Value:
-      Ref: ApiGatewayAuthorizer
-    Export:
-      Name: calcutta-cognito-authorizer-${self:custom.stage}
