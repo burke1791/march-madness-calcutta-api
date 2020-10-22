@@ -69,39 +69,39 @@ functions:
             headers:
               - x-cognito-token
 
-  createLeague:
-    handler: createLeague.createLeague
-    events:
-      - http:
-          path: createLeague
-          method: post
-          integration: lambda
-          authorizer:
-            type: COGNITO_USER_POOLS
-            authorizerId:
-              Ref: ApiGatewayAuthorizer
-          cors:
-            origin: '*'
-            headers:
-              - Content-Type
-              - x-cognito-token
+  # createLeague:
+  #   handler: createLeague.createLeague
+  #   events:
+  #     - http:
+  #         path: createLeague
+  #         method: post
+  #         integration: lambda
+  #         authorizer:
+  #           type: COGNITO_USER_POOLS
+  #           authorizerId:
+  #             Ref: ApiGatewayAuthorizer
+  #         cors:
+  #           origin: '*'
+  #           headers:
+  #             - Content-Type
+  #             - x-cognito-token
 
-  joinLeague:
-    handler: joinLeague.joinLeague
-    events:
-      - http:
-          path: joinLeague
-          method: post
-          integration: lambda
-          authorizer:
-            type: COGNITO_USER_POOLS
-            authorizerId:
-              Ref: ApiGatewayAuthorizer
-          cors:
-            origin: '*'
-            headers:
-              - Content-Type
-              - x-cognito-token
+  # joinLeague:
+  #   handler: joinLeague.joinLeague
+  #   events:
+  #     - http:
+  #         path: joinLeague
+  #         method: post
+  #         integration: lambda
+  #         authorizer:
+  #           type: COGNITO_USER_POOLS
+  #           authorizerId:
+  #             Ref: ApiGatewayAuthorizer
+  #         cors:
+  #           origin: '*'
+  #           headers:
+  #             - Content-Type
+  #             - x-cognito-token
 
   getLeagueSummaries:
     handler: getLeagueSummaries.getLeagueSummaries
