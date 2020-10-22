@@ -9,16 +9,21 @@ notifications:
   email:
     on_failure: always
     on_success: always
-deploy_service_job:
-  cache: &1
+deploy_service_job: &DEPLOY_SERVICE_JOB
+  cache:
     directories:
-    - node_modules
-  install: &2
-  - npm install -g serverless
-  - travis_retry npm install
-  script: &3
-  - echo ${STAGE_NAME}
-  - serverless deploy -s ${STAGE_NAME}
+      - node_modules
+      - ${SERVICE_PATH}/node_modules
+  install:
+    - npm install -g serverless
+    - travis_retry npm install
+    - cd ${SERVICE_PATH}
+    - travis_retry npm install
+    - cd -
+  script:
+    - cd ${SERVICE_PATH}
+    - serverless deploy -s ${STAGE_NAME}
+    - cd -
 env:
   prod:
   - &5
@@ -39,19 +44,31 @@ env:
     - secure: UZME3Mn1fJzcLuUUui5Lk8/PWLDAFSE8BetGFhzD/tnty1NdKMBqWklKWK1kJYtzE2FpD520l6rcFxc9tcaFQtjBT0w+KFCtby2UtNlfZpQdFq+b/eBtJ1qLMYkkAN89iYnY7d/WIVUD73KAbTHXRnTwOCfURttP3KUYT30UX/XSeEwS5MCmxTpDYftWis0V1iAZ+//Fu8LRBwGSZHdUXYSUFdGIem2my0925YP7dfG1ngYlpxTZSaBDDgQEeK9ii7gwKvsoAl0QNeZyimtU3teBuad1tmP0NC+9x0ZMcrllTxzmtj8HitbHWKQpG8va2Ug1ZqusiMffsJ52dFS9EWRKHn1+b2quc9TNBFvU9HO84RUtFGEEMM9iREBFAaNYNoIfvZRRGmcExBFAIrjEoo/3kmTtlmZPHYntZ3/2msouD+lENZUNZyBYydCGAO1oH94gzMVLJ/Ne2pkrNzcFrzVg53sN1fb1zXQefL72GWAtEwRxevPD/h5RIe3+Rbzne8ek583alpaDQpuBGk9cYbfr7ELB3hJI85bShzJc7fPLj4dYRX4zCRiBCKeGNkEgCKSCiMFF1d4zqorgrmpR0ifLWfcZfFodtuS70l88t+HZ2loDoGzAqrSxdlBdlfRti4i44qGO5cOBLsfussUc0Z2MSFw+vmUe1bfRXknPAx4=
 jobs:
   include:
-  - cache: *1
-    install: *2
-    script: *3
-    name: Deploy to the dev account
-    if: type = push AND branch = develop
-    env:
-    - STAGE_NAME=dev
-    - *4
-  - cache: *1
-    install: *2
-    script: *3
-    name: Deploy to the prod account
-    if: type = push AND branch = master
-    env:
-    - STAGE_NAME=prod
-    - *5
+    - cache:
+        - node_modules
+      install:
+        - npm install -g serverless
+        - travis_retry npm install
+      script:
+        - serverless deploy -s ${STAGE_NAME}
+      name: Deploy base service
+      if: type = push AND branch = develop
+      env:
+      - STAGE_NAME=dev
+      - *4
+    - <<: *DEPLOY_SERVICE_JOB
+      name: Deploy league management API
+      if: type = push AND branch = develop
+      env:
+        - STAGE_NAME=dev
+        - SERVICE_PATH='services/leagueManagement'
+        - *4
+
+    # - cache: *1
+    #   install: *2
+    #   script: *3
+    #   name: Deploy to the prod account
+    #   if: type = push AND branch = master
+    #   env:
+    #   - STAGE_NAME=prod
+    #   - *5
