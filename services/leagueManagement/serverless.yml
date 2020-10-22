@@ -24,9 +24,9 @@ provider:
     DB_USER: ${env:DB_USER}
     DB_PASSWORD: ${env:DB_PASSWORD}
     DB_HOST:
-      Fn::GetAtt: [ CalcuttaDB, Endpoint.Address ]
+      Fn::ImportValue: calcutta-db-${self:custom.stage}-address
     DB_PORT:
-      Fn::GetAtt: [ CalcuttaDB, Endpoint.Port ]
+      Fn::ImportValue: calcutta-db-${self:custom.stage}-port
   vpc:
     securityGroupIds:
       - Fn::ImportValue: calcutta-lambdaSG-${self:custom.stage}
@@ -88,4 +88,4 @@ functions:
   #             - x-cognito-token
 
 resources:
-  - ${file(../common/resources/api-gateway-authorizer.yml)}
+  - ${file(../../common/resources/api-gateway-authorizer.yml)}
