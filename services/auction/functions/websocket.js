@@ -1,5 +1,5 @@
 import AWS from 'aws-sdk';
-import { verifyToken } from '../../../common/utilities/verify'
+import { verifyToken } from '../../../common/utilities/verify';
 import { generateAllow, generateDeny } from '../../../common/utilities/generatePolicy';
 import { connection, BigInt, Varchar } from '../../../common/utilities/db';
 
