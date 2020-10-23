@@ -52,7 +52,7 @@ provider:
       - Ref: LambdaSubnet3
 
 
-functions:
+# functions:
   # getTournamentOptions:
   #   handler: getTournamentOptions.getTournamentOptions
   #   events:
@@ -183,69 +183,69 @@ functions:
   #           headers:
   #             - x-cognito-token
 
-  getAuctionTeams:
-    handler: getAuctionTeams.getAuctionTeams
-    events:
-      - http:
-          path: getAuctionTeams/{leagueId}
-          method: get
-          integration: lambda
-          authorizer:
-            type: COGNITO_USER_POOLS
-            authorizerId:
-              Ref: ApiGatewayAuthorizer
-          cors:
-            origin: '*'
-            headers:
-              - x-cognito-token
+  # getAuctionTeams:
+  #   handler: getAuctionTeams.getAuctionTeams
+  #   events:
+  #     - http:
+  #         path: getAuctionTeams/{leagueId}
+  #         method: get
+  #         integration: lambda
+  #         authorizer:
+  #           type: COGNITO_USER_POOLS
+  #           authorizerId:
+  #             Ref: ApiGatewayAuthorizer
+  #         cors:
+  #           origin: '*'
+  #           headers:
+  #             - x-cognito-token
 
-  getAuctionMemberBuyIns:
-    handler: getAuctionMemberBuyIns.getAuctionMemberBuyIns
-    events:
-      - http:
-          path: getAuctionMemberBuyIns/{leagueId}
-          method: get
-          integration: lambda
-          authorizer:
-            type: COGNITO_USER_POOLS
-            authorizerId:
-              Ref: ApiGatewayAuthorizer
-          cors:
-            origin: '*'
-            headers:
-              - x-cognito-token
+  # getAuctionMemberBuyIns:
+  #   handler: getAuctionMemberBuyIns.getAuctionMemberBuyIns
+  #   events:
+  #     - http:
+  #         path: getAuctionMemberBuyIns/{leagueId}
+  #         method: get
+  #         integration: lambda
+  #         authorizer:
+  #           type: COGNITO_USER_POOLS
+  #           authorizerId:
+  #             Ref: ApiGatewayAuthorizer
+  #         cors:
+  #           origin: '*'
+  #           headers:
+  #             - x-cognito-token
 
-  getAllChatMessages:
-    handler: auction/chat.getAllMessages
-    events:
-      - http:
-          path: getAllChatMessages/{leagueId}
-          method: get
-          integration: lambda
-          authorizer:
-            type: COGNITO_USER_POOLS
-            authorizerId:
-              Ref: ApiGatewayAuthorizer
-          cors:
-            origin: '*'
-            headers:
-              - x-cognito-token
+  # getAllChatMessages:
+  #   handler: auction/chat.getAllMessages
+  #   events:
+  #     - http:
+  #         path: getAllChatMessages/{leagueId}
+  #         method: get
+  #         integration: lambda
+  #         authorizer:
+  #           type: COGNITO_USER_POOLS
+  #           authorizerId:
+  #             Ref: ApiGatewayAuthorizer
+  #         cors:
+  #           origin: '*'
+  #           headers:
+  #             - x-cognito-token
 
-  getAuctionStatus:
-    handler: getAuctionStatus.getAuctionStatus
-    events:
-      - http:
-          path: getAuctionStatus/{leagueId}
-          method: get
-          integration: lambda
-          authorizer:
-            type: COGNITO_USER_POOLS
-            authorizerId:
-              Ref: ApiGatewayAuthorizer
-          cors:
-            origin: '*'
-            headers:
-              - x-cognito-token
+  # getAuctionStatus:
+  #   handler: getAuctionStatus.getAuctionStatus
+  #   events:
+  #     - http:
+  #         path: getAuctionStatus/{leagueId}
+  #         method: get
+  #         integration: lambda
+  #         authorizer:
+  #           type: COGNITO_USER_POOLS
+  #           authorizerId:
+  #             Ref: ApiGatewayAuthorizer
+  #         cors:
+  #           origin: '*'
+  #           headers:
+  #             - x-cognito-token
 
   # getTournamentGamesForBracket:
   #   handler: getTournamentGamesForBracket.getTournamentGamesForBracket
@@ -263,71 +263,71 @@ functions:
   #           headers:
   #             - x-cognito-token
 
-  getServerTime:
-    handler: getServerTime.getServerTime
-    events:
-      - http:
-          path: getServerTime
-          method: get
-          integration: lambda
-          authorizer:
-            type: COGNITO_USER_POOLS
-            authorizerId:
-              Ref: ApiGatewayAuthorizer
-          cors:
-            origin: '*'
-            headers:
-              - x-cognito-token
+  # getServerTime:
+  #   handler: getServerTime.getServerTime
+  #   events:
+  #     - http:
+  #         path: getServerTime
+  #         method: get
+  #         integration: lambda
+  #         authorizer:
+  #           type: COGNITO_USER_POOLS
+  #           authorizerId:
+  #             Ref: ApiGatewayAuthorizer
+  #         cors:
+  #           origin: '*'
+  #           headers:
+  #             - x-cognito-token
 
   # websocketAuthorizer:
   #   handler: utilities/authorizer.websocketAuthorizer
   #   events
 
-  onConnect:
-    handler: auction/websocket.onConnect
-    events:
-      - websocket:
-          route: $connect
-  onDisconnect:
-    handler: auction/websocket.onDisconnect
-    events:
-      - websocket:
-          route: $disconnect
-  handleMessage:
-    handler: auction/websocket.handleMessage
-    events:
-      - websocket:
-          route: $default
-  resetClock:
-    handler: auction/admin.resetClock
-    events:
-      - websocket:
-          route: RESET_CLOCK
-  setItemComplete:
-    handler: auction/admin.setItemComplete
-    events:
-      - websocket:
-          route: ITEM_COMPLETE
-  placeBid:
-    handler: auction/admin.placeBid
-    events:
-      - websocket:
-          route: PLACE_BID
-  setNextItem:
-    handler: auction/admin.setNextItem
-    events:
-      - websocket:
-          route: NEXT_ITEM
-  startAuction:
-    handler: auction/admin.startAuction
-    events:
-      - websocket:
-          route: START_AUCTION
-  closeAuction:
-    handler: auction/admin.closeAuction
-    events:
-      - websocket:
-          route: CLOSE_AUCTION
+  # onConnect:
+  #   handler: auction/websocket.onConnect
+  #   events:
+  #     - websocket:
+  #         route: $connect
+  # onDisconnect:
+  #   handler: auction/websocket.onDisconnect
+  #   events:
+  #     - websocket:
+  #         route: $disconnect
+  # handleMessage:
+  #   handler: auction/websocket.handleMessage
+  #   events:
+  #     - websocket:
+  #         route: $default
+  # resetClock:
+  #   handler: auction/admin.resetClock
+  #   events:
+  #     - websocket:
+  #         route: RESET_CLOCK
+  # setItemComplete:
+  #   handler: auction/admin.setItemComplete
+  #   events:
+  #     - websocket:
+  #         route: ITEM_COMPLETE
+  # placeBid:
+  #   handler: auction/admin.placeBid
+  #   events:
+  #     - websocket:
+  #         route: PLACE_BID
+  # setNextItem:
+  #   handler: auction/admin.setNextItem
+  #   events:
+  #     - websocket:
+  #         route: NEXT_ITEM
+  # startAuction:
+  #   handler: auction/admin.startAuction
+  #   events:
+  #     - websocket:
+  #         route: START_AUCTION
+  # closeAuction:
+  #   handler: auction/admin.closeAuction
+  #   events:
+  #     - websocket:
+  #         route: CLOSE_AUCTION
 
 
 resources:

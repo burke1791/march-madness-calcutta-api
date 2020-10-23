@@ -7,7 +7,7 @@ const config = {
   database: process.env.DB_NAME
 };
 
-const connection = {
+const connection_dummy = {
   isConnected: false,
   pool: null,
   createConnection: async function() {
@@ -26,5 +26,5 @@ const connection = {
 };
 
 export {
-  connection
+  connection_dummy
 };

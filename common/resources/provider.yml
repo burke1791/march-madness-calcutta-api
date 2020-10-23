@@ -1,0 +1,23 @@
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  timeout: 15
+  logRetentionInDays: 7
+  region: us-east-1
+  stage: dev
+  environment:
+    DB_NAME: ${env:DB_NAME}
+    DB_USER: ${env:DB_USER}
+    DB_PASSWORD: ${env:DB_PASSWORD}
+    DB_HOST:
+      Fn::ImportValue: calcutta-db-${self:custom.stage}-address
+    DB_PORT:
+      Fn::ImportValue: calcutta-db-${self:custom.stage}-port
+  vpc:
+    securityGroupIds:
+      - Fn::ImportValue: calcutta-lambdaSG-${self:custom.stage}
+    subnetIds:
+      - Fn::ImportValue: calcutta-lambda-subnet1-${self:custom.stage}
+      - Fn::ImportValue: calcutta-lambda-subnet2-${self:custom.stage}
+      - Fn::ImportValue: calcutta-lambda-subnet3-${self:custom.stage}
