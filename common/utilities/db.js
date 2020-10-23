@@ -25,6 +25,11 @@ const connection = {
   }
 };
 
+const BigInt = sql.BigInt;
+const Varchar = (length) => sql.VarChar(length);
+
 export {
-  connection
+  connection,
+  BigInt,
+  Varchar
 };

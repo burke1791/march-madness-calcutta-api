@@ -1,5 +1,4 @@
-import mssql from 'mssql';
-const connection = require('../../../common/utilities/db').connection;
+import { connection, BigInt, Varchar } from '../../../common/utilities/db';
 
 export async function getUpcomingGames(event, context, callback) {
   context.callbackWaitsForEmptyEventLoop = false;
@@ -14,8 +13,8 @@ export async function getUpcomingGames(event, context, callback) {
     }
 
     let result = await connection.pool.request()
-      .input('CognitoSub', mssql.VarChar(256), cognitoSub)
-      .input('LeagueId', mssql.BigInt(), leagueId)
+      .input('CognitoSub', Varchar(256), cognitoSub)
+      .input('LeagueId', BigInt, leagueId)
       .execute('dbo.up_GetUpcomingGames');
 
     console.log(result);
