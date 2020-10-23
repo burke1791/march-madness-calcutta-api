@@ -9,9 +9,23 @@ plugins:
 
 custom:
   stage: ${opt:stage, self:provider.stage}
+  provider: ${file(../../common/config/provider.json)}
 
 provider:
+  name: ${self:custom.provider.name}
+  runtime: ${self:custom.provider.runtime}
+  timeout: ${self:custom.provider.timeout}
+  logRetentionInDays: ${self:custom.provider.logRetentionInDays}
+  region: ${self:custom.provider.region}
+  stage: ${self:custom.provider.stage}
   environment:
+    DB_NAME: ${self:custom.provider.env.DB_NAME}
+    DB_USER: ${self:custom.provider.env.DB_USER}
+    DB_PASSWORD: ${self:custom.provider.env.DB_PASSWORD}
+    DB_HOST:
+      Fn::ImportValue: ${self:custom.provider.env.DB_HOST}
+    DB_PORT:
+      Fn::ImportValue: ${self:custom.provider.env.DB_PORT}
     WEBSOCKET_ENDPOINT:
       Fn::Join:
         - ''
@@ -20,6 +34,13 @@ provider:
           - Ref: AWS::Region
           - .amazonaws.com/
           - ${self:custom.stage}
+  vpc:
+    securityGroupIds:
+      - Fn::ImportValue: ${self:custom.provider.vpc.securityGroupIds.LAMBDA_SG}
+    subnetIds:
+      - Fn::ImportValue: ${self:custom.provider.vpc.securityGroupIds.SUBNET1}
+      - Fn::ImportValue: ${self:custom.provider.vpc.securityGroupIds.SUBNET2}
+      - Fn::ImportValue: ${self:custom.provider.vpc.securityGroupIds.SUBNET3}
 
 functions:
   getAuctionTeams:
@@ -150,5 +171,4 @@ functions:
           route: CLOSE_AUCTION
 
 resources:
-  - ${file(../../common/resources/provider.yml)}
   - ${file(../../common/resources/api-gateway-authorizer.yml)}
