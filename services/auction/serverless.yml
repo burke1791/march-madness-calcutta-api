@@ -38,9 +38,9 @@ provider:
     securityGroupIds:
       - Fn::ImportValue: ${self:custom.provider.vpc.securityGroupIds.LAMBDA_SG}
     subnetIds:
-      - Fn::ImportValue: ${self:custom.provider.vpc.securityGroupIds.SUBNET1}
-      - Fn::ImportValue: ${self:custom.provider.vpc.securityGroupIds.SUBNET2}
-      - Fn::ImportValue: ${self:custom.provider.vpc.securityGroupIds.SUBNET3}
+      - Fn::ImportValue: ${self:custom.provider.vpc.subnetIds.SUBNET1}
+      - Fn::ImportValue: ${self:custom.provider.vpc.subnetIds.SUBNET2}
+      - Fn::ImportValue: ${self:custom.provider.vpc.subnetIds.SUBNET3}
 
 functions:
   getAuctionTeams:
