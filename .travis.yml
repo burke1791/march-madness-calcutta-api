@@ -57,11 +57,11 @@ jobs:
       - STAGE_NAME=dev
       - *4
     - <<: *DEPLOY_SERVICE_JOB
-      name: Deploy league management API
+      name: Deploy league service API
       if: type = push AND branch = develop
       env:
         - STAGE_NAME=dev
-        - SERVICE_PATH='services/leagueManagement'
+        - SERVICE_PATH='services/league'
         - *4
 
     # - cache: *1
