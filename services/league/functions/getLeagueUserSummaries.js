@@ -1,4 +1,4 @@
-const connection = require('../../../common/utilities/db');
+const connection = require('../../../common/utilities/db').connection;
 
 export async function getLeagueUserSummaries(event, context, callback) {
   context.callbackWaitsForEmptyEventLoop = false;
