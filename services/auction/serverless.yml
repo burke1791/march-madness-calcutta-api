@@ -1,0 +1,154 @@
+
+service: calcutta-auction-service
+
+package:
+  individually: true
+
+plugins:
+  - serverless-bundle
+
+custom:
+  stage: ${opt:stage, self:provider.stage}
+
+provider:
+  environment:
+    WEBSOCKET_ENDPOINT:
+      Fn::Join:
+        - ''
+        - - Ref: WebsocketsApi
+          - .execute-api.
+          - Ref: AWS::Region
+          - .amazonaws.com/
+          - ${self:custom.stage}
+
+functions:
+  getAuctionTeams:
+    handler: functions/getAuctionTeams.getAuctionTeams
+    events:
+      - http:
+          path: getAuctionTeams/{leagueId}
+          method: get
+          integration: lambda
+          authorizer:
+            type: COGNITO_USER_POOLS
+            authorizerId:
+              Ref: ApiGatewayAuthorizer
+          cors:
+            origin: '*'
+            headers:
+              - x-cognito-token
+
+  getAuctionMemberBuyIns:
+    handler: functions/getAuctionMemberBuyIns.getAuctionMemberBuyIns
+    events:
+      - http:
+          path: getAuctionMemberBuyIns/{leagueId}
+          method: get
+          integration: lambda
+          authorizer:
+            type: COGNITO_USER_POOLS
+            authorizerId:
+              Ref: ApiGatewayAuthorizer
+          cors:
+            origin: '*'
+            headers:
+              - x-cognito-token
+
+  getAllChatMessages:
+    handler: functions/chat.getAllMessages
+    events:
+      - http:
+          path: getAllChatMessages/{leagueId}
+          method: get
+          integration: lambda
+          authorizer:
+            type: COGNITO_USER_POOLS
+            authorizerId:
+              Ref: ApiGatewayAuthorizer
+          cors:
+            origin: '*'
+            headers:
+              - x-cognito-token
+
+  getAuctionStatus:
+    handler: functions/getAuctionStatus.getAuctionStatus
+    events:
+      - http:
+          path: getAuctionStatus/{leagueId}
+          method: get
+          integration: lambda
+          authorizer:
+            type: COGNITO_USER_POOLS
+            authorizerId:
+              Ref: ApiGatewayAuthorizer
+          cors:
+            origin: '*'
+            headers:
+              - x-cognito-token
+
+  getServerTime:
+    handler: functions/getServerTime.getServerTime
+    events:
+      - http:
+          path: getServerTime
+          method: get
+          integration: lambda
+          authorizer:
+            type: COGNITO_USER_POOLS
+            authorizerId:
+              Ref: ApiGatewayAuthorizer
+          cors:
+            origin: '*'
+            headers:
+              - x-cognito-token
+
+  # websocket functions
+  onConnect:
+    handler: functions/websocket.onConnect
+    events:
+      - websocket:
+          route: $connect
+  onDisconnect:
+    handler: functions/websocket.onDisconnect
+    events:
+      - websocket:
+          route: $disconnect
+  handleMessage:
+    handler: functions/websocket.handleMessage
+    events:
+      - websocket:
+          route: $default
+  resetClock:
+    handler: functions/admin.resetClock
+    events:
+      - websocket:
+          route: RESET_CLOCK
+  setItemComplete:
+    handler: functions/admin.setItemComplete
+    events:
+      - websocket:
+          route: ITEM_COMPLETE
+  placeBid:
+    handler: functions/admin.placeBid
+    events:
+      - websocket:
+          route: PLACE_BID
+  setNextItem:
+    handler: functions/admin.setNextItem
+    events:
+      - websocket:
+          route: NEXT_ITEM
+  startAuction:
+    handler: functions/admin.startAuction
+    events:
+      - websocket:
+          route: START_AUCTION
+  closeAuction:
+    handler: functions/admin.closeAuction
+    events:
+      - websocket:
+          route: CLOSE_AUCTION
+
+resources:
+  - ${file(../../common/resources/provider.yml)}
+  - ${file(../../common/resources/api-gateway-authorizer.yml)}
