@@ -1,10 +1,8 @@
-import { callbackWaitsForEmptyEventLoopFalse } from './utilities/common';
-const sql = require('mssql');
-
-const connection = require('./db').connection;
+const mssql = require('mssql');
+const connection = require('../../../common/utilities/db');
 
 export async function getTournamentGamesForBracket(event, context, callback) {
-  callbackWaitsForEmptyEventLoopFalse(context);
+  context.callbackWaitsForEmptyEventLoop = false;
 
   let cognitoSub = event.cognitoPoolClaims.sub;
 
@@ -15,9 +13,9 @@ export async function getTournamentGamesForBracket(event, context, callback) {
       await connection.createConnection();
     }
 
-    const request = new sql.Request();
-    request.input('leagueId', sql.BigInt(), leagueId);
-    request.input('cognitoSub', sql.VarChar(256), cognitoSub);
+    const request = new mssql.Request();
+    request.input('leagueId', mssql.BigInt(), leagueId);
+    request.input('cognitoSub', mssql.VarChar(256), cognitoSub);
 
     let result = await request.execute('dbo.up_GetTournamentGamesForBracket');
     console.log(result);
