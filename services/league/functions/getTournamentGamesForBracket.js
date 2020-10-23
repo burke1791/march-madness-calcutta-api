@@ -13,7 +13,7 @@ export async function getTournamentGamesForBracket(event, context, callback) {
       await connection.createConnection();
     }
 
-    const request = new mssql.Request();
+    const request = connection.pool.request();
     request.input('leagueId', mssql.BigInt(), leagueId);
     request.input('cognitoSub', mssql.VarChar(256), cognitoSub);
 

@@ -13,7 +13,7 @@ export async function getUpcomingGames(event, context, callback) {
       await connection.createConnection();
     }
 
-    const request = new mssql.Request();
+    const request = connection.pool.request();
     request.input('CognitoSub', mssql.VarChar(256), cognitoSub);
     request.input('LeagueId', mssql.BigInt(), leagueId);
 
