@@ -63,6 +63,13 @@ jobs:
         - STAGE_NAME=dev
         - SERVICE_PATH='services/league'
         - *4
+    - <<: *DEPLOY_SERVICE_JOB
+      name: Deploy auction service API
+      if: type = push AND branch = develop
+      env:
+        - STAGE_NAME=dev
+        - SERVICE_PATH='services/auction'
+        - *4
 
     # - cache: *1
     #   install: *2

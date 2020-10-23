@@ -6,11 +6,8 @@ package:
 
 plugins:
   - serverless-bundle
-  - serverless-offline
-  - serverless-dotenv-plugin
 
 custom:
-  # secrets: ${file(secrets.json)}
   stage: ${opt:stage, self:provider.stage}
   profile:
     prod: burke03
@@ -22,7 +19,6 @@ provider:
   timeout: 15
   region: us-east-1
   stage: dev
-  # profile: ${self:custom.profile.${self:custom.stage}}
   websocketsApiName: calcutta-websockets-api-${self:custom.stage}
   websocketsApiRouteSelectionExpression: $request.body.action
   environment:
@@ -35,14 +31,14 @@ provider:
       Fn::GetAtt: [ CalcuttaDB, Endpoint.Address ]
     DB_PORT:
       Fn::GetAtt: [ CalcuttaDB, Endpoint.Port ]
-    WEBSOCKET_ENDPOINT:
-      Fn::Join:
-        - ''
-        - - Ref: WebsocketsApi
-          - .execute-api.
-          - Ref: AWS::Region
-          - .amazonaws.com/
-          - ${self:custom.stage}
+    # WEBSOCKET_ENDPOINT:
+    #   Fn::Join:
+    #     - ''
+    #     - - Ref: WebsocketsApi
+    #       - .execute-api.
+    #       - Ref: AWS::Region
+    #       - .amazonaws.com/
+    #       - ${self:custom.stage}
   vpc:
     securityGroupIds:
       - Ref: LambdaSG
@@ -340,5 +336,5 @@ resources:
   - ${file(resources/security-groups.yml)}
   - ${file(resources/rds.yml)}
   - ${file(resources/roles.yml)}
-  - ${file(resources/api-gateway-errors.yml)}
-  - ${file(resources/api-gateway-authorizer.yml)}
+  # - ${file(resources/api-gateway-errors.yml)}
+  # - ${file(resources/api-gateway-authorizer.yml)}
