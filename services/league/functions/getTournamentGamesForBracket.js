@@ -1,5 +1,4 @@
-const mssql = require('mssql');
-const connection = require('../../../common/utilities/db').connection;
+import { connection, BigInt, Varchar } from '../../../common/utilities/db';
 
 export async function getTournamentGamesForBracket(event, context, callback) {
   context.callbackWaitsForEmptyEventLoop = false;
@@ -14,8 +13,8 @@ export async function getTournamentGamesForBracket(event, context, callback) {
     }
 
     let result = await connection.pool.request()
-      .input('leagueId', mssql.BigInt(), leagueId)
-      .input('cognitoSub', mssql.VarChar(256), cognitoSub)
+      .input('leagueId', BigInt, leagueId)
+      .input('cognitoSub', Varchar(256), cognitoSub)
       .execute('dbo.up_GetTournamentGamesForBracket');
 
     console.log(result);
