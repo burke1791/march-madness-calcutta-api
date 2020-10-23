@@ -12,7 +12,7 @@ custom:
   provider: ${file(../../common/config/provider.json)}
 
 provider:
-  name: ${self:custom.provider.name}
+  name: aws
   runtime: ${self:custom.provider.runtime}
   timeout: ${self:custom.provider.timeout}
   logRetentionInDays: ${self:custom.provider.logRetentionInDays}

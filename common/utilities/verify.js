@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken');
 const jwkToPem = require('jwk-to-pem');
 
-const jwk = require('../jwks.json');
+const jwk = require('../config/jwks.json');
 
 console.log(process.env.APP_ENV);
 console.log(jwk);
