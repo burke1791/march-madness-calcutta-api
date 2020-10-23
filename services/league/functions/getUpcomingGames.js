@@ -1,9 +1,8 @@
-import { callbackWaitsForEmptyEventLoopFalse } from './utilities/common';
 import mssql from 'mssql';
-const connection = require('./db').connection;
+const connection = require('../../../common/utilities/db');
 
 export async function getUpcomingGames(event, context, callback) {
-  callbackWaitsForEmptyEventLoopFalse(context);
+  context.callbackWaitsForEmptyEventLoop = false;
 
   let cognitoSub = event.cognitoPoolClaims.sub;
 

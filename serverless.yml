@@ -53,21 +53,21 @@ provider:
 
 
 functions:
-  getTournamentOptions:
-    handler: getTournamentOptions.getTournamentOptions
-    events:
-      - http:
-          path: getTournamentOptions
-          method: get
-          integration: lambda
-          authorizer:
-            type: COGNITO_USER_POOLS
-            authorizerId:
-              Ref: ApiGatewayAuthorizer
-          cors:
-            origin: '*'
-            headers:
-              - x-cognito-token
+  # getTournamentOptions:
+  #   handler: getTournamentOptions.getTournamentOptions
+  #   events:
+  #     - http:
+  #         path: getTournamentOptions
+  #         method: get
+  #         integration: lambda
+  #         authorizer:
+  #           type: COGNITO_USER_POOLS
+  #           authorizerId:
+  #             Ref: ApiGatewayAuthorizer
+  #         cors:
+  #           origin: '*'
+  #           headers:
+  #             - x-cognito-token
 
   # createLeague:
   #   handler: createLeague.createLeague
@@ -103,85 +103,85 @@ functions:
   #             - Content-Type
   #             - x-cognito-token
 
-  getLeagueSummaries:
-    handler: getLeagueSummaries.getLeagueSummaries
-    events:
-      - http:
-          path: getLeagueSummaries
-          method: get
-          integration: lambda
-          authorizer:
-            type: COGNITO_USER_POOLS
-            authorizerId:
-              Ref: ApiGatewayAuthorizer
-          cors:
-            origin: '*'
-            headers:
-              - x-cognito-token
+  # getLeagueSummaries:
+  #   handler: getLeagueSummaries.getLeagueSummaries
+  #   events:
+  #     - http:
+  #         path: getLeagueSummaries
+  #         method: get
+  #         integration: lambda
+  #         authorizer:
+  #           type: COGNITO_USER_POOLS
+  #           authorizerId:
+  #             Ref: ApiGatewayAuthorizer
+  #         cors:
+  #           origin: '*'
+  #           headers:
+  #             - x-cognito-token
 
-  getLeagueUserSummaries:
-    handler: getLeagueUserSummaries.getLeagueUserSummaries
-    events:
-      - http:
-          path: getLeagueUserSummaries/{leagueId}
-          method: get
-          integration: lambda
-          authorizer:
-            type: COGNITO_USER_POOLS
-            authorizerId:
-              Ref: ApiGatewayAuthorizer
-          cors:
-            origin: '*'
-            headers:
-              - x-cognito-token
+  # getLeagueUserSummaries:
+  #   handler: getLeagueUserSummaries.getLeagueUserSummaries
+  #   events:
+  #     - http:
+  #         path: getLeagueUserSummaries/{leagueId}
+  #         method: get
+  #         integration: lambda
+  #         authorizer:
+  #           type: COGNITO_USER_POOLS
+  #           authorizerId:
+  #             Ref: ApiGatewayAuthorizer
+  #         cors:
+  #           origin: '*'
+  #           headers:
+  #             - x-cognito-token
 
-  getUpcomingGames:
-    handler: getUpcomingGames.getUpcomingGames
-    events:
-      - http:
-          path: getUpcomingGames/{leagueId}
-          method: get
-          integration: lambda
-          authorizer:
-            type: COGNITO_USER_POOLS
-            authorizerId:
-              Ref: ApiGatewayAuthorizer
-          cors:
-            origin: '*'
-            headers:
-              - x-cognito-token
+  # getUpcomingGames:
+  #   handler: getUpcomingGames.getUpcomingGames
+  #   events:
+  #     - http:
+  #         path: getUpcomingGames/{leagueId}
+  #         method: get
+  #         integration: lambda
+  #         authorizer:
+  #           type: COGNITO_USER_POOLS
+  #           authorizerId:
+  #             Ref: ApiGatewayAuthorizer
+  #         cors:
+  #           origin: '*'
+  #           headers:
+  #             - x-cognito-token
 
-  getRemainingTeamsCount:
-    handler: getRemainingTeamsCount.getRemainingTeamsCount
-    events:
-      - http:
-          path: 'getRemainingTeamsCount/{tournamentId}'
-          method: get
-          integration: lambda
-          authorizer:
-            type: COGNITO_USER_POOLS
-            authorizerId:
-              Ref: ApiGatewayAuthorizer
-          cors:
-            origin: '*'
-            headers:
-              - x-cognito-token
+  # getRemainingTeamsCount:
+  #   handler: getRemainingTeamsCount.getRemainingTeamsCount
+  #   events:
+  #     - http:
+  #         path: 'getRemainingTeamsCount/{tournamentId}'
+  #         method: get
+  #         integration: lambda
+  #         authorizer:
+  #           type: COGNITO_USER_POOLS
+  #           authorizerId:
+  #             Ref: ApiGatewayAuthorizer
+  #         cors:
+  #           origin: '*'
+  #           headers:
+  #             - x-cognito-token
 
-  getLeagueUserTeams:
-    handler: getLeagueUserTeams.getLeagueUserTeams
-    events:
-      - http:
-          path: getLeagueUserTeams/{leagueId}/{userId}
-          method: get
-          integration: lambda
-          authorizer:
-            type: COGNITO_USER_POOLS
-            authorizerId:
-              Ref: ApiGatewayAuthorizer
-          cors:
-            origin: '*'
-            headers:
-              - x-cognito-token
+  # getLeagueUserTeams:
+  #   handler: getLeagueUserTeams.getLeagueUserTeams
+  #   events:
+  #     - http:
+  #         path: getLeagueUserTeams/{leagueId}/{userId}
+  #         method: get
+  #         integration: lambda
+  #         authorizer:
+  #           type: COGNITO_USER_POOLS
+  #           authorizerId:
+  #             Ref: ApiGatewayAuthorizer
+  #         cors:
+  #           origin: '*'
+  #           headers:
+  #             - x-cognito-token
 
   getAuctionTeams:
     handler: getAuctionTeams.getAuctionTeams
@@ -247,21 +247,21 @@ functions:
             headers:
               - x-cognito-token
 
-  getTournamentGamesForBracket:
-    handler: getTournamentGamesForBracket.getTournamentGamesForBracket
-    events:
-      - http:
-          path: getTournamentGamesForBracket/{leagueId}
-          method: get
-          integration: lambda
-          authorizer:
-            type: COGNITO_USER_POOLS
-            authorizerId:
-              Ref: ApiGatewayAuthorizer
-          cors:
-            origin: '*'
-            headers:
-              - x-cognito-token
+  # getTournamentGamesForBracket:
+  #   handler: getTournamentGamesForBracket.getTournamentGamesForBracket
+  #   events:
+  #     - http:
+  #         path: getTournamentGamesForBracket/{leagueId}
+  #         method: get
+  #         integration: lambda
+  #         authorizer:
+  #           type: COGNITO_USER_POOLS
+  #           authorizerId:
+  #             Ref: ApiGatewayAuthorizer
+  #         cors:
+  #           origin: '*'
+  #           headers:
+  #             - x-cognito-token
 
   getServerTime:
     handler: getServerTime.getServerTime

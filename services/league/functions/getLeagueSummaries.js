@@ -1,8 +1,7 @@
-import { callbackWaitsForEmptyEventLoopFalse } from './utilities/common';
-const connection = require('./db').connection;
+const connection = require('../../../common/utilities/db');
 
 export async function getLeagueSummaries(event, context, callback) {
-  callbackWaitsForEmptyEventLoopFalse(context);
+  context.callbackWaitsForEmptyEventLoop = false;
 
   let cognitoSub = event.cognitoPoolClaims.sub;
 
