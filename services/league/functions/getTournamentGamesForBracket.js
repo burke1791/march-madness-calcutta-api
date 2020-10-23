@@ -13,11 +13,11 @@ export async function getTournamentGamesForBracket(event, context, callback) {
       await connection.createConnection();
     }
 
-    const request = connection.pool.request();
-    request.input('leagueId', mssql.BigInt(), leagueId);
-    request.input('cognitoSub', mssql.VarChar(256), cognitoSub);
+    let result = await connection.pool.request()
+      .input('leagueId', mssql.BigInt(), leagueId)
+      .input('cognitoSub', mssql.VarChar(256), cognitoSub)
+      .execute('dbo.up_GetTournamentGamesForBracket');
 
-    let result = await request.execute('dbo.up_GetTournamentGamesForBracket');
     console.log(result);
 
     callback(null, result.recordset);
