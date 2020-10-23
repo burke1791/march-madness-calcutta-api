@@ -1,5 +1,5 @@
 const mssql = require('mssql');
-const connection = require('../../../common/utilities/db');
+const connection = require('../../../common/utilities/db').connection;
 
 export async function getTournamentGamesForBracket(event, context, callback) {
   context.callbackWaitsForEmptyEventLoop = false;
