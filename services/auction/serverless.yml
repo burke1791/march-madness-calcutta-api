@@ -19,6 +19,7 @@ provider:
   region: ${self:custom.provider.region}
   stage: ${self:custom.provider.stage}
   environment:
+    APP_ENV: ${self:custom.stage} # used by the websocket verification function
     DB_NAME: ${self:custom.provider.env.DB_NAME}
     DB_USER: ${self:custom.provider.env.DB_USER}
     DB_PASSWORD: ${self:custom.provider.env.DB_PASSWORD}
