@@ -1,8 +1,7 @@
-import { callbackWaitsForEmptyEventLoopFalse } from './utilities/common';
-const connection = require('./db').connection;
+import { connection } from '../../../common/utilities/db';
 
 export async function getAuctionTeams(event, context, callback) {
-  callbackWaitsForEmptyEventLoopFalse(context);
+  context.callbackWaitsForEmptyEventLoop = false;
 
   let cognitoSub = event.cognitoPoolClaims.sub;
 

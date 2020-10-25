@@ -7,7 +7,7 @@ const config = {
   database: process.env.DB_NAME
 };
 
-const connection_dummy = {
+const connection = {
   isConnected: false,
   pool: null,
   createConnection: async function() {
@@ -25,6 +25,13 @@ const connection_dummy = {
   }
 };
 
+const BigInt = sql.BigInt;
+const Varchar = (length) => sql.VarChar(length);
+const Decimal = (digits, precision) => sql.Decimal(digits, precision);
+
 export {
-  connection_dummy
+  connection,
+  BigInt,
+  Varchar,
+  Decimal
 };

@@ -1,11 +1,8 @@
-const sql = require('mssql');
 import AWS from 'aws-sdk';
-import { callbackWaitsForEmptyEventLoopFalse } from '../utilities/common';
-
-import { connection } from '../db';
+import { connection, BigInt, Varchar, Decimal } from '../../../common/utilities/db';
 
 export async function resetClock(event, context, callback) {
-  callbackWaitsForEmptyEventLoopFalse(context);
+  context.callbackWaitsForEmptyEventLoop = false;
 
   console.log(event);
   let data = JSON.parse(event.body);
@@ -16,12 +13,12 @@ export async function resetClock(event, context, callback) {
     await connection.createConnection();
   }
 
-  const request = new sql.Request();
-  request.input('connectionId', sql.VarChar(128), connectionId);
-  request.input('leagueId', sql.BigInt(), leagueId);
-
   try {
-    let result = await request.execute('dbo.up_resetAuctionClock');
+    let result = await connection.pool.request()
+      .input('connectionId', Varchar(128), connectionId)
+      .input('leagueId', BigInt, leagueId)
+      .execute('dbo.up_resetAuctionClock');
+
     console.log(result);
 
     let connectionIds = result.recordset;
@@ -72,7 +69,7 @@ export async function resetClock(event, context, callback) {
 }
 
 export async function setItemComplete(event, context, callback) {
-  callbackWaitsForEmptyEventLoopFalse(context);
+  context.callbackWaitsForEmptyEventLoop = false;
 
   console.log(event);
   let data = JSON.parse(event.body);
@@ -83,12 +80,12 @@ export async function setItemComplete(event, context, callback) {
     await connection.createConnection();
   }
 
-  const request = new sql.Request();
-  request.input('connectionId', sql.VarChar(128), connectionId);
-  request.input('leagueId', sql.BigInt(), leagueId);
-
   try {
-    let result = await request.execute('dbo.up_setItemComplete');
+    let result = await connection.pool.request()
+      .input('connectionId', Varchar(128), connectionId)
+      .input('leagueId', BigInt, leagueId)
+      .execute('dbo.up_setItemComplete');
+
     console.log(result);
 
     let connectionIds = result.recordset;
@@ -116,7 +113,7 @@ export async function setItemComplete(event, context, callback) {
 }
 
 export async function placeBid(event, context, callback) {
-  callbackWaitsForEmptyEventLoopFalse(context);
+  context.callbackWaitsForEmptyEventLoop = false;
 
   console.log(event);
   let data = JSON.parse(event.body);
@@ -128,13 +125,13 @@ export async function placeBid(event, context, callback) {
     await connection.createConnection();
   }
 
-  const request = new sql.Request();
-  request.input('connectionId', sql.VarChar(128), connectionId);
-  request.input('leagueId', sql.BigInt(), leagueId);
-  request.input('bidVal', sql.Decimal(8, 2), amount);
-
   try {
-    let result = await request.execute('dbo.up_placeBid');
+    let result = await connection.pool.request()
+      .input('connectionId', Varchar(128), connectionId)
+      .input('leagueId', BigInt, leagueId)
+      .input('bidVal', Decimal(8, 2), amount)
+      .execute('dbo.up_placeBid');
+
     console.log(result);
 
     if (result.recordset == undefined) {
@@ -176,7 +173,7 @@ export async function placeBid(event, context, callback) {
 }
 
 export async function setNextItem(event, context, callback) {
-  callbackWaitsForEmptyEventLoopFalse(context);
+  context.callbackWaitsForEmptyEventLoop = false;
 
   console.log(event);
   let data = JSON.parse(event.body);
@@ -187,12 +184,12 @@ export async function setNextItem(event, context, callback) {
     await connection.createConnection();
   }
 
-  const request = new sql.Request();
-  request.input('connectionId', sql.VarChar(128), connectionId);
-  request.input('leagueId', sql.BigInt(), leagueId);
-
   try {
-    let result = await request.execute('dbo.up_nextItem');
+    let result = await connection.pool.request()
+      .input('connectionId', Varchar(128), connectionId)
+      .input('leagueId', BigInt, leagueId)
+      .execute('dbo.up_nextItem');
+
     console.log(result);
 
     let connectionIds = result.recordset;
@@ -220,7 +217,7 @@ export async function setNextItem(event, context, callback) {
 }
 
 export async function startAuction(event, context, callback) {
-  callbackWaitsForEmptyEventLoopFalse(context);
+  context.callbackWaitsForEmptyEventLoop = false;
 
   console.log(event);
   let data = JSON.parse(event.body);
@@ -231,12 +228,12 @@ export async function startAuction(event, context, callback) {
     await connection.createConnection();
   }
 
-  const request = new sql.Request();
-  request.input('connectionId', sql.VarChar(128), connectionId);
-  request.input('leagueId', sql.BigInt(), leagueId);
-
   try {
-    let result = await request.execute('dbo.up_startAuction');
+    let result = await connection.pool.request()
+      .input('connectionId', Varchar(128), connectionId)
+      .input('leagueId', BigInt, leagueId)
+      .execute('dbo.up_startAuction');
+
     console.log(result);
 
     let connectionIds = result.recordset;
@@ -264,7 +261,7 @@ export async function startAuction(event, context, callback) {
 }
 
 export async function closeAuction(event, context, callback) {
-  callbackWaitsForEmptyEventLoopFalse(context);
+  context.callbackWaitsForEmptyEventLoop = false;
 
   console.log(event);
   let data = JSON.parse(event.body);
@@ -275,12 +272,12 @@ export async function closeAuction(event, context, callback) {
     await connection.createConnection();
   }
 
-  const request = new sql.Request();
-  request.input('connectionId', sql.VarChar(128), connectionId);
-  request.input('leagueId', sql.BigInt(), leagueId);
-
   try {
-    let result = await request.execute('dbo.up_closeAuction');
+    let result = await connection.pool.request()
+      .input('connectionId', Varchar(128), connectionId)
+      .input('leagueId', BigInt, leagueId)
+      .execute('dbo.up_closeAuction');
+
     console.log(result);
 
     let connectionIds = result.recordset;

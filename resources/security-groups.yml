@@ -25,8 +25,8 @@ Resources:
           FromPort: 1433
           ToPort: 1433
         - IpProtocol: tcp
-          SourceSecurityGroupId: ${self:custom.secrets.${self:custom.stage}.AWS_COGNITO_LAMBDA_SG_ID}
-          SourceSecurityGroupOwnerId: ${self:custom.secrets.AWS_COGNITO_ACCOUNT_ID}
+          SourceSecurityGroupId: ${env:AWS_COGNITO_LAMBDA_SG_ID}
+          SourceSecurityGroupOwnerId: ${env:AWS_COGNITO_ACCOUNT_ID}
           FromPort: 1433
           ToPort: 1433
       VpcId:

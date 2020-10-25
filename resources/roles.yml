@@ -2,11 +2,11 @@ Resources:
   RDSOptionRole:
     Type: AWS::IAM::Role
     Properties:
-      RoleName:
-        Fn::Join:
-          - ''
-          - - sql-server-backup-${self:custom.stage}-
-            - Ref: AWS::Region
+      # RoleName:
+      #   Fn::Join:
+      #     - ''
+      #     - - sql-server-backup-${self:custom.stage}-
+      #       - Ref: AWS::Region
       AssumeRolePolicyDocument:
         Version: '2012-10-17'
         Statement:
@@ -14,7 +14,7 @@ Resources:
             Principal:
               Service: rds.amazonaws.com
             Action: sts:AssumeRole
-      Path: /service-role/
+      Path: /
       Policies:
         - PolicyName: root
           PolicyDocument:
@@ -24,11 +24,11 @@ Resources:
                 Action:
                   - s3:ListBucket
                   - s3:GetBucketLocation
-                Resource: arn:aws:s3:::rds-backups-calcutta
+                Resource: arn:aws:s3:::rds-backups-calcutta-prod
               - Effect: Allow
                 Action:
                   - s3:GetObject
                   - s3:PutObject
                   - s3:ListMultipartUploadParts
                   - s3:AbortMultipartUpload
-                Resource: arn:aws:s3:::rds-backups-calcutta/*
+                Resource: arn:aws:s3:::rds-backups-calcutta-prod/*

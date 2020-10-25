@@ -1,0 +1,175 @@
+
+service: calcutta-auction-service
+
+package:
+  individually: true
+
+plugins:
+  - serverless-bundle
+
+custom:
+  stage: ${opt:stage, self:provider.stage}
+  provider: ${file(../../common/config/provider.json)}
+
+provider:
+  name: aws
+  runtime: ${self:custom.provider.runtime}
+  timeout: ${self:custom.provider.timeout}
+  logRetentionInDays: ${self:custom.provider.logRetentionInDays}
+  region: ${self:custom.provider.region}
+  stage: ${self:custom.provider.stage}
+  environment:
+    APP_ENV: ${self:custom.stage} # used by the websocket verification function
+    DB_NAME: ${self:custom.provider.env.DB_NAME}
+    DB_USER: ${self:custom.provider.env.DB_USER}
+    DB_PASSWORD: ${self:custom.provider.env.DB_PASSWORD}
+    DB_HOST:
+      Fn::ImportValue: ${self:custom.provider.env.DB_HOST}
+    DB_PORT:
+      Fn::ImportValue: ${self:custom.provider.env.DB_PORT}
+    WEBSOCKET_ENDPOINT:
+      Fn::Join:
+        - ''
+        - - Ref: WebsocketsApi
+          - .execute-api.
+          - Ref: AWS::Region
+          - .amazonaws.com/
+          - ${self:custom.stage}
+  vpc:
+    securityGroupIds:
+      - Fn::ImportValue: ${self:custom.provider.vpc.securityGroupIds.LAMBDA_SG}
+    subnetIds:
+      - Fn::ImportValue: ${self:custom.provider.vpc.subnetIds.SUBNET1}
+      - Fn::ImportValue: ${self:custom.provider.vpc.subnetIds.SUBNET2}
+      - Fn::ImportValue: ${self:custom.provider.vpc.subnetIds.SUBNET3}
+
+functions:
+  getAuctionTeams:
+    handler: functions/getAuctionTeams.getAuctionTeams
+    events:
+      - http:
+          path: getAuctionTeams/{leagueId}
+          method: get
+          integration: lambda
+          authorizer:
+            type: COGNITO_USER_POOLS
+            authorizerId:
+              Ref: ApiGatewayAuthorizer
+          cors:
+            origin: '*'
+            headers:
+              - x-cognito-token
+
+  getAuctionMemberBuyIns:
+    handler: functions/getAuctionMemberBuyIns.getAuctionMemberBuyIns
+    events:
+      - http:
+          path: getAuctionMemberBuyIns/{leagueId}
+          method: get
+          integration: lambda
+          authorizer:
+            type: COGNITO_USER_POOLS
+            authorizerId:
+              Ref: ApiGatewayAuthorizer
+          cors:
+            origin: '*'
+            headers:
+              - x-cognito-token
+
+  getAllChatMessages:
+    handler: functions/chat.getAllMessages
+    events:
+      - http:
+          path: getAllChatMessages/{leagueId}
+          method: get
+          integration: lambda
+          authorizer:
+            type: COGNITO_USER_POOLS
+            authorizerId:
+              Ref: ApiGatewayAuthorizer
+          cors:
+            origin: '*'
+            headers:
+              - x-cognito-token
+
+  getAuctionStatus:
+    handler: functions/getAuctionStatus.getAuctionStatus
+    events:
+      - http:
+          path: getAuctionStatus/{leagueId}
+          method: get
+          integration: lambda
+          authorizer:
+            type: COGNITO_USER_POOLS
+            authorizerId:
+              Ref: ApiGatewayAuthorizer
+          cors:
+            origin: '*'
+            headers:
+              - x-cognito-token
+
+  getServerTime:
+    handler: functions/getServerTime.getServerTime
+    events:
+      - http:
+          path: getServerTime
+          method: get
+          integration: lambda
+          authorizer:
+            type: COGNITO_USER_POOLS
+            authorizerId:
+              Ref: ApiGatewayAuthorizer
+          cors:
+            origin: '*'
+            headers:
+              - x-cognito-token
+
+  # websocket functions
+  onConnect:
+    handler: functions/websocket.onConnect
+    events:
+      - websocket:
+          route: $connect
+  onDisconnect:
+    handler: functions/websocket.onDisconnect
+    events:
+      - websocket:
+          route: $disconnect
+  handleMessage:
+    handler: functions/websocket.handleMessage
+    events:
+      - websocket:
+          route: $default
+  resetClock:
+    handler: functions/admin.resetClock
+    events:
+      - websocket:
+          route: RESET_CLOCK
+  setItemComplete:
+    handler: functions/admin.setItemComplete
+    events:
+      - websocket:
+          route: ITEM_COMPLETE
+  placeBid:
+    handler: functions/admin.placeBid
+    events:
+      - websocket:
+          route: PLACE_BID
+  setNextItem:
+    handler: functions/admin.setNextItem
+    events:
+      - websocket:
+          route: NEXT_ITEM
+  startAuction:
+    handler: functions/admin.startAuction
+    events:
+      - websocket:
+          route: START_AUCTION
+  closeAuction:
+    handler: functions/admin.closeAuction
+    events:
+      - websocket:
+          route: CLOSE_AUCTION
+
+resources:
+  - ${file(../../common/resources/api-gateway-authorizer.yml)}

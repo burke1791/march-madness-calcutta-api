@@ -1,0 +1,202 @@
+
+service: calcutta-league-service
+
+package:
+  individually: true
+
+plugins:
+  - serverless-bundle
+
+custom:
+  stage: ${opt:stage, self:provider.stage}
+  provider: ${file(../../common/config/provider.json)}
+
+provider:
+  name: aws
+  runtime: ${self:custom.provider.runtime}
+  timeout: ${self:custom.provider.timeout}
+  logRetentionInDays: ${self:custom.provider.logRetentionInDays}
+  region: ${self:custom.provider.region}
+  stage: ${self:custom.provider.stage}
+  environment:
+    DB_NAME: ${self:custom.provider.env.DB_NAME}
+    DB_USER: ${self:custom.provider.env.DB_USER}
+    DB_PASSWORD: ${self:custom.provider.env.DB_PASSWORD}
+    DB_HOST:
+      Fn::ImportValue: ${self:custom.provider.env.DB_HOST}
+    DB_PORT:
+      Fn::ImportValue: ${self:custom.provider.env.DB_PORT}
+  vpc:
+    securityGroupIds:
+      - Fn::ImportValue: ${self:custom.provider.vpc.securityGroupIds.LAMBDA_SG}
+    subnetIds:
+      - Fn::ImportValue: ${self:custom.provider.vpc.subnetIds.SUBNET1}
+      - Fn::ImportValue: ${self:custom.provider.vpc.subnetIds.SUBNET2}
+      - Fn::ImportValue: ${self:custom.provider.vpc.subnetIds.SUBNET3}
+
+functions:
+  getTournamentOptions:
+    handler: functions/getTournamentOptions.getTournamentOptions
+    events:
+      - http:
+          path: getTournamentOptions
+          method: get
+          integration: lambda
+          authorizer:
+            type: COGNITO_USER_POOLS
+            authorizerId:
+              Ref: ApiGatewayAuthorizer
+          cors:
+            origin: '*'
+            headers:
+              - x-cognito-token
+
+  createLeague:
+    handler: functions/createLeague.createLeague
+    events:
+      - http:
+          path: createLeague
+          method: post
+          integration: lambda
+          authorizer:
+            type: COGNITO_USER_POOLS
+            authorizerId:
+              Ref: ApiGatewayAuthorizer
+          cors:
+            origin: '*'
+            headers:
+              - Content-Type
+              - x-cognito-token
+
+  joinLeague:
+    handler: functions/joinLeague.joinLeague
+    events:
+      - http:
+          path: joinLeague
+          method: post
+          integration: lambda
+          authorizer:
+            type: COGNITO_USER_POOLS
+            authorizerId:
+              Ref: ApiGatewayAuthorizer
+          cors:
+            origin: '*'
+            headers:
+              - Content-Type
+              - x-cognito-token
+  
+  getLeagueSummaries:
+    handler: functions/getLeagueSummaries.getLeagueSummaries
+    events:
+      - http:
+          path: getLeagueSummaries
+          method: get
+          integration: lambda
+          authorizer:
+            type: COGNITO_USER_POOLS
+            authorizerId:
+              Ref: ApiGatewayAuthorizer
+          cors:
+            origin: '*'
+            headers:
+              - x-cognito-token
+
+  getLeagueUserSummaries:
+    handler: functions/getLeagueUserSummaries.getLeagueUserSummaries
+    events:
+      - http:
+          path: getLeagueUserSummaries/{leagueId}
+          method: get
+          integration: lambda
+          authorizer:
+            type: COGNITO_USER_POOLS
+            authorizerId:
+              Ref: ApiGatewayAuthorizer
+          cors:
+            origin: '*'
+            headers:
+              - x-cognito-token
+
+  getUpcomingGames:
+    handler: functions/getUpcomingGames.getUpcomingGames
+    events:
+      - http:
+          path: getUpcomingGames/{leagueId}
+          method: get
+          integration: lambda
+          authorizer:
+            type: COGNITO_USER_POOLS
+            authorizerId:
+              Ref: ApiGatewayAuthorizer
+          cors:
+            origin: '*'
+            headers:
+              - x-cognito-token
+
+  getRemainingTeamsCount:
+    handler: functions/getRemainingTeamsCount.getRemainingTeamsCount
+    events:
+      - http:
+          path: 'getRemainingTeamsCount/{tournamentId}'
+          method: get
+          integration: lambda
+          authorizer:
+            type: COGNITO_USER_POOLS
+            authorizerId:
+              Ref: ApiGatewayAuthorizer
+          cors:
+            origin: '*'
+            headers:
+              - x-cognito-token
+
+  getTournamentGamesForBracket:
+    handler: functions/getTournamentGamesForBracket.getTournamentGamesForBracket
+    events:
+      - http:
+          path: getTournamentGamesForBracket/{leagueId}
+          method: get
+          integration: lambda
+          authorizer:
+            type: COGNITO_USER_POOLS
+            authorizerId:
+              Ref: ApiGatewayAuthorizer
+          cors:
+            origin: '*'
+            headers:
+              - x-cognito-token
+
+  getLeagueUserTeams:
+    handler: functions/getLeagueUserTeams.getLeagueUserTeams
+    events:
+      - http:
+          path: getLeagueUserTeams/{leagueId}/{userId}
+          method: get
+          integration: lambda
+          authorizer:
+            type: COGNITO_USER_POOLS
+            authorizerId:
+              Ref: ApiGatewayAuthorizer
+          cors:
+            origin: '*'
+            headers:
+              - x-cognito-token
+
+  # updateLeagueSettings:
+  #   handler: functions/leagueSettings.updateLeagueSettings
+  #   events:
+  #     - http:
+  #         path: updateLeagueSettings
+  #         method: post
+  #         integration: lambda
+  #         authorizer:
+  #           type: COGNITO_USER_POOLS
+  #           authorizerId:
+  #             Ref: ApiGatewayAuthorizer
+  #         cors:
+  #           origin: '*'
+  #           headers:
+  #             - Content-Type
+  #             - x-cognito-token
+
+resources:
+  - ${file(../../common/resources/api-gateway-authorizer.yml)}

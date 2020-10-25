@@ -1,13 +1,10 @@
-const sql = require('mssql');
 import AWS from 'aws-sdk';
-import { callbackWaitsForEmptyEventLoopFalse } from '../utilities/common';
-
-const verifyToken = require('../libraries/verify').verifyToken;
-import { generateAllow, generateDeny } from '../utilities/generatePolicy';
-import { connection } from '../db';
+import { verifyToken } from '../../../common/utilities/verify';
+import { generateAllow, generateDeny } from '../../../common/utilities/generatePolicy';
+import { connection, BigInt, Varchar } from '../../../common/utilities/db';
 
 export async function onConnect(event, context, callback) {
-  callbackWaitsForEmptyEventLoopFalse(context);
+  context.callbackWaitsForEmptyEventLoop = false;
   console.log(event);
 
   let connectionId = event.requestContext.connectionId;
@@ -20,13 +17,12 @@ export async function onConnect(event, context, callback) {
     await connection.createConnection();
   }
 
-  const request = new sql.Request();
-  request.input('cognitoSub', sql.VarChar(256), cognitoSub);
-  request.input('leagueId', sql.BigInt(), leagueId);
-  request.input('connectionId', sql.VarChar(128), connectionId);
-
   try {
-    await request.execute('dbo.up_updateAuctionConnection');
+    await connection.pool.request()
+      .input('cognitoSub', Varchar(256), cognitoSub)
+      .input('leagueId', BigInt, leagueId)
+      .input('connectionId', Varchar(128), connectionId)
+      .execute('dbo.up_updateAuctionConnection');
 
     callback(null, {
       statusCode: 200,
@@ -49,7 +45,7 @@ export async function onConnect(event, context, callback) {
 }
 
 export async function onDisconnect(event, context, callback) {
-  callbackWaitsForEmptyEventLoopFalse(context);
+  context.callbackWaitsForEmptyEventLoop = false;
   console.log(event);
 
   let connectionId = event.requestContext.connectionId;
@@ -84,7 +80,7 @@ export async function onDisconnect(event, context, callback) {
 }
 
 export async function handleMessage(event, context, callback) {
-  callbackWaitsForEmptyEventLoopFalse(context);
+  context.callbackWaitsForEmptyEventLoop = false;
 
   await generateAllow('me', event.methodArn);
 
@@ -103,13 +99,13 @@ export async function handleMessage(event, context, callback) {
     await connection.createConnection();
   }
 
-  const request = new sql.Request();
-  request.input('leagueId', sql.BigInt(), leagueId);
-  request.input('connectionId', sql.VarChar(128), connectionId);
-  request.input('content', sql.VarChar(512), content);
-
   try {
-    let result = await request.execute('dbo.up_sendAuctionChat');
+    let result = await connection.pool.request()
+      .input('leagueId', BigInt, leagueId)
+      .input('connectionId', Varchar(128), connectionId)
+      .input('content', Varchar(512), content)
+      .execute('dbo.up_sendAuctionChat');
+
     console.log(result);
     let connectionIds = result.recordset;
     let newMessage = result.recordsets[1][0];

@@ -6,11 +6,8 @@ package:
 
 plugins:
   - serverless-bundle
-  - serverless-offline
-  - serverless-dotenv-plugin
 
 custom:
-  secrets: ${file(secrets.json)}
   stage: ${opt:stage, self:provider.stage}
   profile:
     prod: burke03
@@ -22,27 +19,26 @@ provider:
   timeout: 15
   region: us-east-1
   stage: dev
-  profile: ${self:custom.profile.${self:custom.stage}}
   websocketsApiName: calcutta-websockets-api-${self:custom.stage}
   websocketsApiRouteSelectionExpression: $request.body.action
   environment:
     NODE_ENV: ${self:custom.stage}
     APP_ENV: ${self:custom.stage}
-    DB_NAME: ${self:custom.secrets.${self:custom.stage}.DB_NAME}
-    DB_USER: ${self:custom.secrets.${self:custom.stage}.DB_USER}
-    DB_PASSWORD: ${self:custom.secrets.${self:custom.stage}.DB_PASSWORD}
+    DB_NAME: ${env:DB_NAME}
+    DB_USER: ${env:DB_USER}
+    DB_PASSWORD: ${env:DB_PASSWORD}
     DB_HOST:
       Fn::GetAtt: [ CalcuttaDB, Endpoint.Address ]
     DB_PORT:
       Fn::GetAtt: [ CalcuttaDB, Endpoint.Port ]
-    WEBSOCKET_ENDPOINT:
-      Fn::Join:
-        - ''
-        - - Ref: WebsocketsApi
-          - .execute-api.
-          - Ref: AWS::Region
-          - .amazonaws.com/
-          - ${self:custom.stage}
+    # WEBSOCKET_ENDPOINT:
+    #   Fn::Join:
+    #     - ''
+    #     - - Ref: WebsocketsApi
+    #       - .execute-api.
+    #       - Ref: AWS::Region
+    #       - .amazonaws.com/
+    #       - ${self:custom.stage}
   vpc:
     securityGroupIds:
       - Ref: LambdaSG
@@ -52,282 +48,282 @@ provider:
       - Ref: LambdaSubnet3
 
 
-functions:
-  getTournamentOptions:
-    handler: getTournamentOptions.getTournamentOptions
-    events:
-      - http:
-          path: getTournamentOptions
-          method: get
-          integration: lambda
-          authorizer:
-            type: COGNITO_USER_POOLS
-            authorizerId:
-              Ref: ApiGatewayAuthorizer
-          cors:
-            origin: '*'
-            headers:
-              - x-cognito-token
+# functions:
+  # getTournamentOptions:
+  #   handler: getTournamentOptions.getTournamentOptions
+  #   events:
+  #     - http:
+  #         path: getTournamentOptions
+  #         method: get
+  #         integration: lambda
+  #         authorizer:
+  #           type: COGNITO_USER_POOLS
+  #           authorizerId:
+  #             Ref: ApiGatewayAuthorizer
+  #         cors:
+  #           origin: '*'
+  #           headers:
+  #             - x-cognito-token
 
-  createLeague:
-    handler: createLeague.createLeague
-    events:
-      - http:
-          path: createLeague
-          method: post
-          integration: lambda
-          authorizer:
-            type: COGNITO_USER_POOLS
-            authorizerId:
-              Ref: ApiGatewayAuthorizer
-          cors:
-            origin: '*'
-            headers:
-              - Content-Type
-              - x-cognito-token
+  # createLeague:
+  #   handler: createLeague.createLeague
+  #   events:
+  #     - http:
+  #         path: createLeague
+  #         method: post
+  #         integration: lambda
+  #         authorizer:
+  #           type: COGNITO_USER_POOLS
+  #           authorizerId:
+  #             Ref: ApiGatewayAuthorizer
+  #         cors:
+  #           origin: '*'
+  #           headers:
+  #             - Content-Type
+  #             - x-cognito-token
 
-  joinLeague:
-    handler: joinLeague.joinLeague
-    events:
-      - http:
-          path: joinLeague
-          method: post
-          integration: lambda
-          authorizer:
-            type: COGNITO_USER_POOLS
-            authorizerId:
-              Ref: ApiGatewayAuthorizer
-          cors:
-            origin: '*'
-            headers:
-              - Content-Type
-              - x-cognito-token
+  # joinLeague:
+  #   handler: joinLeague.joinLeague
+  #   events:
+  #     - http:
+  #         path: joinLeague
+  #         method: post
+  #         integration: lambda
+  #         authorizer:
+  #           type: COGNITO_USER_POOLS
+  #           authorizerId:
+  #             Ref: ApiGatewayAuthorizer
+  #         cors:
+  #           origin: '*'
+  #           headers:
+  #             - Content-Type
+  #             - x-cognito-token
 
-  getLeagueSummaries:
-    handler: getLeagueSummaries.getLeagueSummaries
-    events:
-      - http:
-          path: getLeagueSummaries
-          method: get
-          integration: lambda
-          authorizer:
-            type: COGNITO_USER_POOLS
-            authorizerId:
-              Ref: ApiGatewayAuthorizer
-          cors:
-            origin: '*'
-            headers:
-              - x-cognito-token
+  # getLeagueSummaries:
+  #   handler: getLeagueSummaries.getLeagueSummaries
+  #   events:
+  #     - http:
+  #         path: getLeagueSummaries
+  #         method: get
+  #         integration: lambda
+  #         authorizer:
+  #           type: COGNITO_USER_POOLS
+  #           authorizerId:
+  #             Ref: ApiGatewayAuthorizer
+  #         cors:
+  #           origin: '*'
+  #           headers:
+  #             - x-cognito-token
 
-  getLeagueUserSummaries:
-    handler: getLeagueUserSummaries.getLeagueUserSummaries
-    events:
-      - http:
-          path: getLeagueUserSummaries/{leagueId}
-          method: get
-          integration: lambda
-          authorizer:
-            type: COGNITO_USER_POOLS
-            authorizerId:
-              Ref: ApiGatewayAuthorizer
-          cors:
-            origin: '*'
-            headers:
-              - x-cognito-token
+  # getLeagueUserSummaries:
+  #   handler: getLeagueUserSummaries.getLeagueUserSummaries
+  #   events:
+  #     - http:
+  #         path: getLeagueUserSummaries/{leagueId}
+  #         method: get
+  #         integration: lambda
+  #         authorizer:
+  #           type: COGNITO_USER_POOLS
+  #           authorizerId:
+  #             Ref: ApiGatewayAuthorizer
+  #         cors:
+  #           origin: '*'
+  #           headers:
+  #             - x-cognito-token
 
-  getUpcomingGames:
-    handler: getUpcomingGames.getUpcomingGames
-    events:
-      - http:
-          path: getUpcomingGames/{leagueId}
-          method: get
-          integration: lambda
-          authorizer:
-            type: COGNITO_USER_POOLS
-            authorizerId:
-              Ref: ApiGatewayAuthorizer
-          cors:
-            origin: '*'
-            headers:
-              - x-cognito-token
+  # getUpcomingGames:
+  #   handler: getUpcomingGames.getUpcomingGames
+  #   events:
+  #     - http:
+  #         path: getUpcomingGames/{leagueId}
+  #         method: get
+  #         integration: lambda
+  #         authorizer:
+  #           type: COGNITO_USER_POOLS
+  #           authorizerId:
+  #             Ref: ApiGatewayAuthorizer
+  #         cors:
+  #           origin: '*'
+  #           headers:
+  #             - x-cognito-token
 
-  getRemainingTeamsCount:
-    handler: getRemainingTeamsCount.getRemainingTeamsCount
-    events:
-      - http:
-          path: 'getRemainingTeamsCount/{tournamentId}'
-          method: get
-          integration: lambda
-          authorizer:
-            type: COGNITO_USER_POOLS
-            authorizerId:
-              Ref: ApiGatewayAuthorizer
-          cors:
-            origin: '*'
-            headers:
-              - x-cognito-token
+  # getRemainingTeamsCount:
+  #   handler: getRemainingTeamsCount.getRemainingTeamsCount
+  #   events:
+  #     - http:
+  #         path: 'getRemainingTeamsCount/{tournamentId}'
+  #         method: get
+  #         integration: lambda
+  #         authorizer:
+  #           type: COGNITO_USER_POOLS
+  #           authorizerId:
+  #             Ref: ApiGatewayAuthorizer
+  #         cors:
+  #           origin: '*'
+  #           headers:
+  #             - x-cognito-token
 
-  getLeagueUserTeams:
-    handler: getLeagueUserTeams.getLeagueUserTeams
-    events:
-      - http:
-          path: getLeagueUserTeams/{leagueId}/{userId}
-          method: get
-          integration: lambda
-          authorizer:
-            type: COGNITO_USER_POOLS
-            authorizerId:
-              Ref: ApiGatewayAuthorizer
-          cors:
-            origin: '*'
-            headers:
-              - x-cognito-token
+  # getLeagueUserTeams:
+  #   handler: getLeagueUserTeams.getLeagueUserTeams
+  #   events:
+  #     - http:
+  #         path: getLeagueUserTeams/{leagueId}/{userId}
+  #         method: get
+  #         integration: lambda
+  #         authorizer:
+  #           type: COGNITO_USER_POOLS
+  #           authorizerId:
+  #             Ref: ApiGatewayAuthorizer
+  #         cors:
+  #           origin: '*'
+  #           headers:
+  #             - x-cognito-token
 
-  getAuctionTeams:
-    handler: getAuctionTeams.getAuctionTeams
-    events:
-      - http:
-          path: getAuctionTeams/{leagueId}
-          method: get
-          integration: lambda
-          authorizer:
-            type: COGNITO_USER_POOLS
-            authorizerId:
-              Ref: ApiGatewayAuthorizer
-          cors:
-            origin: '*'
-            headers:
-              - x-cognito-token
+  # getAuctionTeams:
+  #   handler: getAuctionTeams.getAuctionTeams
+  #   events:
+  #     - http:
+  #         path: getAuctionTeams/{leagueId}
+  #         method: get
+  #         integration: lambda
+  #         authorizer:
+  #           type: COGNITO_USER_POOLS
+  #           authorizerId:
+  #             Ref: ApiGatewayAuthorizer
+  #         cors:
+  #           origin: '*'
+  #           headers:
+  #             - x-cognito-token
 
-  getAuctionMemberBuyIns:
-    handler: getAuctionMemberBuyIns.getAuctionMemberBuyIns
-    events:
-      - http:
-          path: getAuctionMemberBuyIns/{leagueId}
-          method: get
-          integration: lambda
-          authorizer:
-            type: COGNITO_USER_POOLS
-            authorizerId:
-              Ref: ApiGatewayAuthorizer
-          cors:
-            origin: '*'
-            headers:
-              - x-cognito-token
+  # getAuctionMemberBuyIns:
+  #   handler: getAuctionMemberBuyIns.getAuctionMemberBuyIns
+  #   events:
+  #     - http:
+  #         path: getAuctionMemberBuyIns/{leagueId}
+  #         method: get
+  #         integration: lambda
+  #         authorizer:
+  #           type: COGNITO_USER_POOLS
+  #           authorizerId:
+  #             Ref: ApiGatewayAuthorizer
+  #         cors:
+  #           origin: '*'
+  #           headers:
+  #             - x-cognito-token
 
-  getAllChatMessages:
-    handler: auction/chat.getAllMessages
-    events:
-      - http:
-          path: getAllChatMessages/{leagueId}
-          method: get
-          integration: lambda
-          authorizer:
-            type: COGNITO_USER_POOLS
-            authorizerId:
-              Ref: ApiGatewayAuthorizer
-          cors:
-            origin: '*'
-            headers:
-              - x-cognito-token
+  # getAllChatMessages:
+  #   handler: auction/chat.getAllMessages
+  #   events:
+  #     - http:
+  #         path: getAllChatMessages/{leagueId}
+  #         method: get
+  #         integration: lambda
+  #         authorizer:
+  #           type: COGNITO_USER_POOLS
+  #           authorizerId:
+  #             Ref: ApiGatewayAuthorizer
+  #         cors:
+  #           origin: '*'
+  #           headers:
+  #             - x-cognito-token
 
-  getAuctionStatus:
-    handler: getAuctionStatus.getAuctionStatus
-    events:
-      - http:
-          path: getAuctionStatus/{leagueId}
-          method: get
-          integration: lambda
-          authorizer:
-            type: COGNITO_USER_POOLS
-            authorizerId:
-              Ref: ApiGatewayAuthorizer
-          cors:
-            origin: '*'
-            headers:
-              - x-cognito-token
+  # getAuctionStatus:
+  #   handler: getAuctionStatus.getAuctionStatus
+  #   events:
+  #     - http:
+  #         path: getAuctionStatus/{leagueId}
+  #         method: get
+  #         integration: lambda
+  #         authorizer:
+  #           type: COGNITO_USER_POOLS
+  #           authorizerId:
+  #             Ref: ApiGatewayAuthorizer
+  #         cors:
+  #           origin: '*'
+  #           headers:
+  #             - x-cognito-token
 
-  getTournamentGamesForBracket:
-    handler: getTournamentGamesForBracket.getTournamentGamesForBracket
-    events:
-      - http:
-          path: getTournamentGamesForBracket/{leagueId}
-          method: get
-          integration: lambda
-          authorizer:
-            type: COGNITO_USER_POOLS
-            authorizerId:
-              Ref: ApiGatewayAuthorizer
-          cors:
-            origin: '*'
-            headers:
-              - x-cognito-token
+  # getTournamentGamesForBracket:
+  #   handler: getTournamentGamesForBracket.getTournamentGamesForBracket
+  #   events:
+  #     - http:
+  #         path: getTournamentGamesForBracket/{leagueId}
+  #         method: get
+  #         integration: lambda
+  #         authorizer:
+  #           type: COGNITO_USER_POOLS
+  #           authorizerId:
+  #             Ref: ApiGatewayAuthorizer
+  #         cors:
+  #           origin: '*'
+  #           headers:
+  #             - x-cognito-token
 
-  getServerTime:
-    handler: getServerTime.getServerTime
-    events:
-      - http:
-          path: getServerTime
-          method: get
-          integration: lambda
-          authorizer:
-            type: COGNITO_USER_POOLS
-            authorizerId:
-              Ref: ApiGatewayAuthorizer
-          cors:
-            origin: '*'
-            headers:
-              - x-cognito-token
+  # getServerTime:
+  #   handler: getServerTime.getServerTime
+  #   events:
+  #     - http:
+  #         path: getServerTime
+  #         method: get
+  #         integration: lambda
+  #         authorizer:
+  #           type: COGNITO_USER_POOLS
+  #           authorizerId:
+  #             Ref: ApiGatewayAuthorizer
+  #         cors:
+  #           origin: '*'
+  #           headers:
+  #             - x-cognito-token
 
   # websocketAuthorizer:
   #   handler: utilities/authorizer.websocketAuthorizer
   #   events
 
-  onConnect:
-    handler: auction/websocket.onConnect
-    events:
-      - websocket:
-          route: $connect
-  onDisconnect:
-    handler: auction/websocket.onDisconnect
-    events:
-      - websocket:
-          route: $disconnect
-  handleMessage:
-    handler: auction/websocket.handleMessage
-    events:
-      - websocket:
-          route: $default
-  resetClock:
-    handler: auction/admin.resetClock
-    events:
-      - websocket:
-          route: RESET_CLOCK
-  setItemComplete:
-    handler: auction/admin.setItemComplete
-    events:
-      - websocket:
-          route: ITEM_COMPLETE
-  placeBid:
-    handler: auction/admin.placeBid
-    events:
-      - websocket:
-          route: PLACE_BID
-  setNextItem:
-    handler: auction/admin.setNextItem
-    events:
-      - websocket:
-          route: NEXT_ITEM
-  startAuction:
-    handler: auction/admin.startAuction
-    events:
-      - websocket:
-          route: START_AUCTION
-  closeAuction:
-    handler: auction/admin.closeAuction
-    events:
-      - websocket:
-          route: CLOSE_AUCTION
+  # onConnect:
+  #   handler: auction/websocket.onConnect
+  #   events:
+  #     - websocket:
+  #         route: $connect
+  # onDisconnect:
+  #   handler: auction/websocket.onDisconnect
+  #   events:
+  #     - websocket:
+  #         route: $disconnect
+  # handleMessage:
+  #   handler: auction/websocket.handleMessage
+  #   events:
+  #     - websocket:
+  #         route: $default
+  # resetClock:
+  #   handler: auction/admin.resetClock
+  #   events:
+  #     - websocket:
+  #         route: RESET_CLOCK
+  # setItemComplete:
+  #   handler: auction/admin.setItemComplete
+  #   events:
+  #     - websocket:
+  #         route: ITEM_COMPLETE
+  # placeBid:
+  #   handler: auction/admin.placeBid
+  #   events:
+  #     - websocket:
+  #         route: PLACE_BID
+  # setNextItem:
+  #   handler: auction/admin.setNextItem
+  #   events:
+  #     - websocket:
+  #         route: NEXT_ITEM
+  # startAuction:
+  #   handler: auction/admin.startAuction
+  #   events:
+  #     - websocket:
+  #         route: START_AUCTION
+  # closeAuction:
+  #   handler: auction/admin.closeAuction
+  #   events:
+  #     - websocket:
+  #         route: CLOSE_AUCTION
 
 
 resources:
@@ -340,5 +336,5 @@ resources:
   - ${file(resources/security-groups.yml)}
   - ${file(resources/rds.yml)}
   - ${file(resources/roles.yml)}
-  - ${file(resources/api-gateway-errors.yml)}
-  - ${file(resources/api-gateway-authorizer.yml)}
+  # - ${file(resources/api-gateway-errors.yml)}
+  # - ${file(resources/api-gateway-authorizer.yml)}

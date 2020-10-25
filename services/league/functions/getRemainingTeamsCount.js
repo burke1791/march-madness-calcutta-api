@@ -1,8 +1,7 @@
-import { callbackWaitsForEmptyEventLoopFalse } from './utilities/common';
-const connection = require('./db').connection;
+const connection = require('../../../common/utilities/db').connection;
 
 export async function getRemainingTeamsCount(event, context, callback) {
-  callbackWaitsForEmptyEventLoopFalse(context);
+  context.callbackWaitsForEmptyEventLoop = false;
 
   // in case we need it for future refactoring
   // let cognitoSub = event.cognitoPoolClaims.sub;

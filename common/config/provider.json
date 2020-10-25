@@ -1,0 +1,24 @@
+{
+  "runtime": "nodejs12.x",
+  "timeout": 15,
+  "logRetentionInDays": 7,
+  "region": "us-east-1",
+  "stage": "dev",
+  "env": {
+    "DB_NAME": "${env:DB_NAME}",
+    "DB_USER": "${env:DB_USER}",
+    "DB_PASSWORD": "${env:DB_PASSWORD}",
+    "DB_HOST": "calcutta-db-${self:custom.stage}-address",
+    "DB_PORT": "calcutta-db-${self:custom.stage}-port"
+  },
+  "vpc": {
+    "securityGroupIds": {
+      "LAMBDA_SG": "calcutta-lambdaSG-${self:custom.stage}"
+    },
+    "subnetIds": {
+      "SUBNET1": "calcutta-lambda-subnet1-${self:custom.stage}",
+      "SUBNET2": "calcutta-lambda-subnet2-${self:custom.stage}",
+      "SUBNET3": "calcutta-lambda-subnet3-${self:custom.stage}"
+    }
+  }
+}
