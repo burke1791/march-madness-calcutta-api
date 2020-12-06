@@ -1,0 +1,24 @@
+
+name: calcutta api dev
+
+on:
+  pull_request:
+    branches: develop
+
+jobs:
+  base_deploy:
+    name: Deploy base service
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v2
+      - name: use nodejs
+        uses: actions/setup-node@v1
+        with:
+          node-version: '12.x'
+      - run: npm install -g serverless
+      - run: npm install
+      - run: serverless deploy -s $STAGE_NAME
+  
+  env:
+    STAGE_NAME: dev
