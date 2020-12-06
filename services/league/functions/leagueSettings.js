@@ -1,4 +1,4 @@
-import { connection, BigInt, Decimal, Varchar, TinyInt, Bit, Int } from '../../../common/utilities/db';
+import { connection, BigInt, Varchar } from '../../../common/utilities/db';
 
 export async function updateLeagueSettings(event, context, callback) {
   context.callbackWaitsForEmptyEventLoop = false;
