@@ -20,5 +20,5 @@ jobs:
       - run: npm install
       - run: serverless deploy -s $STAGE_NAME
   
-  env:
-    STAGE_NAME: dev
+env:
+  STAGE_NAME: dev
