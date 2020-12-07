@@ -14,7 +14,7 @@ export async function updateLeagueSettings(event, context, callback) {
       await connection.createConnection();
     }
 
-    let tvp = new Table();
+    let tvp = Table();
     tvp.columns.add('SettingParameterId', BigInt, { nullable: false });
     tvp.columns.add('SettingValue', Varchar(255), { nullable: true });
 
