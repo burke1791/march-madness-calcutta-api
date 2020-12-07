@@ -19,6 +19,40 @@ jobs:
       - run: npm install -g serverless
       - run: npm install
       - run: serverless deploy -s $STAGE_NAME
+
+  league_service:
+    name: Deploy league service API
+    needs: base_deploy
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: use nodejs
+        uses: actions/setup-node@v1
+        with:
+          node-version: '12.x'
+      - run: npm install -g serverless
+      - run: npm install
+      - run: |
+          cd services/league
+          serverless deploy -s $STAGE_NAME
+
+  auction_service:
+    name: Deploy auction service API
+    needs: base_deploy
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: use nodejs
+        uses: actions/setup-node@v1
+        with:
+          node-version: '12.x'
+      - run: npm install -g serverless
+      - run: npm install
+      - run: |
+          cd services/auction
+          serverless deploy -s $STAGE_NAME
   
 env:
   STAGE_NAME: dev
