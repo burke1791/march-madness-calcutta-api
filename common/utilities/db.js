@@ -32,6 +32,7 @@ const Int = sql.Int;
 const BigInt = sql.BigInt;
 const Varchar = (length) => sql.VarChar(length);
 const Decimal = (digits, precision) => sql.Decimal(digits, precision);
+const Table = () => sql.Table();
 
 export {
   connection,
@@ -41,5 +42,6 @@ export {
   Int,
   BigInt,
   Varchar,
-  Decimal
+  Decimal,
+  Table
 };

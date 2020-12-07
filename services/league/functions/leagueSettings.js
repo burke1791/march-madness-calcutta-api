@@ -1,13 +1,34 @@
-import { connection, BigInt, Varchar } from '../../../common/utilities/db';
+import { connection, BigInt, Varchar, Table } from '../../../common/utilities/db';
 
 export async function updateLeagueSettings(event, context, callback) {
   context.callbackWaitsForEmptyEventLoop = false;
 
   try {
+    let cognitoSub = event.cognitoPoolClaims.sub;
 
-    // if (!connection.isConnected) {
-    //   await connection.createConnection();
-    // }
+    let { leagueId, settings } = event.body;
+
+    console.log(settings);
+
+    if (!connection.isConnected) {
+      await connection.createConnection();
+    }
+
+    let tvp = new Table();
+    tvp.columns.add('SettingParameterId', BigInt, { nullable: false });
+    tvp.columns.add('SettingValue', Varchar(255), { nullable: true });
+
+    settings.forEach(obj => {
+      tvp.rows.add(obj.settingParameterId, obj.settingValue);
+    });
+
+    let result = await connection.pool.request()
+      .input('LeagueId', BigInt, leagueId)
+      .input('CognitoSub', Varchar(256), cognitoSub)
+      .input('SettingInputs', tvp)
+      .execute('dbo.up_UpdateLeagueSettings');
+
+    console.log(result);
 
     callback(null, { message: 'this endpoint is under construction' });
   } catch (error) {
@@ -32,8 +53,6 @@ export async function getLeagueSettings(event, context, callback) {
       .input('LeagueId', BigInt, leagueId)
       .input('CognitoSub', Varchar(256), cognitoSub)
       .execute('dbo.up_GetLeagueSettings');
-
-    console.log(result);
 
     callback(null, result.recordset);
   } catch (error) {
