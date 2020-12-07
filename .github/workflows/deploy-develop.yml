@@ -2,7 +2,7 @@
 name: calcutta api dev
 
 on:
-  pull_request:
+  push:
     branches: develop
 
 jobs:
@@ -22,3 +22,14 @@ jobs:
   
 env:
   STAGE_NAME: dev
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID_DEV }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY_DEV }}
+  DB_NAME: ${{ secrets.DB_NAME }}
+  DB_MASTER_USER: ${{ secrets.DB_MASTER_USER }}
+  DB_MASTER_PASSWORD: ${{ secrets.DB_MASTER_PASSWORD }}
+  DB_USER: ${{ secrets.DB_USER }}
+  DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+  USER_POOL_ARN: ${{ secrets.USER_POOL_ARN_DEV }}
+  AWS_COGNITO_VPC_ID: ${{ secrets.AWS_COGNITO_VPC_ID_DEV }}
+  AWS_COGNITO_LAMBDA_SG_ID: ${{ secrets.AWS_COGNITO_LAMBDA_SG_ID_DEV }}
+  AWS_COGNITO_ACCOUNT_ID: ${{ secrets.AWS_COGNITO_ACCOUNT_ID }}
