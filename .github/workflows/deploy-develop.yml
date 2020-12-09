@@ -1,5 +1,5 @@
 
-name: calcutta api dev
+name: Stage
 
 on:
   push:

@@ -30,7 +30,7 @@ export async function updateLeagueSettings(event, context, callback) {
 
     console.log(result);
 
-    callback(null, { message: 'this endpoint is under construction' });
+    callback(null, result.recordset);
   } catch (error) {
     console.log(error);
     callback(null, { message: 'ERROR!' });
