@@ -1,3 +1,5 @@
+import { Varchar } from '../../../common/utilities/db';
+
 const connection = require('../../../common/utilities/db').connection;
 
 export async function getTournamentOptions(event, context, callback) {
@@ -10,23 +12,10 @@ export async function getTournamentOptions(event, context, callback) {
       await connection.createConnection();
     }
 
-    let query = `Select t.name, t.id
-                From dbo.tournaments t
-                Where t.testOnly = 0
-                And t.invalidated Is Null
-                Union
-                Select t.name, t.id
-                From dbo.tournaments t
-                Where t.testOnly = 1
-                And t.invalidated Is Null
-                And Exists (
-                  Select *
-                  From dbo.users u
-                  Where u.cognitoSub = '${cognitoSub}'
-                  And u.permissionId In (2, 3)
-                )`;
+    let result = await connection.pool.request()
+      .input('CognitoSub', Varchar(256), cognitoSub)
+      .execute('dbo.up_GetTournamentOptions');
 
-    let result = await connection.pool.request().query(query);
     console.log(result);
 
     callback(null, result.recordset);
