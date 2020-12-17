@@ -16,6 +16,7 @@ export async function getLeagueSummaries(event, context, callback) {
       , lm.leagueId
       , l.name
       , [tournamentId] = t.id
+      , [tournamentRegimeId] = l.TournamentRegimeId
       , [tournamentName] = t.name
       , lm.roleId
       , [role] = lr.name
@@ -31,7 +32,8 @@ export async function getLeagueSummaries(event, context, callback) {
       On lm.roleId = lr.id 
       Inner Join dbo.users u 
       On lm.userId = u.id 
-      Where u.cognitoSub = '${cognitoSub}'`);
+      Where u.cognitoSub = '${cognitoSub}'
+      And l.IsDeleted = 0`);
 
     callback(null, result.recordset);
   } catch (error) {
