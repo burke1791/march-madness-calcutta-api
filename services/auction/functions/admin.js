@@ -97,7 +97,7 @@ export async function setItemComplete(event, context, callback) {
       msgType: 'auction'
     };
 
-    await sendWebsocketPayloads(connectionIds, payload, event.requestContext.domainName, event.requestContext.stage, callback);
+    await sendWebsocketPayloads(connectionIds, payload, event.requestContext.domainName, event.requestContext.stage);
 
     callback(null, {
       statusCode: 200,
@@ -140,7 +140,7 @@ export async function placeBid(event, context, callback) {
         msgType: 'auction_error'
       };
 
-      await sendWebsocketPayloads([{ connectionId }], payload, event.requestContext.domainName, event.requestContext.stage, callback);
+      await sendWebsocketPayloads([{ connectionId }], payload, event.requestContext.domainName, event.requestContext.stage);
 
       callback(null, {
         statusCode: 200,
@@ -156,7 +156,7 @@ export async function placeBid(event, context, callback) {
         msgType: 'auction'
       };
 
-      await sendWebsocketPayloads(connectionIds, payload, event.requestContext.domainName, event.requestContext.stage, callback);
+      await sendWebsocketPayloads(connectionIds, payload, event.requestContext.domainName, event.requestContext.stage);
 
       callback(null, {
         statusCode: 200,
@@ -201,7 +201,7 @@ export async function setNextItem(event, context, callback) {
       msgType: 'auction'
     };
 
-    await sendWebsocketPayloads(connectionIds, payload, event.requestContext.domainName, event.requestContext.stage, callback);
+    await sendWebsocketPayloads(connectionIds, payload, event.requestContext.domainName, event.requestContext.stage);
 
     callback(null, {
       statusCode: 200,
@@ -289,7 +289,7 @@ export async function closeAuction(event, context, callback) {
       msgType: 'auction'
     };
 
-    await sendWebsocketPayloads(connectionIds, payload, event.requestContext.domainName, event.requestContext.stage, callback);
+    await sendWebsocketPayloads(connectionIds, payload, event.requestContext.domainName, event.requestContext.stage);
 
     callback(null, {
       statusCode: 200,
