@@ -12,7 +12,7 @@ export async function createLeague(event, context, callback) {
     let name = body.name;
     let password = body.password;
     let tournamentId = Number(body.tournamentId);
-    let tournamentRegimeId = Number(body.tournamentScopeId)
+    let tournamentRegimeId = Number(body.tournamentScopeId);
 
     if (!connection.isConnected) {
       await connection.createConnection();
@@ -25,7 +25,7 @@ export async function createLeague(event, context, callback) {
       .input('TournamentId', SmallInt, tournamentId)
       .input('TournamentRegimeId', Int, tournamentRegimeId)
       .execute('dbo.up_CreateLeague');
-    
+
     console.log(result);
 
     callback(null, { message: 'league created' });
