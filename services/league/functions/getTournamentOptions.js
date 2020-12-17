@@ -18,7 +18,7 @@ export async function getTournamentOptions(event, context, callback) {
 
     console.log(result);
 
-    callback(null, result.recordset);
+    callback(null, result.recordsets);
   } catch (error) {
     console.log(error);
     callback(null, { message: 'ERROR!' });
