@@ -18,6 +18,7 @@ export async function getLeagueSummaries(event, context, callback) {
       , [tournamentId] = t.id
       , [tournamentRegimeId] = l.TournamentRegimeId
       , [tournamentName] = t.name
+      , [tournamentRegimeName] = tr.Name
       , lm.roleId
       , [role] = lr.name
       , lm.naturalBuyIn
@@ -28,6 +29,9 @@ export async function getLeagueSummaries(event, context, callback) {
       On lm.leagueId = l.id 
       Inner Join dbo.tournaments t
       On l.tournamentId = t.id
+      Inner Join dbo.TournamentRegime tr
+      On l.TournamentId = tr.TournamentId
+      And l.TournamentRegimeId = tr.TournamentRegimeId
       Inner Join dbo.leagueRoles lr 
       On lm.roleId = lr.id 
       Inner Join dbo.users u 
