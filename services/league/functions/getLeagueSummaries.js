@@ -29,7 +29,7 @@ export async function getLeagueSummaries(event, context, callback) {
       On lm.leagueId = l.id 
       Inner Join dbo.tournaments t
       On l.tournamentId = t.id
-      Inner Join dbo.TournamentRegime tr
+      Left Join dbo.TournamentRegime tr
       On l.TournamentId = tr.TournamentId
       And l.TournamentRegimeId = tr.TournamentRegimeId
       Inner Join dbo.leagueRoles lr 
