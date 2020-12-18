@@ -1,4 +1,4 @@
-import { connection } from '../../../common/utilities/db';
+import { BigInt, connection, Varchar } from '../../../common/utilities/db';
 
 export async function getAuctionStatus(event, context, callback) {
   context.callbackWaitsForEmptyEventLoop = false;
@@ -12,9 +12,10 @@ export async function getAuctionStatus(event, context, callback) {
       await connection.createConnection();
     }
 
-    let query = `Select [status] = s.name, a.currentItemId, t.name, tt.seed, a.currentItemPrice, a.currentItemWinner, u.alias, a.lastBidTimestamp From dbo.auctions a Inner Join dbo.auctionStatus s On a.statusId = s.id Left Join dbo.teams t On a.currentItemId = t.id Inner Join dbo.leagues l On a.leagueId = l.id Left Join dbo.tournamentTeams tt On t.id = tt.teamId And l.tournamentId = tt.tournamentId Left Join dbo.users u On a.currentItemWinner = u.id Where a.leagueId = ${leagueId} And Exists (Select * From dbo.leagueMemberships lm Inner Join dbo.users u2 On lm.userId = u2.id Where lm.leagueId = ${leagueId} And u2.cognitoSub = '${cognitoSub}')`;
-
-    let result = await connection.pool.request().query(query);
+    let result = await connection.pool.request()
+      .input('CognitoSub', Varchar(256), cognitoSub)
+      .input('LeagueId', BigInt, leagueId)
+      .execute('dbo.up_GetAuctionStatus');
 
     callback(null, result.recordset);
   } catch (error) {
