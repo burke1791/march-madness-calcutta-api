@@ -20,7 +20,7 @@ export async function joinLeague(event, context, callback) {
       From dbo.leagues l
       Where l.name = '${name}'
       And l.password = '${password}'
-      And l.statusId = 1
+      And l.statusId < 2
     )
     Insert Into dbo.leagueMemberships (userId, leagueId, roleId)
     Select u.id
