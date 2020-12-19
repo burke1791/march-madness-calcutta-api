@@ -247,9 +247,9 @@ export async function startAuction(event, context, callback) {
     };
 
     if (isError) {
-      payload.msgType = 'error'
+      payload.msgType = 'error';
     } else {
-      payload.msgType = 'auction'
+      payload.msgType = 'auction';
     }
 
     await sendWebsocketPayloads(connectionIds, payload, event.requestContext.domainName, event.requestContext.stage, callback);
