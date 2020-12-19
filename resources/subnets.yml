@@ -90,3 +90,9 @@ Outputs:
       Ref: LambdaSubnet3
     Export:
       Name: calcutta-lambda-subnet3-${self:custom.stage}
+  NatSubnet1Id:
+    Description: 'NatSubnet1 Id'
+    Value:
+      Ref: NatSubnet1
+    Export:
+      Name: calcutta-nat-subnet1-${self:custom.stage}
