@@ -240,10 +240,17 @@ export async function startAuction(event, context, callback) {
     let auctionStatus = result.recordsets[1][0];
     console.log(auctionStatus);
 
+    let isError = Object.keys(auctionStatus)[0] === 'Error';
+
     let payload = {
-      msgObj: auctionStatus,
-      msgType: 'auction'
+      msgObj: auctionStatus
     };
+
+    if (isError) {
+      payload.msgType = 'error'
+    } else {
+      payload.msgType = 'auction'
+    }
 
     await sendWebsocketPayloads(connectionIds, payload, event.requestContext.domainName, event.requestContext.stage, callback);
 
