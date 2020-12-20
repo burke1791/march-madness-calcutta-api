@@ -1,5 +1,6 @@
 import AWS from 'aws-sdk';
 import { connection, BigInt, Varchar, Decimal } from '../../../common/utilities/db';
+import { constructAuctionPayload } from './utilities/helper';
 
 export async function resetClock(event, context, callback) {
   context.callbackWaitsForEmptyEventLoop = false;
@@ -23,12 +24,8 @@ export async function resetClock(event, context, callback) {
 
     let connectionIds = result.recordset;
     let auctionStatus = result.recordsets[1][0];
-    console.log(auctionStatus);
 
-    let payload = {
-      msgObj: auctionStatus,
-      msgType: 'auction'
-    };
+    let payload = constructAuctionPayload(auctionStatus);
 
     const apig = new AWS.ApiGatewayManagementApi({
       apiVersion: '2018-11-29',
@@ -90,12 +87,8 @@ export async function setItemComplete(event, context, callback) {
 
     let connectionIds = result.recordset;
     let auctionStatus = result.recordsets[1][0];
-    console.log(auctionStatus);
 
-    let payload = {
-      msgObj: auctionStatus,
-      msgType: 'auction'
-    };
+    let payload = constructAuctionPayload(auctionStatus);
 
     await sendWebsocketPayloads(connectionIds, payload, event.requestContext.domainName, event.requestContext.stage);
 
@@ -190,16 +183,10 @@ export async function setNextItem(event, context, callback) {
       .input('leagueId', BigInt, leagueId)
       .execute('dbo.up_nextItem');
 
-    console.log(result);
-
     let connectionIds = result.recordset;
     let auctionStatus = result.recordsets[1][0];
-    console.log(auctionStatus);
 
-    let payload = {
-      msgObj: auctionStatus,
-      msgType: 'auction'
-    };
+    let payload = constructAuctionPayload(auctionStatus);
 
     await sendWebsocketPayloads(connectionIds, payload, event.requestContext.domainName, event.requestContext.stage);
 
@@ -234,23 +221,10 @@ export async function startAuction(event, context, callback) {
       .input('leagueId', BigInt, leagueId)
       .execute('dbo.up_startAuction');
 
-    console.log(result);
-
     let connectionIds = result.recordset;
     let auctionStatus = result.recordsets[1][0];
-    console.log(auctionStatus);
 
-    let isError = Object.keys(auctionStatus)[0] === 'Error';
-
-    let payload = {
-      msgObj: auctionStatus
-    };
-
-    if (isError) {
-      payload.msgType = 'error';
-    } else {
-      payload.msgType = 'auction';
-    }
+    let payload = constructAuctionPayload(auctionStatus);
 
     await sendWebsocketPayloads(connectionIds, payload, event.requestContext.domainName, event.requestContext.stage, callback);
 
@@ -289,12 +263,8 @@ export async function closeAuction(event, context, callback) {
 
     let connectionIds = result.recordset;
     let auctionStatus = result.recordsets[1][0];
-    console.log(auctionStatus);
 
-    let payload = {
-      msgObj: auctionStatus,
-      msgType: 'auction'
-    };
+    let payload = constructAuctionPayload(auctionStatus);
 
     await sendWebsocketPayloads(connectionIds, payload, event.requestContext.domainName, event.requestContext.stage);
 
