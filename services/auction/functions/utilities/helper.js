@@ -13,7 +13,7 @@ const constructAuctionPayload = (data) => {
   }
 
   return payload;
-}
+};
 
 export {
   constructAuctionPayload
