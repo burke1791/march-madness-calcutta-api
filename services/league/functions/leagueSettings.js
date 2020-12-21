@@ -78,7 +78,7 @@ export async function getLeaguePayoutSettings(event, context, callback) {
       .input('CognitoSub', Varchar(256), cognitoSub)
       .execute('dbo.up_GetLeaguePayoutSettings');
 
-    callback(null, result.recordset);    
+    callback(null, result.recordset);
   } catch (error) {
     console.log(error);
     callback(null, { message: 'ERROR!' });
