@@ -230,6 +230,22 @@ functions:
             headers:
               - x-cognito-token
 
+  getLeaguePayoutSettings:
+    handler: functions/leagueSettings.getLeaguePayoutSettings
+    events:
+      - http:
+          path: getLeaguePayoutSettings/{leagueId}
+          method: get
+          integration: lambda
+          authorizer:
+            type: COGNITO_USER_POOLS
+            authorizerId:
+              Ref: ApiGatewayAuthorizer
+          cors:
+            origin: '*'
+            headers:
+              - x-cognito-token
+
 
 resources:
   - ${file(../../common/resources/api-gateway-authorizer.yml)}
