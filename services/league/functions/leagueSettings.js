@@ -126,7 +126,7 @@ export async function updateLeaguePayoutSettings(event, context, callback) {
 function constructUpdatedPayoutSettingsArray(settings) {
   let arr = [];
 
-  settings.forEacch((obj, index) => {
+  settings.forEach((obj, index) => {
     let existingSetting = arr.find(e => e.tournamentPayoutId == obj.settingParameterId);
 
     if (existingSetting !== undefined && obj.type == 'payoutRate') {
