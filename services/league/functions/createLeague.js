@@ -1,3 +1,5 @@
+import { Int, SmallInt, Varchar } from '../../../common/utilities/db';
+
 const connection = require('../../../common/utilities/db').connection;
 
 export async function createLeague(event, context, callback) {
@@ -10,14 +12,21 @@ export async function createLeague(event, context, callback) {
     let name = body.name;
     let password = body.password;
     let tournamentId = Number(body.tournamentId);
+    let tournamentRegimeId = Number(body.tournamentScopeId);
 
     if (!connection.isConnected) {
       await connection.createConnection();
     }
 
-    const query = `Insert Into dbo.leagues (name, password, year, statusId, createdBy, tournamentId) Select '${name}', '${password}', t.year, ${1}, u.id, t.id From dbo.users u Cross Join dbo.tournaments t Where u.cognitoSub = '${cognitoSub}' And t.id = ${tournamentId}`;
+    let result = await connection.pool.request()
+      .input('CognitoSub', Varchar(256), cognitoSub)
+      .input('LeagueName', Varchar(50), name)
+      .input('LeaguePassword', Varchar(50), password)
+      .input('TournamentId', SmallInt, tournamentId)
+      .input('TournamentRegimeId', Int, tournamentRegimeId)
+      .execute('dbo.up_CreateLeague');
 
-    await connection.pool.request().query(query);
+    console.log(result);
 
     callback(null, { message: 'league created' });
   } catch (error) {

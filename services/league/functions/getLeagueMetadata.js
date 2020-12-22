@@ -1,11 +1,12 @@
-import { Varchar } from '../../../common/utilities/db';
+import { BigInt, Varchar } from '../../../common/utilities/db';
 
 const connection = require('../../../common/utilities/db').connection;
 
-export async function getTournamentOptions(event, context, callback) {
+export async function getLeagueMetadata(event, context, callback) {
   context.callbackWaitsForEmptyEventLoop = false;
 
   let cognitoSub = event.cognitoPoolClaims.sub;
+  let leagueId = event.path.leagueId;
 
   try {
     if (!connection.isConnected) {
@@ -13,12 +14,11 @@ export async function getTournamentOptions(event, context, callback) {
     }
 
     let result = await connection.pool.request()
+      .input('LeagueId', BigInt, leagueId)
       .input('CognitoSub', Varchar(256), cognitoSub)
-      .execute('dbo.up_GetTournamentOptions');
+      .execute('dbo.up_GetLeagueMetadata');
 
-    console.log(result);
-
-    callback(null, result.recordsets);
+    callback(null, result.recordset);
   } catch (error) {
     console.log(error);
     callback(null, { message: 'ERROR!' });

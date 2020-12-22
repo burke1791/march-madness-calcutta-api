@@ -25,13 +25,23 @@ const connection = {
   }
 };
 
+const Bit = sql.Bit;
+const TinyInt = sql.TinyInt;
+const SmallInt = sql.SmallInt;
+const Int = sql.Int;
 const BigInt = sql.BigInt;
 const Varchar = (length) => sql.VarChar(length);
 const Decimal = (digits, precision) => sql.Decimal(digits, precision);
+const Table = () => new sql.Table();
 
 export {
   connection,
+  Bit,
+  TinyInt,
+  SmallInt,
+  Int,
   BigInt,
   Varchar,
-  Decimal
+  Decimal,
+  Table
 };

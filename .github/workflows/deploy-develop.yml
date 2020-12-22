@@ -1,0 +1,69 @@
+
+name: Stage
+
+on:
+  push:
+    branches: develop
+
+jobs:
+  base_deploy:
+    name: Deploy base service
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v2
+      - name: use nodejs
+        uses: actions/setup-node@v1
+        with:
+          node-version: '12.x'
+      - run: npm install -g serverless
+      - run: npm install
+      - run: serverless deploy -s $STAGE_NAME
+
+  league_service:
+    name: Deploy league service API
+    needs: base_deploy
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: use nodejs
+        uses: actions/setup-node@v1
+        with:
+          node-version: '12.x'
+      - run: npm install -g serverless
+      - run: npm install
+      - run: |
+          cd services/league
+          serverless deploy -s $STAGE_NAME
+
+  auction_service:
+    name: Deploy auction service API
+    needs: base_deploy
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: use nodejs
+        uses: actions/setup-node@v1
+        with:
+          node-version: '12.x'
+      - run: npm install -g serverless
+      - run: npm install
+      - run: |
+          cd services/auction
+          serverless deploy -s $STAGE_NAME
+  
+env:
+  STAGE_NAME: dev
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID_DEV }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY_DEV }}
+  DB_NAME: ${{ secrets.DB_NAME }}
+  DB_MASTER_USER: ${{ secrets.DB_MASTER_USER }}
+  DB_MASTER_PASSWORD: ${{ secrets.DB_MASTER_PASSWORD }}
+  DB_USER: ${{ secrets.DB_USER }}
+  DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+  USER_POOL_ARN: ${{ secrets.USER_POOL_ARN_DEV }}
+  AWS_COGNITO_VPC_ID: ${{ secrets.AWS_COGNITO_VPC_ID_DEV }}
+  AWS_COGNITO_LAMBDA_SG_ID: ${{ secrets.AWS_COGNITO_LAMBDA_SG_ID_DEV }}
+  AWS_COGNITO_ACCOUNT_ID: ${{ secrets.AWS_COGNITO_ACCOUNT_ID }}

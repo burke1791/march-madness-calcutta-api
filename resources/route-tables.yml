@@ -16,3 +16,11 @@ Resources:
       Tags:
         - Key: Name
           Value: 'NAT GW'
+
+Outputs:
+  NatRouteTableId:
+    Description: 'Nat Route Table Id'
+    Value:
+      Ref: NatRouteTable
+    Export:
+      Name: calcutta-nat-route-table-${self:custom.stage}
