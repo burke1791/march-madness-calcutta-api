@@ -1,25 +1,23 @@
+import { BigInt, Varchar } from '../../../common/utilities/db';
+
 const connection = require('../../../common/utilities/db').connection;
 
 export async function getRemainingTeamsCount(event, context, callback) {
   context.callbackWaitsForEmptyEventLoop = false;
 
-  // in case we need it for future refactoring
-  // let cognitoSub = event.cognitoPoolClaims.sub;
+  let cognitoSub = event.cognitoPoolClaims.sub;
 
   try {
-    let tournamentId = event.path.tournamentId;
+    let leagueId = event.path.leagueId;
 
     if (!connection.isConnected) {
       await connection.createConnection();
     }
 
-    let query = `
-    Select  [numTeamsRemaining] = Count(*)
-    From dbo.tournamentTeams tt
-    Where tt.tournamentId = ${tournamentId}
-    And tt.alive = 1`;
-
-    let result = await connection.pool.request().query(query);
+    let result = await connection.pool.request()
+      .input('LeagueId', BigInt, leagueId)
+      .input('CognitoSub', Varchar(256), cognitoSub)
+      .execute('dbo.up_GetRemainingTeamsCount');
 
     console.log(result);
 
