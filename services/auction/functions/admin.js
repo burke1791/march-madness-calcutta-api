@@ -226,7 +226,7 @@ export async function startAuction(event, context, callback) {
 
     let payload = constructAuctionPayload(auctionStatus);
 
-    await sendWebsocketPayloads(connectionIds, payload, event.requestContext.domainName, event.requestContext.stage, callback);
+    await sendWebsocketPayloads(connectionIds, payload, event.requestContext.domainName, event.requestContext.stage);
 
     callback(null, {
       statusCode: 200,
