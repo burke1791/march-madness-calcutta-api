@@ -153,7 +153,7 @@ functions:
     handler: functions/getRemainingTeamsCount.getRemainingTeamsCount
     events:
       - http:
-          path: 'getAllRemainingTeamsCount/{leagueId}'
+          path: 'getRemainingTeamsCount/{leagueId}'
           method: get
           integration: lambda
           authorizer:
