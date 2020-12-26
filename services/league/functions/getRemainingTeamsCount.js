@@ -8,7 +8,7 @@ export async function getRemainingTeamsCount(event, context, callback) {
   let cognitoSub = event.cognitoPoolClaims.sub;
 
   try {
-    let leagueId = event.path.tournamentId;
+    let leagueId = event.path.leagueId;
 
     if (!connection.isConnected) {
       await connection.createConnection();
