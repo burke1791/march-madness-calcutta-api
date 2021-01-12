@@ -1,3 +1,5 @@
+import { BigInt, Varchar } from '../../../common/utilities/db';
+
 const connection = require('../../../common/utilities/db').connection;
 
 export async function getLeagueUserTeams(event, context, callback) {
@@ -13,38 +15,11 @@ export async function getLeagueUserTeams(event, context, callback) {
       await connection.createConnection();
     }
 
-    let result = await connection.pool.request().query(`
-    Select lt.teamId
-      , u.alias
-      , tt.seed
-      , t.name
-      , lt.price
-      , [payout] = lt.[return]
-      , lm.taxBuyIn
-      , tt.alive
-    From dbo.leagueTeams lt
-    Inner Join dbo.leagues l
-    On lt.leagueId = l.id
-    Inner Join dbo.tournamentTeams tt
-    On l.tournamentId = tt.tournamentId
-    And lt.teamId = tt.teamId
-    Inner Join dbo.teams t
-    On lt.teamId = t.id
-    Inner Join dbo.users u
-    On lt.userId = u.id
-    Inner Join dbo.leagueMemberships lm
-    On l.id = lm.leagueId
-    And u.id = lm.userId
-    Where lt.userId = ${targetUserId}
-    And lt.leagueId = ${leagueId}
-    And Exists (
-      Select *
-      From dbo.leagueMemberships lm2
-      Inner Join dbo.users u
-      On lm2.userId = u.id
-      Where lm2.leagueId = ${leagueId}
-      And u.cognitoSub = '${cognitoSub}'
-    )`);
+    let result = await connection.pool.request()
+      .input('LeagueId', BigInt, leagueId)
+      .input('CognitoSub', Varchar(256), cognitoSub)
+      .input('TargetUserId', BigInt, targetUserId)
+      .execute('dbo.up_GetLeagueUserTeams');
 
     console.log(result);
 
