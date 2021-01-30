@@ -22,6 +22,19 @@ Resources:
         - Key: Name
           Value: 'Cognito Peer'
 
+  CalcuttaLinkedServerPeeringConnection:
+    Type: AWS::EC2::VPCPeeringConnection
+    Condition: IsProduction
+    Properties:
+      PeerOwnerId: ${env:AWS_LINKED_SERVER_ACCOUNT_ID}
+      PeerRoleArn: arn:aws:iam::${env:AWS_LINKED_SERVER_ACCOUNT_ID}:role/calcutta-${self:custom.stage}-linked-server-peer-role
+      PeerVpcId: ${env:AWS_LINKED_SERVER_VPC_ID}
+      VpcId:
+        Ref: CalcuttaVPC
+      Tags:
+        - Key: Name
+          Value: 'Linked Server Peer'
+
 Outputs:
   CalcuttaVPCId:
     Description: 'Calcutta VPC locical Id'
