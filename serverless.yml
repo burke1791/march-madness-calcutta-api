@@ -50,3 +50,4 @@ resources:
   - ${file(resources/security-groups.yml)}
   - ${file(resources/rds.yml)}
   - ${file(resources/roles.yml)}
+  - ${file(resources/conditions.yml)}
