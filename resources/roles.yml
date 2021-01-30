@@ -33,24 +33,25 @@ Resources:
                   - s3:AbortMultipartUpload
                 Resource: arn:aws:s3:::rds-backups-calcutta-prod/*
 
-  CalcuttaVPCPeerRole:
-    Type: AWS::IAM::Role
-    Condition: IsDev
-    Properties:
-      RoleName: calcutta-${self:custom.stage}-linked-server-peer-role
-      AssumeRolePolicyDocument:
-        Statement:
-          - Effect: Allow
-            Principal:
-              AWS: ${env:AWS_LINKED_SERVER_ACCOUNT_ID}
-            Action: 
-              - sts:AssumeRole
-      Path: /
-      Policies:
-        - PolicyName: root
-          PolicyDocument:
-            Version: '2012-10-17'
-            Statement:
-              - Effect: Allow
-                Action: ec2:AcceptVpcPeeringConnection
-                Resource: '*'
+# Will need to have different CIDR ranges between dev and prod VPCs before attempting to peer
+  # CalcuttaVPCPeerRole:
+  #   Type: AWS::IAM::Role
+  #   Condition: IsDev
+  #   Properties:
+  #     RoleName: calcutta-${self:custom.stage}-linked-server-peer-role
+  #     AssumeRolePolicyDocument:
+  #       Statement:
+  #         - Effect: Allow
+  #           Principal:
+  #             AWS: ${env:AWS_LINKED_SERVER_ACCOUNT_ID}
+  #           Action: 
+  #             - sts:AssumeRole
+  #     Path: /
+  #     Policies:
+  #       - PolicyName: root
+  #         PolicyDocument:
+  #           Version: '2012-10-17'
+  #           Statement:
+  #             - Effect: Allow
+  #               Action: ec2:AcceptVpcPeeringConnection
+  #               Resource: '*'
