@@ -1,4 +1,4 @@
-import { connection } from '../../../common/utilities/db';
+import { BigInt, connection, Varchar } from '../../../common/utilities/db';
 
 export async function getAuctionMemberBuyIns(event, context, callback) {
   context.callbackWaitsForEmptyEventLoop = false;
@@ -12,9 +12,10 @@ export async function getAuctionMemberBuyIns(event, context, callback) {
       await connection.createConnection();
     }
 
-    let query = `Select lm.userId, u.alias, lm.naturalBuyIn, lm.taxBuyIn From dbo.leagueMemberships lm Inner Join dbo.users u On lm.userId = u.id Where lm.leagueId = ${leagueId} And Exists (Select * From dbo.leagueMemberships lm2 Inner Join dbo.users u On lm2.userId = u.id Where lm2.leagueId = ${leagueId} And u.cognitoSub = '${cognitoSub}')`;
-
-    let result = await connection.pool.request().query(query);
+    let result = await connection.pool.request()
+      .input('LeagueId', BigInt, leagueId)
+      .input('CognitoSub', Varchar(256), cognitoSub)
+      .execute('dbo.up_GetAuctionMemberBuyIns');
 
     callback(null, result.recordset);
   } catch (error) {
