@@ -11,7 +11,7 @@ export async function getServerTime(event, context, callback) {
       await connection.createConnection();
     }
 
-    const query = 'Select [ServerTimestamp] = GetUtcDate()';
+    const query = 'Select [ServerTimestamp] = SysUtcDateTime()';
 
     let result = await connection.pool.request().query(query);
 

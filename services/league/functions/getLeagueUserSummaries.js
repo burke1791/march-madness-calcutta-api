@@ -1,3 +1,5 @@
+import { BigInt, Varchar } from '../../../common/utilities/db';
+
 const connection = require('../../../common/utilities/db').connection;
 
 export async function getLeagueUserSummaries(event, context, callback) {
@@ -12,20 +14,10 @@ export async function getLeagueUserSummaries(event, context, callback) {
       await connection.createConnection();
     }
 
-    let query = `
-      Select *
-      From dbo.LeagueUserSummaries lus
-      Where lus.leagueId = ${leagueId} 
-      And Exists (
-        Select * 
-        From dbo.users u2 
-        Inner Join dbo.leagueMemberships lm2 
-        On u2.id = lm2.userId 
-        Where lm2.leagueId = ${leagueId} 
-        And u2.cognitoSub = '${cognitoSub}'
-      )`;
-
-    let result = await connection.pool.request().query(query);
+    let result = await connection.pool.request()
+      .input('LeagueId', BigInt, leagueId)
+      .input('CognitoSub', Varchar(256), cognitoSub)
+      .execute('dbo.up_GetLeagueUserSummaries');
 
     callback(null, result.recordset);
   } catch (error) {
