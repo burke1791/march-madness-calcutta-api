@@ -1,3 +1,5 @@
+import { Varchar } from '../../../common/utilities/db';
+
 const connection = require('../../../common/utilities/db').connection;
 
 export async function getLeagueSummaries(event, context, callback) {
@@ -10,34 +12,9 @@ export async function getLeagueSummaries(event, context, callback) {
       await connection.createConnection();
     }
 
-    // I hate this, I hate everything about it.  Get your damn ORM implemented!
-    let result = await connection.pool.request().query(`
-    Select lm.userId
-      , lm.leagueId
-      , l.name
-      , [tournamentId] = t.id
-      , [tournamentRegimeId] = l.TournamentRegimeId
-      , [tournamentName] = t.name
-      , [tournamentRegimeName] = tr.Name
-      , lm.roleId
-      , [role] = lr.name
-      , lm.naturalBuyIn
-      , lm.taxBuyIn
-      , lm.totalReturn 
-      From dbo.leagueMemberships lm 
-      Inner Join dbo.leagues l 
-      On lm.leagueId = l.id 
-      Inner Join dbo.tournaments t
-      On l.tournamentId = t.id
-      Left Join dbo.TournamentRegime tr
-      On l.TournamentId = tr.TournamentId
-      And l.TournamentRegimeId = tr.TournamentRegimeId
-      Inner Join dbo.leagueRoles lr 
-      On lm.roleId = lr.id 
-      Inner Join dbo.users u 
-      On lm.userId = u.id 
-      Where u.cognitoSub = '${cognitoSub}'
-      And l.IsDeleted = 0`);
+    let result = await connection.pool.request()
+      .input('CognitoSub', Varchar(256), cognitoSub)
+      .execute('dbo.up_GetLeagueSummaries');
 
     callback(null, result.recordset);
   } catch (error) {
