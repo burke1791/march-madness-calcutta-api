@@ -197,6 +197,22 @@ functions:
             headers:
               - x-cognito-token
 
+  getLeagueUserTeams:
+    handler: functions/getLeagueUserMetadata.getLeagueUserMetadata
+    events:
+      - http:
+          path: getLeagueUserMetadata/{leagueId}/{userId}
+          method: get
+          integration: lambda
+          authorizer:
+            type: COGNITO_USER_POOLS
+            authorizerId:
+              Ref: ApiGatewayAuthorizer
+          cors:
+            origin: '*'
+            headers:
+              - x-cognito-token
+
   updateLeagueSettings:
     handler: functions/leagueSettings.updateLeagueSettings
     events:
