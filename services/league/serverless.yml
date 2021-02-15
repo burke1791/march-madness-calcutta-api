@@ -197,7 +197,7 @@ functions:
             headers:
               - x-cognito-token
 
-  getLeagueUserTeams:
+  getLeagueUserMetadata:
     handler: functions/getLeagueUserMetadata.getLeagueUserMetadata
     events:
       - http:
