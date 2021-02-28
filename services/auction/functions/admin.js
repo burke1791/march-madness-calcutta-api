@@ -217,9 +217,9 @@ export async function startAuction(event, context, callback) {
 
   try {
     let result = await connection.pool.request()
-      .input('connectionId', Varchar(128), connectionId)
-      .input('leagueId', BigInt, leagueId)
-      .execute('dbo.up_startAuction');
+      .input('ConnectionId', Varchar(128), connectionId)
+      .input('LeagueId', BigInt, leagueId)
+      .execute('dbo.up_StartAuction');
 
     let connectionIds = result.recordset;
     let auctionStatus = result.recordsets[1][0];
