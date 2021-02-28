@@ -279,7 +279,7 @@ functions:
               - Content-Type
               - x-cognito-token
 
-  getLeagueUserTeams:
+  getLeagueSeedGroups:
     handler: functions/getLeagueSeedGroups.getLeagueSeedGroups
     events:
       - http:
