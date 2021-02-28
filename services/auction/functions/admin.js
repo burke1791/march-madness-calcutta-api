@@ -35,7 +35,7 @@ export async function resetClock(event, context, callback) {
     const postCalls = connectionIds.map(async obj => {
       console.log(obj);
       var params = {
-        ConnectionId: obj.connectionId,
+        ConnectionId: obj.ConnectionId,
         Data: JSON.stringify(payload)
       };
 
