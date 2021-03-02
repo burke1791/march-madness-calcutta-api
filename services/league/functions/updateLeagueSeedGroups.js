@@ -52,7 +52,7 @@ export async function deleteLeagueSeedGroup(event, context, callback) {
       .input('LeagueId', BigInt, leagueId)
       .input('CognitoSub', Varchar(256), cognitoSub)
       .input('SeedGroupId', BigInt, groupId)
-      .execute('dbo.up_DeleteLeagueSeedGroup')
+      .execute('dbo.up_DeleteLeagueSeedGroup');
 
     callback(null, result.recordset);
   } catch (error) {
