@@ -41,7 +41,7 @@ export async function deleteLeagueSeedGroup(event, context, callback) {
 
   let cognitoSub = event.cognitoPoolClaims.sub;
 
-  let { leagueId, groupId } = event.body;
+  let { leagueId, groupName } = event.body;
 
   try {
     if (!connection.isConnected) {
@@ -51,7 +51,7 @@ export async function deleteLeagueSeedGroup(event, context, callback) {
     let result = await connection.pool.request()
       .input('LeagueId', BigInt, leagueId)
       .input('CognitoSub', Varchar(256), cognitoSub)
-      .input('SeedGroupId', BigInt, groupId)
+      .input('SeedGroupName', Varchar(128), groupName)
       .execute('dbo.up_DeleteLeagueSeedGroup');
 
     callback(null, result.recordset);
