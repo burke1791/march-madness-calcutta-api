@@ -7,6 +7,9 @@ export async function newLeagueSeedGroup(event, context, callback) {
 
   let cognitoSub = event.cognitoPoolClaims.sub;
 
+  console.log(event);
+  console.log(event.body);
+
   let { leagueId, groupName, groupTeams } = event.body;
 
   try {
