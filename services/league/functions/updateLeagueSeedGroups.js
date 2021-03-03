@@ -7,9 +7,6 @@ export async function newLeagueSeedGroup(event, context, callback) {
 
   let cognitoSub = event.cognitoPoolClaims.sub;
 
-  console.log(event);
-  console.log(event.body);
-
   let { leagueId, groupName, groupTeams } = event.body;
 
   try {
@@ -18,11 +15,11 @@ export async function newLeagueSeedGroup(event, context, callback) {
     }
 
     let tvp = Table();
-    tvp.columns.add('ItemId', BigInt, { nullable: false });
     tvp.columns.add('ItemTypeId', TinyInt, { nullable: false });
+    tvp.columns.add('ItemId', BigInt, { nullable: false });
 
     groupTeams.forEach(team => {
-      tvp.rows.add(team.itemId, team.itemTypeId);
+      tvp.rows.add(team.itemTypeId, team.itemId);
     });
 
     let result = await connection.pool.request()
