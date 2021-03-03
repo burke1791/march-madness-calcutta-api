@@ -26,7 +26,7 @@ export async function newLeagueSeedGroup(event, context, callback) {
       .input('LeagueId', BigInt, leagueId)
       .input('CognitoSub', Varchar(256), cognitoSub)
       .input('GroupName', Varchar(128), groupName)
-      .input('Teams', tvp)
+      .input('GroupTeams', tvp)
       .execute('dbo.up_NewLeagueSeedGroup');
 
     callback(null, result.recordset);
