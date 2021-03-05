@@ -2,14 +2,13 @@ import { BigInt, Varchar } from '../../../common/utilities/db';
 
 const connection = require('../../../common/utilities/db').connection;
 
-export async function getLeagueRoster(event, context, callback) {
+export async function kickLeagueMember(event, context, callback) {
   context.callbackWaitsForEmptyEventLoop = false;
 
   let cognitoSub = event.cognitoPoolClaims.sub;
+  let { leagueId, userId } = event.body;
 
   try {
-    let leagueId = event.path.leagueId;
-
     if (!connection.isConnected) {
       await connection.createConnection();
     }
@@ -17,7 +16,8 @@ export async function getLeagueRoster(event, context, callback) {
     let result = await connection.pool.request()
       .input('LeagueId', BigInt, leagueId)
       .input('CognitoSub', Varchar(256), cognitoSub)
-      .execute('dbo.up_GetLeagueRoster');
+      .input('UserIdToKick', BigInt, userId)
+      .execute('dbo.up_KickLeagueMember');
 
     callback(null, result.recordset);
   } catch (error) {

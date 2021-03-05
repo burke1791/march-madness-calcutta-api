@@ -329,12 +329,12 @@ functions:
               - Content-Type
               - x-cognito-token
 
-  getLeagueRoster:
-    handler: functions/leagueRoster.getLeagueRoster
+  kickLeagueMember:
+    handler: functions/leagueRoster.kickLeagueMember
     events:
       - http:
-          path: getLeagueRoster/{leagueId}
-          method: get
+          path: kickLeagueMember
+          method: post
           integration: lambda
           authorizer:
             type: COGNITO_USER_POOLS
@@ -343,6 +343,7 @@ functions:
           cors:
             origin: '*'
             headers:
+              - Content-Type
               - x-cognito-token
 
 resources:
