@@ -8,7 +8,7 @@ export async function getLeagueMetadata(event, context, callback) {
   let cognitoSub = event.cognitoPoolClaims.sub;
   let leagueId = event.path.leagueId;
 
-  console.log(event);
+  let origin = event.headers.origin;
 
   try {
     if (!connection.isConnected) {
@@ -19,6 +19,15 @@ export async function getLeagueMetadata(event, context, callback) {
       .input('LeagueId', BigInt, leagueId)
       .input('CognitoSub', Varchar(256), cognitoSub)
       .execute('dbo.up_GetLeagueMetadata');
+
+    console.log(result.recordset);
+
+    if (result.recordset[0]?.Error == undefined) {
+      let leagueGuid = result.recordset[0].InviteCode;
+      result.recordset[0].InviteUrl = `${origin}/joinLeague?inviteCode=${leagueGuid}`;
+    }
+
+    console.log(result.recordset);
 
     callback(null, result.recordset);
   } catch (error) {
