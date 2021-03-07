@@ -8,6 +8,8 @@ export async function getLeagueMetadata(event, context, callback) {
   let cognitoSub = event.cognitoPoolClaims.sub;
   let leagueId = event.path.leagueId;
 
+  console.log(event);
+
   try {
     if (!connection.isConnected) {
       await connection.createConnection();
