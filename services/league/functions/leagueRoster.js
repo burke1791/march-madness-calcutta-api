@@ -2,13 +2,11 @@ import { BigInt, Varchar } from '../../../common/utilities/db';
 
 const connection = require('../../../common/utilities/db').connection;
 
-export async function getLeagueMetadata(event, context, callback) {
+export async function kickLeagueMember(event, context, callback) {
   context.callbackWaitsForEmptyEventLoop = false;
 
   let cognitoSub = event.cognitoPoolClaims.sub;
-  let leagueId = event.path.leagueId;
-
-  let origin = event.headers.origin;
+  let { leagueId, userId } = event.body;
 
   try {
     if (!connection.isConnected) {
@@ -18,12 +16,8 @@ export async function getLeagueMetadata(event, context, callback) {
     let result = await connection.pool.request()
       .input('LeagueId', BigInt, leagueId)
       .input('CognitoSub', Varchar(256), cognitoSub)
-      .execute('dbo.up_GetLeagueMetadata');
-
-    if (result.recordset[0]?.Error == undefined) {
-      let leagueGuid = result.recordset[0].InviteCode;
-      result.recordset[0].InviteUrl = `${origin}/joinLeague?inviteCode=${leagueGuid}`;
-    }
+      .input('UserIdToKick', BigInt, userId)
+      .execute('dbo.up_KickLeagueMember');
 
     callback(null, result.recordset);
   } catch (error) {

@@ -329,5 +329,39 @@ functions:
               - Content-Type
               - x-cognito-token
 
+  kickLeagueMember:
+    handler: functions/leagueRoster.kickLeagueMember
+    events:
+      - http:
+          path: kickLeagueMember
+          method: post
+          integration: lambda
+          authorizer:
+            type: COGNITO_USER_POOLS
+            authorizerId:
+              Ref: ApiGatewayAuthorizer
+          cors:
+            origin: '*'
+            headers:
+              - Content-Type
+              - x-cognito-token
+
+  updateLeagueName:
+    handler: functions/leagueSettings.updateLeagueName
+    events:
+      - http:
+          path: updateLeagueName
+          method: post
+          integration: lambda
+          authorizer:
+            type: COGNITO_USER_POOLS
+            authorizerId:
+              Ref: ApiGatewayAuthorizer
+          cors:
+            origin: '*'
+            headers:
+              - Content-Type
+              - x-cognito-token
+
 resources:
   - ${file(../../common/resources/api-gateway-authorizer.yml)}

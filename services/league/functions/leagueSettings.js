@@ -93,8 +93,6 @@ export async function updateLeaguePayoutSettings(event, context, callback) {
 
     let { leagueId, settings } = event.body;
 
-    console.log(settings);
-
     if (!connection.isConnected) {
       await connection.createConnection();
     }
@@ -115,6 +113,31 @@ export async function updateLeaguePayoutSettings(event, context, callback) {
       .input('CognitoSub', Varchar(256), cognitoSub)
       .input('PayoutSettings', tvp)
       .execute('dbo.up_UpdateLeaguePayoutSettings');
+
+    callback(null, result.recordset);
+  } catch (error) {
+    console.log(error);
+    callback(null, { message: 'ERROR!' });
+  }
+}
+
+export async function updateLeagueName(event, context, callback) {
+  context.callbackWaitsForEmptyEventLoop = false;
+
+  try {
+    let cognitoSub = event.cognitoPoolClaims.sub;
+
+    let { leagueId, newLeagueName } = event.body;
+
+    if (!connection.isConnected) {
+      await connection.createConnection();
+    }
+
+    let result = await connection.pool.request()
+      .input('LeagueId', BigInt, leagueId)
+      .input('CognitoSub', Varchar(256), cognitoSub)
+      .input('NewLeagueName', Varchar(50), newLeagueName)
+      .execute('dbo.up_UpdateLeagueName');
 
     callback(null, result.recordset);
   } catch (error) {
