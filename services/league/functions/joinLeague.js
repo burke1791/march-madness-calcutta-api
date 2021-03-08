@@ -9,7 +9,7 @@ export async function joinLeague(event, context, callback) {
   console.log(event);
 
   try {
-    let { leagueGuid } = event.body;
+    let { inviteCode } = event.body;
 
     if (!connection.isConnected) {
       await connection.createConnection();
@@ -33,7 +33,7 @@ export async function joinLeague(event, context, callback) {
 
     let result = await connection.pool.request()
       .input('CognitoSub', Varchar(256), cognitoSub)
-      .input('LeagueGuid', Varchar(256), leagueGuid)
+      .input('LeagueGuid', Varchar(256), inviteCode)
       .execute('dbo.up_JoinLeague');
 
     console.log(result.recordset);
