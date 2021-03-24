@@ -165,22 +165,6 @@ functions:
             headers:
               - x-cognito-token
 
-  getTournamentGamesForBracket:
-    handler: functions/getTournamentGamesForBracket.getTournamentGamesForBracket
-    events:
-      - http:
-          path: getTournamentGamesForBracket/{leagueId}
-          method: get
-          integration: lambda
-          authorizer:
-            type: COGNITO_USER_POOLS
-            authorizerId:
-              Ref: ApiGatewayAuthorizer
-          cors:
-            origin: '*'
-            headers:
-              - x-cognito-token
-
   getLeagueUserTeams:
     handler: functions/getLeagueUserTeams.getLeagueUserTeams
     events:
