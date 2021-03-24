@@ -36,7 +36,7 @@ provider:
 
 functions:
   getTournamentTree:
-    handler: functions/getTournamentTree/getTournamentTree
+    handler: functions/getTournamentTree.getTournamentTree
     events:
       - http:
           path: getTournamentTree/{leagueId}
