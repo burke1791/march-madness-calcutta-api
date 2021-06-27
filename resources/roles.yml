@@ -2,11 +2,11 @@ Resources:
   RDSOptionRole:
     Type: AWS::IAM::Role
     Properties:
-      # RoleName:
-      #   Fn::Join:
-      #     - ''
-      #     - - sql-server-backup-${self:custom.stage}-
-      #       - Ref: AWS::Region
+      RoleName:
+        Fn::Join:
+          - ''
+          - - sql-server-backup-${self:custom.stage}-
+            - Ref: AWS::Region
       AssumeRolePolicyDocument:
         Version: '2012-10-17'
         Statement:
