@@ -31,12 +31,13 @@ Resources:
           SourceSecurityGroupOwnerId: ${env:AWS_COGNITO_ACCOUNT_ID}
           FromPort: 1433
           ToPort: 1433
-        - IpProtocol: tcp
-          Description: 'Linked Server Inbound'
-          SourceSecurityGroupId: ${env:AWS_LINKED_SERVER_SG_ID}
-          SourceSecurityGroupOwnerId: ${env:AWS_LINKED_SERVER_ACCOUNT_ID}
-          FromPort: 1433
-          ToPort: 1433
+        # Comment the below object out until we the other account is fully setup
+        # - IpProtocol: tcp
+        #   Description: 'Linked Server Inbound'
+        #   SourceSecurityGroupId: ${env:AWS_LINKED_SERVER_SG_ID}
+        #   SourceSecurityGroupOwnerId: ${env:AWS_LINKED_SERVER_ACCOUNT_ID}
+        #   FromPort: 1433
+        #   ToPort: 1433
       VpcId:
         Ref: CalcuttaVPC
 
