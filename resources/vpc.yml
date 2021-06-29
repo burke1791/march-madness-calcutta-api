@@ -3,7 +3,7 @@ Resources:
     Type: AWS::EC2::VPC
     Properties:
       CidrBlock:
-        !If [IsProduction, !Ref: ProdVPCCidr, !Ref: StageVPCCidr]
+        !If [IsProduction, !Ref ProdVPCCidr, !Ref StageVPCCidr]
       EnableDnsHostnames: True
       EnableDnsSupport: True
       InstanceTenancy: default
