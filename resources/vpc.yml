@@ -3,7 +3,7 @@ Resources:
     Type: AWS::EC2::VPC
     Properties:
       CidrBlock:
-        !If [IsProduction, !Ref ProdVPCCidr, !Ref StageVPCCidr]
+        !If [IsProduction, 10.0.0.0/16, 10.2.0.0/16]
       EnableDnsHostnames: True
       EnableDnsSupport: True
       InstanceTenancy: default
@@ -36,22 +36,6 @@ Resources:
       Tags:
         - Key: Name
           Value: 'Linked Server Peer'
-
-  ProdVPCCidr:
-    Type: AWS::EC2::VPCCidrBlock
-    Condition: IsProduction
-    Properties:
-      CidrBlock: 10.0.0.0/16
-      VpcId:
-        Ref: CalcuttaVPC
-  
-  StageVPCCidr:
-    Type: AWS::EC2::VPCCidrBlock
-    Condition: IsDev
-    Properties:
-      CidrBlock: 10.2.0.0/16
-      VpcId:
-        Ref: CalcuttaVPC
 
 Outputs:
   CalcuttaVPCId:
