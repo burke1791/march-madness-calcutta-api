@@ -2,13 +2,14 @@ Resources:
   CalcuttaVPC:
     Type: AWS::EC2::VPC
     Properties:
-      CidrBlock: 10.0.0.0/16
+      CidrBlock:
+        !If [IsProduction, 10.0.0.0/16, 10.2.0.0/16]
       EnableDnsHostnames: True
       EnableDnsSupport: True
       InstanceTenancy: default
       Tags:
         - Key: Name
-          Value: Calcutta-${self:custom.stage}
+          Value: calcutta-${self:custom.stage}
 
   CalcuttaPeeringConnection:
     Type: AWS::EC2::VPCPeeringConnection
@@ -23,18 +24,18 @@ Resources:
           Value: 'Cognito Peer'
 
 # Will need to have different CIDR ranges between dev and prod VPCs before attempting to peer
-  # CalcuttaLinkedServerPeeringConnection:
-  #   Type: AWS::EC2::VPCPeeringConnection
-  #   Condition: IsProduction
-  #   Properties:
-  #     PeerOwnerId: ${env:AWS_LINKED_SERVER_ACCOUNT_ID}
-  #     PeerRoleArn: arn:aws:iam::${env:AWS_LINKED_SERVER_ACCOUNT_ID}:role/calcutta-${self:custom.stage}-linked-server-peer-role
-  #     PeerVpcId: ${env:AWS_LINKED_SERVER_VPC_ID}
-  #     VpcId:
-  #       Ref: CalcuttaVPC
-  #     Tags:
-  #       - Key: Name
-  #         Value: 'Linked Server Peer'
+  CalcuttaLinkedServerPeeringConnection:
+    Type: AWS::EC2::VPCPeeringConnection
+    Condition: IsProduction
+    Properties:
+      PeerOwnerId: ${env:AWS_LINKED_SERVER_ACCOUNT_ID}
+      PeerRoleArn: arn:aws:iam::${env:AWS_LINKED_SERVER_ACCOUNT_ID}:role/calcutta-${self:custom.stage}-linked-server-peer-role
+      PeerVpcId: ${env:AWS_LINKED_SERVER_VPC_ID}
+      VpcId:
+        Ref: CalcuttaVPC
+      Tags:
+        - Key: Name
+          Value: 'Linked Server Peer'
 
 Outputs:
   CalcuttaVPCId:

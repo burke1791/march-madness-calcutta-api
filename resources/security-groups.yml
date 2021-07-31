@@ -3,7 +3,7 @@ Resources:
     Type: AWS::EC2::SecurityGroup
     Properties:
       GroupDescription: 'Lambda access to RDS'
-      GroupName: LambdaDMZ
+      GroupName: Lambda_DMZ
       SecurityGroupEgress:
         - IpProtocol: -1
           CidrIp: 0.0.0.0/0
@@ -31,6 +31,7 @@ Resources:
           SourceSecurityGroupOwnerId: ${env:AWS_COGNITO_ACCOUNT_ID}
           FromPort: 1433
           ToPort: 1433
+        # Comment the below object out until we the other account is fully setup
         # - IpProtocol: tcp
         #   Description: 'Linked Server Inbound'
         #   SourceSecurityGroupId: ${env:AWS_LINKED_SERVER_SG_ID}
