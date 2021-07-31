@@ -29,7 +29,8 @@ Resources:
     Condition: IsProduction
     Properties:
       PeerOwnerId: ${env:AWS_LINKED_SERVER_ACCOUNT_ID}
-      PeerRoleArn: arn:aws:iam::${env:AWS_LINKED_SERVER_ACCOUNT_ID}:role/calcutta-${self:custom.stage}-linked-server-peer-role
+      # Hard-coded role name: "-dev-"
+      PeerRoleArn: arn:aws:iam::${env:AWS_LINKED_SERVER_ACCOUNT_ID}:role/calcutta-dev-linked-server-peer-role
       PeerVpcId: ${env:AWS_LINKED_SERVER_VPC_ID}
       VpcId:
         Ref: CalcuttaVPC
