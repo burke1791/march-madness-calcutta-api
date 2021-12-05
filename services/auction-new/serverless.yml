@@ -1,0 +1,36 @@
+
+service: calcutta-auction-service-v2
+
+package:
+  individually: true
+
+plugins:
+  - serverless-bundle
+
+custom:
+  stage: ${opt:stage, self:provider.stage}
+  provider: ${file(../../common/config/provider.json)}
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  timeout: ${self:custom.provider.timeout}
+  logRetentionInDays: ${self:custom.provider.logRetentionInDays}
+  region: ${self:custom.provider.region}
+  stage: ${self:custom.provider.stage}
+  environment:
+    AUCTION_TABLE: ${self:resources.Resources.AuctionTable.TableName}
+    CONNECTION_TABLE: ${self:resources.Resources.AuctionConnectionTable.TableName}
+    CHAT_TABLE: ${self:resources.Resources.AuctionChatTable.TableName}
+    WEBSOCKET_ENDPOINT:
+      Fn::Join:
+        - ''
+        - - Ref: WebsocketsApi
+          - .execute-api.
+          - Ref: AWS::Region
+          - .amazonaws.com/
+          - ${self:custom.stage}
+
+resources:
+  # - ${file(../../common/resources/api-gateway-authorizer.yml)}
+  - ${file(../../resources/dynamodb.yml)}
