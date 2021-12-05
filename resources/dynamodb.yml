@@ -9,39 +9,6 @@ Resources:
         -
           AttributeName: LastBidTimestamp
           AttributeType: S
-        -
-          AttributeName: Status
-          AttributeType: S
-        -
-          AttributeName: CurrentItemId
-          AttributeType: N
-        -
-          AttributeName: TeamLogoUrl
-          AttributeType: S
-        -
-          AttributeName: ItemTypeId
-          AttributeType: N
-        -
-          AttributeName: ItemName
-          AttributeType: S
-        -
-          AttributeName: Seed
-          AttributeType: N
-        -
-          AttributeName: DisplayName
-          AttributeType: S
-        -
-          AttributeName: CurrentItemWinner
-          AttributeType: N
-        -
-          AttributeName: Alias
-          AttributeType: S
-        -
-          AttributeName: CurrentItemPrice
-          AttributeType: N
-        -
-          AttributeName: RecordType
-          AttributeType: S
       KeySchema:
         -
           AttributeName: LeagueId
@@ -66,12 +33,6 @@ Resources:
         -
           AttributeName: LeagueId
           AttributeType: N
-        -
-          AttributeName: UserId
-          AttributeType: N
-        -
-          AttributeName: ConnectionId
-          AttributeType: S
       KeySchema:
         -
           AttributeName: LeagueId
@@ -95,18 +56,6 @@ Resources:
           AttributeType: N
         -
           AttributeName: Timestamp
-          AttributeType: S
-        -
-          AttributeName: MessageId
-          AttributeType: S
-        -
-          AttributeName: UserId
-          AttributeType: N
-        -
-          AttributeName: Alias
-          AttributeType: S
-        -
-          AttributeName: Content
           AttributeType: S
       KeySchema:
         -
