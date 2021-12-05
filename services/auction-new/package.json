@@ -1,0 +1,21 @@
+{
+  "name": "calcutta-auction-service-api-v2",
+  "version": "1.0.0",
+  "description": "",
+  "main": "",
+  "dependencies": {
+    "jsonwebtoken": "^8.5.1",
+    "jwk-to-pem": "^2.0.2"
+  },
+  "devDependencies": {
+    "aws-sdk": "^2.619.0",
+    "aws-sdk-mock": "^5.1.0",
+    "jest": "^25.5.2",
+    "serverless-bundle": "^1.2.5"
+  },
+  "scripts": {
+    "test": "jest"
+  },
+  "author": "",
+  "license": "ISC"
+}
