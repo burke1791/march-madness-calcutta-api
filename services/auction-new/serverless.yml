@@ -30,20 +30,33 @@ provider:
           - Ref: AWS::Region
           - .amazonaws.com/
           - ${self:custom.stage}
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+      Resource:
+        - Fn::GetAtt: [ AuctionConnectionTable, Arn ]
+        - Fn::GetAtt: [AuctionChatTable, Arn]
+        - Fn::GetAtt: [AuctionTable, Arn]
 
 functions:
   # websocket functions
   onConnect:
     handler: functions/websocket.onConnect
-    role:
-      Fn::GetAtt: [DynamoDBWebsocketRole, Arn]
+    # role:
+    #   Fn::GetAtt: [DynamoDBWebsocketRole, Arn]
     events:
       - websocket:
           route: $connect
   onDisconnect:
     handler: functions/websocket.onDisconnect
-    role:
-      Fn::GetAtt: [DynamoDBWebsocketRole, Arn]
+    # role:
+    #   Fn::GetAtt: [DynamoDBWebsocketRole, Arn]
     events:
       - websocket:
           route: $disconnect
