@@ -35,11 +35,15 @@ functions:
   # websocket functions
   onConnect:
     handler: functions/websocket.onConnect
+    role:
+      Fn::GetAtt: [DynamoDBWebsocketRole, Arn]
     events:
       - websocket:
           route: $connect
   onDisconnect:
     handler: functions/websocket.onDisconnect
+    role:
+      Fn::GetAtt: [DynamoDBWebsocketRole, Arn]
     events:
       - websocket:
           route: $disconnect
@@ -47,3 +51,4 @@ functions:
 resources:
   # - ${file(../../common/resources/api-gateway-authorizer.yml)}
   - ${file(../../resources/dynamodb.yml)}
+  - ${file(../../resources/roles.yml)}

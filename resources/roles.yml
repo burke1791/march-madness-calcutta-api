@@ -76,6 +76,8 @@ Resources:
             - Effect: Allow
               Resource:
                 - Fn::GetAtt: [AuctionConnectionTable, Arn]
+                - Fn::GetAtt: [AuctionChatTable, Arn]
+                - Fn::GetAtt: [AuctionTable, Arn]
               Action:
                 - dynamodb:PutItem
                 - dynamodb:GetItem
