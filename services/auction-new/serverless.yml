@@ -40,9 +40,9 @@ provider:
         - dynamodb:UpdateItem
         - dynamodb:DeleteItem
       Resource:
-        - Fn::GetAtt: [ AuctionConnectionTable, Arn ]
-        - Fn::GetAtt: [AuctionChatTable, Arn]
-        - Fn::GetAtt: [AuctionTable, Arn]
+        - Fn::ImportValue: calcutta-auction-connection-table-arn-${self:custom.stage}
+        - Fn::ImportValue: calcutta-auction-chat-table-arn-${self:custom.stage}
+        - Fn::ImportValue: calcutta-auction-table-arn-${self:custom.stage}
 
 functions:
   # websocket functions
