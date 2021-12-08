@@ -50,5 +50,3 @@ functions:
 
 resources:
   # - ${file(../../common/resources/api-gateway-authorizer.yml)}
-  - ${file(../../resources/dynamodb.yml)}
-  - ${file(../../resources/roles.yml)}
