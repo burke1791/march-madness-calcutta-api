@@ -69,26 +69,3 @@ Resources:
         WriteCapacityUnits: 5
       TableName: AuctionChat
       TableClass: STANDARD
-
-Outputs:
-  AuctionConnectionTableArn:
-    Description: 'ARN for AuctionConnectionTable'
-    Value:
-      Ref:
-        Fn::GetAtt: [AuctionConnectionTable, Arn]
-    Export:
-      Name: calcutta-auction-connection-table-arn-${self:custom.stage}
-  AuctionChatTableArn:
-    Description: 'ARN for AuctionChatTable'
-    Value:
-      Ref:
-        Fn::GetAtt: [AuctionChatTable, Arn]
-    Export:
-      Name: calcutta-auction-chat-table-arn-${self:custom.stage}
-  AuctionTableArn:
-    Description: 'ARN for AuctionTable'
-    Value:
-      Ref:
-        Fn::GetAtt: [AuctionTable, Arn]
-    Export:
-      Name: calcutta-auction-table-arn-${self:custom.stage}

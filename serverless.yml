@@ -46,6 +46,5 @@ resources:
   - ${file(resources/routes.yml)}
   - ${file(resources/security-groups.yml)}
   - ${file(resources/rds.yml)}
-  - ${file(resources/dynamodb.yml)}
   - ${file(resources/roles.yml)}
   - ${file(resources/conditions.yml)}
