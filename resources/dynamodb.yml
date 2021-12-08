@@ -31,11 +31,11 @@ Resources:
     Properties:
       AttributeDefinitions:
         -
-          AttributeName: LeagueId
-          AttributeType: N
+          AttributeName: ConnectionId
+          AttributeType: S
       KeySchema:
         -
-          AttributeName: LeagueId
+          AttributeName: ConnectionId
           KeyType: HASH
       ProvisionedThroughput:
         ReadCapacityUnits: 5

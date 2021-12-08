@@ -31,6 +31,24 @@ provider:
           - .amazonaws.com/
           - ${self:custom.stage}
 
+functions:
+  # websocket functions
+  onConnect:
+    handler: functions/websocket.onConnect
+    role:
+      Fn::GetAtt: [DynamoDBWebsocketRole, Arn]
+    events:
+      - websocket:
+          route: $connect
+  onDisconnect:
+    handler: functions/websocket.onDisconnect
+    role:
+      Fn::GetAtt: [DynamoDBWebsocketRole, Arn]
+    events:
+      - websocket:
+          route: $disconnect
+
 resources:
   # - ${file(../../common/resources/api-gateway-authorizer.yml)}
   - ${file(../../resources/dynamodb.yml)}
+  - ${file(../../resources/roles.yml)}
