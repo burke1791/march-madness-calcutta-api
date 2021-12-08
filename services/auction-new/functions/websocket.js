@@ -1,6 +1,6 @@
 import AWS from 'aws-sdk';
 import { verifyToken } from '../../../common/utilities/verify';
-import { generateAllow, generateDeny } from '../../../common/utilities/generatePolicy';
+// import { generateAllow, generateDeny } from '../../../common/utilities/generatePolicy';
 
 const dynamoDb = new AWS.DynamoDB.DocumentClient();
 
