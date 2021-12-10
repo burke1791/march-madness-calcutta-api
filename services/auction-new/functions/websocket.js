@@ -31,6 +31,7 @@ export async function onConnect(event, context, callback) {
 
   try {
     const response = await dynamoDb.put(params);
+    console.log(response);
     callback(null, {
       statusCode: 200,
       body: JSON.stringify(response),
