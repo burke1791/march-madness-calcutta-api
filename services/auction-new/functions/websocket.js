@@ -30,7 +30,7 @@ export async function onConnect(event, context, callback) {
   };
 
   try {
-    const response = await dynamoDb.put(params);
+    const response = await dynamoDb.putItem(params).promise();
     console.log(response);
     callback(null, {
       statusCode: 200,
@@ -62,7 +62,7 @@ export async function onDisconnect(event, context, callback) {
   };
 
   try {
-    const response = await dynamoDb.deleteItem(params);
+    const response = await dynamoDb.deleteItem(params).promise();
 
     callback(null, {
       statusCode: 200,
