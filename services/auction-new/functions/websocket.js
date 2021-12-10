@@ -30,7 +30,7 @@ export async function onConnect(event, context, callback) {
   };
 
   try {
-    const response = await dynamoDb.putItem(params).promise();
+    const response = await dynamoDb.put(params).promise();
     console.log(response);
     callback(null, {
       statusCode: 200,
