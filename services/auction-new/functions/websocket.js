@@ -29,6 +29,8 @@ export async function onConnect(event, context, callback) {
     }
   };
 
+  console.log(params);
+
   try {
     const response = await dynamoDb.put(params).promise();
     console.log(response);
