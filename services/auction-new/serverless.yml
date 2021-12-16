@@ -10,6 +10,9 @@ plugins:
 custom:
   stage: ${opt:stage, self:provider.stage}
   provider: ${file(../../common/config/provider.json)}
+  AUCTION_TABLE: Auctions
+  CONNECTION_TABLE: AuctionConnections
+  CHAT_TABLE: AuctionChat
 
 provider:
   name: aws
@@ -20,9 +23,9 @@ provider:
   stage: ${self:custom.provider.stage}
   environment:
     APP_ENV: ${self:custom.stage} # used by the websocket verification function
-    AUCTION_TABLE: ${self:resources.Resources.AuctionTable.TableName}
-    CONNECTION_TABLE: ${self:resources.Resources.AuctionConnectionTable.TableName}
-    CHAT_TABLE: ${self:resources.Resources.AuctionChatTable.TableName}
+    AUCTION_TABLE: ${self:custom.AUCTION_TABLE}
+    CONNECTION_TABLE: ${self:custom.CONNECTION_TABLE}
+    CHAT_TABLE: ${self:custom.CHAT_TABLE}
     WEBSOCKET_ENDPOINT:
       Fn::Join:
         - ''

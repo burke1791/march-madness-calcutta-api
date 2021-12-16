@@ -19,7 +19,7 @@ Resources:
       ProvisionedThroughput:
         ReadCapacityUnits: 25
         WriteCapacityUnits: 25
-      TableName: Auctions
+      TableName: ${self:custom.AUCTION_TABLE}
       TableClass: STANDARD
       Tags:
         -
@@ -40,7 +40,7 @@ Resources:
       ProvisionedThroughput:
         ReadCapacityUnits: 5
         WriteCapacityUnits: 5
-      TableName: AuctionConnections
+      TableName: ${self:custom.CONNECTION_TABLE}
       TableClass: STANDARD
       Tags:
         -
@@ -67,5 +67,5 @@ Resources:
       ProvisionedThroughput:
         ReadCapacityUnits: 5
         WriteCapacityUnits: 5
-      TableName: AuctionChat
+      TableName: ${self:custom.CHAT_TABLE}
       TableClass: STANDARD
