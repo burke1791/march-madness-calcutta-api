@@ -2,7 +2,7 @@ import AWS from 'aws-sdk';
 import { verifyToken } from '../../../common/utilities/verify';
 // import { generateAllow, generateDeny } from '../../../common/utilities/generatePolicy';
 
-const dynamoDb = new AWS.DynamoDB.DocumentClient();
+const dynamodb = new AWS.DynamoDB();
 
 // const AUCTION_TABLE = process.env.AUCTION_TABLE;
 const CONNECTION_TABLE = process.env.CONNECTION_TABLE;
@@ -23,16 +23,22 @@ export async function onConnect(event, context, callback) {
   const params = {
     TableName: CONNECTION_TABLE,
     Item: {
-      LeagueId: leagueId,
-      CognitoSub: cognitoSub,
-      ConnectionId: connectionId
+      LeagueId: {
+        N: leagueId
+      },
+      CognitoSub: {
+        S: cognitoSub
+      },
+      ConnectionId: {
+        S: connectionId
+      }
     }
   };
 
   console.log(params);
 
   try {
-    const response = await dynamoDb.put(params).promise();
+    const response = await dynamodb.putItem(params).promise();
     console.log(response);
     callback(null, {
       statusCode: 200,
@@ -64,7 +70,7 @@ export async function onDisconnect(event, context, callback) {
   };
 
   try {
-    const response = await dynamoDb.deleteItem(params).promise();
+    const response = await dynamodb.deleteItem(params).promise();
 
     callback(null, {
       statusCode: 200,
