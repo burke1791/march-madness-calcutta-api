@@ -56,7 +56,7 @@ Resources:
           AttributeType: N
         -
           AttributeName: Timestamp
-          AttributeType: S
+          AttributeType: N
       KeySchema:
         -
           AttributeName: LeagueId
