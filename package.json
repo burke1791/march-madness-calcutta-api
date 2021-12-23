@@ -10,7 +10,7 @@
     "uuid": "^3.4.0"
   },
   "devDependencies": {
-    "aws-sdk": "^2.619.0",
+    "aws-sdk": "^2.814.0",
     "aws-sdk-mock": "^5.1.0",
     "jest": "^25.5.2",
     "serverless-bundle": "^1.2.5",
