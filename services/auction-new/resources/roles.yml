@@ -33,3 +33,7 @@ Resources:
                   - arn:aws:execute-api:*:*:**/@connections/*
                 Action:
                   - execute-api:ManageConnections
+              - Effect: Allow
+                Resource: '*'
+                Action:
+                  - lambda:InvokeFunction

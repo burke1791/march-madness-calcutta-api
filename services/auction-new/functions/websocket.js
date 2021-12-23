@@ -3,10 +3,15 @@ import { verifyToken } from '../../../common/utilities/verify';
 // import { generateAllow, generateDeny } from '../../../common/utilities/generatePolicy';
 
 const dynamodb = new AWS.DynamoDB();
+const lambda = new AWS.Lambda();
 
 // const AUCTION_TABLE = process.env.AUCTION_TABLE;
 const CONNECTION_TABLE = process.env.CONNECTION_TABLE;
 // const CHAT_TABLE = process.env.CHAT_TABLE;
+
+const LAMBDAS = {
+  VERIFY_USER_LEAGUE: `calcutta-auction-service-v2-${process.env.APP_ENV}-verifyUserLeague`
+};
 
 const headers = {
   'Content-Type': 'application/json',
@@ -19,6 +24,19 @@ export async function onConnect(event, context, callback) {
   const connectionId = event.requestContext.connectionId;
   const leagueId = event.queryStringParameters.leagueId;
   const cognitoSub = await verifyToken(event.queryStringParameters.Authorizer);
+
+  try {
+    const lambdaParams = {
+      FunctionName: LAMBDAS.VERIFY_USER_LEAGUE,
+      LogType: 'Tail',
+      Payload: JSON.stringify({ name: 'test' })
+    };
+    
+    const lambdaResponse = lambda.invoke(lambdaParams).promise();
+    console.log(lambdaResponse);
+  } catch (error) {
+    console.log(error);
+  }
 
   const params = {
     TableName: CONNECTION_TABLE,
@@ -36,6 +54,8 @@ export async function onConnect(event, context, callback) {
   };
 
   console.log(params);
+  console.log(new Date());
+  console.log(new Date().valueOf());
 
   try {
     const response = await dynamodb.putItem(params).promise();
