@@ -31,7 +31,7 @@ export async function onConnect(event, context, callback) {
       LogType: 'Tail',
       Payload: JSON.stringify({ name: 'test' })
     };
-    
+
     const lambdaResponse = lambda.invoke(lambdaParams).promise();
     console.log(lambdaResponse);
   } catch (error) {
