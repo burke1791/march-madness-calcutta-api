@@ -26,6 +26,13 @@ provider:
     AUCTION_TABLE: ${self:custom.AUCTION_TABLE}
     CONNECTION_TABLE: ${self:custom.CONNECTION_TABLE}
     CHAT_TABLE: ${self:custom.CHAT_TABLE}
+    DB_NAME: ${self:custom.provider.env.DB_NAME}
+    DB_USER: ${self:custom.provider.env.DB_USER}
+    DB_PASSWORD: ${self:custom.provider.env.DB_PASSWORD}
+    DB_HOST:
+      Fn::ImportValue: ${self:custom.provider.env.DB_HOST}
+    DB_PORT:
+      Fn::ImportValue: ${self:custom.provider.env.DB_PORT}
     WEBSOCKET_ENDPOINT:
       Fn::Join:
         - ''
@@ -34,19 +41,6 @@ provider:
           - Ref: AWS::Region
           - .amazonaws.com/
           - ${self:custom.stage}
-  # iamRoleStatements:
-  #   - Effect: Allow
-  #     Action:
-  #       - dynamodb:Query
-  #       - dynamodb:Scan
-  #       - dynamodb:GetItem
-  #       - dynamodb:PutItem
-  #       - dynamodb:UpdateItem
-  #       - dynamodb:DeleteItem
-  #     Resource:
-  #       - Fn::GetAtt: [AuctionConnectionTable, Arn]
-  #       - Fn::GetAtt: [AuctionChatTable, Arn]
-  #       - Fn::GetAtt: [AuctionTable, Arn]
 
 functions:
   verifyUserLeague:
