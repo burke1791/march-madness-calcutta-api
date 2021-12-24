@@ -25,6 +25,8 @@ export async function onConnect(event, context, callback) {
   const leagueId = event.queryStringParameters.leagueId;
   const cognitoSub = await verifyToken(event.queryStringParameters.Authorizer);
 
+  let userId, alias;
+
   try {
     const lambdaParams = {
       FunctionName: LAMBDAS.VERIFY_USER_LEAGUE,
@@ -34,8 +36,21 @@ export async function onConnect(event, context, callback) {
 
     const lambdaResponse = await lambda.invoke(lambdaParams).promise();
     console.log(lambdaResponse);
+
+    if (!lambdaResponse?.Payload.length) {
+      console.log('User not found - throw');
+      throw new Error('Could not find a matching registered user');
+    }
+
+    userId = +lambdaResponse.Payload[0].UserId;
+    alias = lambdaResponse.Payload[0].Alias;
   } catch (error) {
     console.log(error);
+    callback(null, {
+      statusCode: 500,
+      body: JSON.stringify(error),
+      headers: headers
+    });
   }
 
   const params = {
@@ -49,13 +64,15 @@ export async function onConnect(event, context, callback) {
       },
       ConnectionId: {
         S: connectionId
+      },
+      UserId: {
+        N: userId
+      },
+      Alias: {
+        S: alias
       }
     }
   };
-
-  console.log(params);
-  console.log(new Date());
-  console.log(new Date().valueOf());
 
   try {
     const response = await dynamodb.putItem(params).promise();
