@@ -37,3 +37,10 @@ Resources:
                 Resource: '*'
                 Action:
                   - lambda:InvokeFunction
+              - Effect: Allow
+                Resource:
+                  - arn:aws:logs:us-east-1:*:*
+                Action:
+                  - logs:PutLogEvents
+                  - logs:CreateLogGroup
+                  - logs:CreateLogStream

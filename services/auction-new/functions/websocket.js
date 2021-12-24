@@ -29,7 +29,7 @@ export async function onConnect(event, context, callback) {
     const lambdaParams = {
       FunctionName: LAMBDAS.VERIFY_USER_LEAGUE,
       LogType: 'Tail',
-      Payload: JSON.stringify({ name: 'test' })
+      Payload: JSON.stringify({ leagueId: leagueId, cognitoSub: cognitoSub })
     };
 
     const lambdaResponse = lambda.invoke(lambdaParams).promise();
