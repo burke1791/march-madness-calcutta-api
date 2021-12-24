@@ -32,7 +32,7 @@ export async function onConnect(event, context, callback) {
       Payload: JSON.stringify({ leagueId: leagueId, cognitoSub: cognitoSub })
     };
 
-    const lambdaResponse = lambda.invoke(lambdaParams).promise();
+    const lambdaResponse = await lambda.invoke(lambdaParams).promise();
     console.log(lambdaResponse);
   } catch (error) {
     console.log(error);

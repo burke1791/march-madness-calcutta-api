@@ -1,9 +1,11 @@
-import { connection, Varchar } from '../../../common/utilities/db';
+import { BigInt, connection, Varchar } from '../../../common/utilities/db';
 
 export async function verifyUserLeague(event, context, callback) {
   context.callbackWaitsForEmptyEventLoop = false;
 
   console.log(event);
+
+  const { leagueId, cognitoSub } = event;
 
   try {
     if (!connection.isConnected) {
@@ -11,10 +13,11 @@ export async function verifyUserLeague(event, context, callback) {
     }
 
     let result = await connection.pool.request()
-      .input('TestInput', Varchar(100), 'Hello')
-      .execute('dbo.up_Test');
+      .input('LeagueId', BigInt, leagueId)
+      .input('CognitoSub', Varchar(256), cognitoSub)
+      .execute('dbo.up_VerifyLeagueUser');
 
-    console.log(result);
+    console.log(result.recordset);
 
     callback(null, result.recordset);
   } catch (error) {
