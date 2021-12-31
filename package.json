@@ -7,16 +7,12 @@
     "jsonwebtoken": "^8.5.1",
     "jwk-to-pem": "^2.0.2",
     "mssql": "^7.3.0",
-    "serverless": "^2.70.0",
     "uuid": "^8.3.2"
   },
   "devDependencies": {
     "aws-sdk": "^2.619.0",
     "aws-sdk-mock": "^5.1.0",
-    "jest": "^27.4.5",
-    "serverless-bundle": "^5.2.0",
-    "serverless-dotenv-plugin": "^3.12.1",
-    "serverless-offline": "^8.3.1"
+    "jest": "^27.4.5"
   },
   "scripts": {
     "test": "jest",
