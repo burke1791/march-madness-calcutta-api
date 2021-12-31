@@ -3,10 +3,8 @@ service: calcutta-auction-service
 
 package:
   individually: true
-
 plugins:
   - serverless-bundle
-
 custom:
   stage: ${opt:stage, self:provider.stage}
   provider: ${file(../../common/config/provider.json)}
