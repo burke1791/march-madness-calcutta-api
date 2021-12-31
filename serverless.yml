@@ -1,12 +1,6 @@
 
 service: march-madness-calcutta-api
 
-package:
-  individually: true
-
-plugins:
-  - serverless-bundle
-
 custom:
   stage: ${opt:stage, self:provider.stage}
         
