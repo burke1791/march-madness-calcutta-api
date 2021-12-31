@@ -16,7 +16,7 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: '12.x'
-      - run: npm install -g serverless
+      - run: npm install -g serverless@2.69.1
       - run: npm install
       - run: serverless deploy -s $STAGE_NAME
   
