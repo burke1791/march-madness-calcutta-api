@@ -17,8 +17,6 @@ export async function verifyUserLeague(event, context, callback) {
       .input('CognitoSub', Varchar(256), cognitoSub)
       .execute('dbo.up_VerifyLeagueUser');
 
-    console.log(result.recordset);
-
     callback(null, result.recordset);
   } catch (error) {
     console.log(error);

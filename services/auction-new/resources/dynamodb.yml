@@ -31,12 +31,18 @@ Resources:
     Properties:
       AttributeDefinitions:
         -
+          AttributeName: LeagueId
+          AttributeType: N
+        -
           AttributeName: ConnectionId
           AttributeType: S
       KeySchema:
         -
-          AttributeName: ConnectionId
+          AttributeName: LeagueId
           KeyType: HASH
+        -
+          AttributeName: ConnectionId
+          KeyType: RANGE
       ProvisionedThroughput:
         ReadCapacityUnits: 5
         WriteCapacityUnits: 5
@@ -65,7 +71,7 @@ Resources:
           AttributeName: Timestamp
           KeyType: RANGE
       ProvisionedThroughput:
-        ReadCapacityUnits: 5
-        WriteCapacityUnits: 5
+        ReadCapacityUnits: 25
+        WriteCapacityUnits: 25
       TableName: ${self:custom.CHAT_TABLE}
       TableClass: STANDARD
