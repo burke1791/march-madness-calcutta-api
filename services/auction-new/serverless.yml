@@ -4,8 +4,8 @@ service: calcutta-auction-service-v2
 package:
   individually: true
 
-plugins:
-  - serverless-bundle
+# plugins:
+  # - serverless-bundle
 
 custom:
   stage: ${opt:stage, self:provider.stage}
