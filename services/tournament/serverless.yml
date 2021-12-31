@@ -17,7 +17,7 @@ provider:
   timeout: ${self:custom.provider.timeout}
   logRetentionInDays: ${self:custom.provider.logRetentionInDays}
   region: ${self:custom.provider.region}
-  stage: ${self:custom.provider.stage}
+  stage: ${self:custom.stage}
   environment:
     DB_NAME: ${self:custom.provider.env.DB_NAME}
     DB_USER: ${self:custom.provider.env.DB_USER}

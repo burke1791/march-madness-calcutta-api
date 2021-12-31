@@ -15,7 +15,7 @@ provider:
   timeout: ${self:custom.provider.timeout}
   logRetentionInDays: ${self:custom.provider.logRetentionInDays}
   region: ${self:custom.provider.region}
-  stage: ${self:custom.provider.stage}
+  stage: ${self:custom.stage}
   environment:
     APP_ENV: ${self:custom.stage} # used by the websocket verification function
     DB_NAME: ${self:custom.provider.env.DB_NAME}
