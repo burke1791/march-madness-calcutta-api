@@ -1,13 +1,10 @@
 import AWS from 'aws-sdk';
 import { verifyToken } from '../../../common/utilities/verify';
-// import { generateAllow, generateDeny } from '../../../common/utilities/generatePolicy';
 
 const dynamodb = new AWS.DynamoDB();
 const lambda = new AWS.Lambda();
 
-// const AUCTION_TABLE = process.env.AUCTION_TABLE;
 const CONNECTION_TABLE = process.env.CONNECTION_TABLE;
-// const CHAT_TABLE = process.env.CHAT_TABLE;
 
 const LAMBDAS = {
   VERIFY_USER_LEAGUE: `calcutta-auction-service-v2-${process.env.APP_ENV}-verifyUserLeague`
@@ -42,7 +39,7 @@ export async function onConnect(event, context, callback) {
       throw new Error('Could not find a matching registered user');
     }
 
-    userId = +lambdaResponse.Payload[0].UserId;
+    userId = lambdaResponse.Payload[0].UserId;
     alias = lambdaResponse.Payload[0].Alias;
   } catch (error) {
     console.log(error);

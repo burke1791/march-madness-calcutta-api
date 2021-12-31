@@ -55,14 +55,14 @@ functions:
 
   # websocket functions
   onConnect:
-    handler: functions/websocket.onConnect
+    handler: functions/websocketConnection.onConnect
     role:
       Fn::GetAtt: [DynamoDBWebsocketRole, Arn]
     events:
       - websocket:
           route: $connect
   onDisconnect:
-    handler: functions/websocket.onDisconnect
+    handler: functions/websocketConnection.onDisconnect
     role:
       Fn::GetAtt: [DynamoDBWebsocketRole, Arn]
     events:
