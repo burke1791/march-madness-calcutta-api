@@ -123,6 +123,7 @@ export async function sendChatMessage(event, context, callback) {
       body: JSON.stringify({ message: 'messages sent' })
     });
   } catch (error) {
+    console.log(error);
     callback(null, {
       statusCode: 500,
       body: JSON.stringify({ message: 'chat not sent' })
