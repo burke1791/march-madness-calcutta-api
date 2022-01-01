@@ -41,6 +41,8 @@ export async function onConnect(event, context, callback) {
 
     userId = lambdaResponse.Payload[0].UserId;
     alias = lambdaResponse.Payload[0].Alias;
+    console.log(userId);
+    console.log(alias);
   } catch (error) {
     console.log(error);
     callback(null, {
@@ -54,7 +56,7 @@ export async function onConnect(event, context, callback) {
     TableName: CONNECTION_TABLE,
     Item: {
       LeagueId: {
-        N: leagueId
+        N: Number(leagueId)
       },
       CognitoSub: {
         S: cognitoSub
@@ -63,13 +65,15 @@ export async function onConnect(event, context, callback) {
         S: connectionId
       },
       UserId: {
-        N: userId
+        N: Number(userId)
       },
       Alias: {
         S: alias
       }
     }
   };
+
+  console.log(params);
 
   try {
     const response = await dynamodb.putItem(params).promise();
