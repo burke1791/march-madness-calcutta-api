@@ -68,6 +68,13 @@ functions:
     events:
       - websocket:
           route: $disconnect
+  handleMessage:
+    handler: functions/websocketChat.sendChatMessage
+    role:
+      Fn::GetAtt: [DynamoDBWebsocketRole, Arn]
+    events:
+      - websocket:
+          route: $default
 
 resources:
   # - ${file(../../common/resources/api-gateway-authorizer.yml)}
