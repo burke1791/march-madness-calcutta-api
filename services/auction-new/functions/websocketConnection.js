@@ -57,7 +57,7 @@ export async function onConnect(event, context, callback) {
     TableName: CONNECTION_TABLE,
     Item: {
       LeagueId: {
-        N: Number(leagueId)
+        N: leagueId
       },
       CognitoSub: {
         S: cognitoSub
@@ -66,7 +66,7 @@ export async function onConnect(event, context, callback) {
         S: connectionId
       },
       UserId: {
-        N: Number(userId)
+        N: userId
       },
       Alias: {
         S: alias
