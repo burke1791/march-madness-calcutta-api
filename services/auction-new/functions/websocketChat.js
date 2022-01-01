@@ -22,6 +22,9 @@ export async function sendChatMessage(event, context, callback) {
     const params = {
       TableName: CONNECTION_TABLE,
       Key: {
+        LeagueId: {
+          N: leagueId
+        },
         ConnectionId: {
           S: connectionId
         }
