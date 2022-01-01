@@ -33,14 +33,15 @@ export async function onConnect(event, context, callback) {
 
     const lambdaResponse = await lambda.invoke(lambdaParams).promise();
     console.log(lambdaResponse);
+    const responsePayload = JSON.parse(lambdaResponse.Payload);
 
-    if (!lambdaResponse?.Payload.length) {
+    if (!responsePayload.length) {
       console.log('User not found - throw');
       throw new Error('Could not find a matching registered user');
     }
 
-    userId = lambdaResponse.Payload[0].UserId;
-    alias = lambdaResponse.Payload[0].Alias;
+    userId = responsePayload[0].UserId;
+    alias = responsePayload[0].Alias;
     console.log(userId);
     console.log(alias);
   } catch (error) {
