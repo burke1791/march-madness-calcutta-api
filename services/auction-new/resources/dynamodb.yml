@@ -33,6 +33,9 @@ Resources:
         -
           AttributeName: ConnectionId
           AttributeType: S
+        -
+          AttributeName: LeagueId
+          AttributeType: N
       KeySchema:
         -
           AttributeName: ConnectionId
