@@ -43,6 +43,24 @@ provider:
           - ${self:custom.stage}
 
 functions:
+  # HTTP functions
+  getAllChatMessages:
+    handler: functions/chat.getAllMessages
+    events:
+      - http:
+          path: getAllChatMessages/{leagueId}
+          method: get
+          integration: lambda
+          authorizer:
+            type: COGNITO_USER_POOLS
+            authorizerId:
+              Ref: ApiGatewayAuthorizer
+          cors:
+            origin: '*'
+            headers:
+              - x-cognito-token
+
+  # Invokable functions
   verifyUserLeague:
     handler: functions/verifyUserLeague.verifyUserLeague
     vpc:
@@ -77,6 +95,6 @@ functions:
           route: $default
 
 resources:
-  # - ${file(../../common/resources/api-gateway-authorizer.yml)}
+  - ${file(../../common/resources/api-gateway-authorizer.yml)}
   - ${file(resources/dynamodb.yml)}
   - ${file(resources/roles.yml)}
