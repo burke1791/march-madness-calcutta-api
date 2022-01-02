@@ -31,18 +31,12 @@ Resources:
     Properties:
       AttributeDefinitions:
         -
-          AttributeName: LeagueId
-          AttributeType: N
-        -
           AttributeName: ConnectionId
           AttributeType: S
       KeySchema:
         -
-          AttributeName: LeagueId
-          KeyType: HASH
-        -
           AttributeName: ConnectionId
-          KeyType: RANGE
+          KeyType: HASH
       ProvisionedThroughput:
         ReadCapacityUnits: 5
         WriteCapacityUnits: 5
@@ -50,15 +44,17 @@ Resources:
       TableClass: STANDARD
       GlobalSecondaryIndexes:
         -
-          IndexName: ${self:custom.CONNECTION_TABLE}_ConnectionId
+          IndexName: ${self:custom.CONNECTION_TABLE}_LeagueId
           KeySchema:
             -
-              AttributeName: ConnectionId
+              AttributeName: LeagueId
               KeyType: HASH
           Projection:
             ProjectionType: INCLUDE
             NonKeyAttributes:
-              - LeagueId
+              - ConnectionId
+              - Alias
+              - UserId
           ProvisionedThroughput:
             ReadCapacityUnits: 5
             WriteCapacityUnits: 5

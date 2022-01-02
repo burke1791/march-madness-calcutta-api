@@ -5,7 +5,6 @@ const dynamodb = new AWS.DynamoDB();
 const lambda = new AWS.Lambda();
 
 const CONNECTION_TABLE = process.env.CONNECTION_TABLE;
-const CONNECTION_INDEX = `${process.env.CONNECTION_TABLE}_ConnectionId`;
 
 const LAMBDAS = {
   VERIFY_USER_LEAGUE: `calcutta-auction-service-v2-${process.env.APP_ENV}-verifyUserLeague`
@@ -100,8 +99,8 @@ export async function onDisconnect(event, context, callback) {
 
   const connectionId = event.requestContext.connectionId;
 
-  const indexSearchParams = {
-    IndexName: CONNECTION_INDEX,
+  const deleteItemParams = {
+    TableName: CONNECTION_TABLE,
     Key: {
       ConnectionId: {
         S: connectionId
@@ -110,23 +109,8 @@ export async function onDisconnect(event, context, callback) {
   };
 
   try {
-    const keyResponse = await dynamodb.getItem(indexSearchParams).promise();
-
-    const leagueId = keyResponse.Item.LeagueId.N;
-
-    const deleteItemParams = {
-      TableName: CONNECTION_TABLE,
-      Key: {
-        LeagueId: {
-          N: leagueId
-        },
-        ConnectionId: {
-          S: connectionId
-        }
-      }
-    };
-
     const response = await dynamodb.deleteItem(deleteItemParams).promise();
+    console.log(response);
 
     callback(null, {
       statusCode: 200,
