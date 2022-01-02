@@ -46,6 +46,8 @@ functions:
   # HTTP functions
   getAllChatMessages:
     handler: functions/chat.getAllMessages
+    role:
+      Fn::GetAtt: [DynamoDBWebsocketRole, Arn]
     events:
       - http:
           path: getAllChatMessages/{leagueId}
