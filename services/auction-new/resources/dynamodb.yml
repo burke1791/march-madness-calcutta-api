@@ -48,6 +48,20 @@ Resources:
         WriteCapacityUnits: 5
       TableName: ${self:custom.CONNECTION_TABLE}
       TableClass: STANDARD
+      GlobalSecondaryIndexes:
+        -
+          IndexName: ${self:custom.CONNECTION_TABLE}_ConnectionId
+          KeySchema:
+            -
+              AttributeName: ConnectionId
+              KeyType: HASH
+          Projection:
+            ProjectionType: INCLUDE
+            NonKeyAttributes:
+              - LeagueId
+          ProvisionedThroughput:
+            ReadCapacityUnits: 5
+            WriteCapacityUnits: 5
       Tags:
         -
           Key: Description

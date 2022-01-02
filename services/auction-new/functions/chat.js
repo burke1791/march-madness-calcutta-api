@@ -36,8 +36,7 @@ export async function getAllMessages(event, context, callback) {
           N: leagueId
         }
       },
-      KeyConditionExpression: 'LeagueId = :v1',
-      ProjectionExpression: 'ChatMessage'
+      KeyConditionExpression: 'LeagueId = :v1'
     };
 
     const response = await dynamodb.query(messagesQuery).promise();
