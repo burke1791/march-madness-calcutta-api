@@ -43,7 +43,18 @@ export async function getAllMessages(event, context, callback) {
 
     console.log(response);
 
-    callback(null, response.Items);
+    const messages = response.Items.map(message => {
+      return {
+        LeagueId: message.LeagueId.N,
+        UserId: message.UserId.N,
+        Alias: message.Alias.S,
+        MessageId: message.MessageId.S,
+        Timestamp: message.Timestamp.N,
+        Content: message.Content.S
+      };
+    });
+
+    callback(null, messages);
   } catch (error) {
     console.log(error);
     callback(null, error);
