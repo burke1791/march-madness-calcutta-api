@@ -34,12 +34,15 @@ export async function sendChatMessage(event, context, callback) {
     let response = await dynamodb.getItem(params).promise();
     console.log(response);
 
+    const userId = response.Item.UserId.N;
+    const alias = response.Item.Alias.S;
+
     // @TODO: verify the leagueId in dynamodb matches the leagueId in the request body
     if (!response?.Item.ConnectionId.S) {
       throw new Error('User does not exist in the Connection table');
     }
 
-    const timestamp = new Date().valueOf();
+    const timestamp = new Date().valueOf().toString();
 
     const chatParams = {
       TableName: CHAT_TABLE,
@@ -51,10 +54,10 @@ export async function sendChatMessage(event, context, callback) {
           N: timestamp
         },
         Alias: {
-          S: 'AliasPlaceholder'
+          S: alias
         },
         UserId: {
-          N: 'UserIdPlaceholder'
+          N: userId
         },
         Content: {
           S: content
@@ -63,8 +66,8 @@ export async function sendChatMessage(event, context, callback) {
     };
 
     const chatObj = {
-      UserId: 'UserIdPlaceholder',
-      Alias: 'AliasPlaceholder',
+      UserId: userId,
+      Alias: alias,
       LeagueId: leagueId,
       Content: content,
       Timestamp: timestamp
