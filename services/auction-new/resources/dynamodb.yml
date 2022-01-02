@@ -49,12 +49,10 @@ Resources:
             -
               AttributeName: LeagueId
               KeyType: HASH
-            -
-              AttributeName: ConnectionId
-              KeyType: RANGE
           Projection:
             ProjectionType: INCLUDE
             NonKeyAttributes:
+              - ConnectionId
               - Alias
               - UserId
           ProvisionedThroughput:
