@@ -1,8 +1,10 @@
 import AWS from 'aws-sdk';
+import { v4 as uuidv4 } from 'uuid';
 
 const dynamodb = new AWS.DynamoDB();
 
 const CONNECTION_TABLE = process.env.CONNECTION_TABLE;
+const CONNECTION_INDEX = `${process.env.CONNECTION_TABLE}_LeagueId`;
 const CHAT_TABLE = process.env.CHAT_TABLE;
 
 export async function sendChatMessage(event, context, callback) {
@@ -22,9 +24,6 @@ export async function sendChatMessage(event, context, callback) {
     const params = {
       TableName: CONNECTION_TABLE,
       Key: {
-        LeagueId: {
-          N: leagueId
-        },
         ConnectionId: {
           S: connectionId
         }
@@ -43,6 +42,7 @@ export async function sendChatMessage(event, context, callback) {
     }
 
     const timestamp = new Date().valueOf().toString();
+    const messageId = uuidv4();
 
     const chatParams = {
       TableName: CHAT_TABLE,
@@ -52,6 +52,9 @@ export async function sendChatMessage(event, context, callback) {
         },
         Timestamp: {
           N: timestamp
+        },
+        MessageId: {
+          S: messageId
         },
         Alias: {
           S: alias
@@ -66,6 +69,7 @@ export async function sendChatMessage(event, context, callback) {
     };
 
     const chatObj = {
+      MessageId: messageId,
       UserId: userId,
       Alias: alias,
       LeagueId: leagueId,
@@ -79,12 +83,14 @@ export async function sendChatMessage(event, context, callback) {
     };
 
     let chatResponse = await dynamodb.putItem(chatParams).promise();
+    console.log('Chat Response:');
     console.log(chatResponse);
 
     // @TODO: verify the message was sent to the table
 
     const queryParams = {
       TableName: CONNECTION_TABLE,
+      IndexName: CONNECTION_INDEX,
       ExpressionAttributeValues: {
         ':v1': {
           N: leagueId
