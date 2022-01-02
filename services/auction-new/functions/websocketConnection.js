@@ -98,6 +98,7 @@ export async function onDisconnect(event, context, callback) {
   context.callbackWaitsForEmptyEventLoop = false;
 
   const connectionId = event.requestContext.connectionId;
+  console.log(event);
 
   const params = {
     TableName: CONNECTION_TABLE,

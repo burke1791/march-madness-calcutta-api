@@ -31,11 +31,13 @@ export async function getAllMessages(event, context, callback) {
 
     const messagesQuery = {
       TableName: CHAT_TABLE,
-      Key: {
-        LeagueId: {
+      ExpressionAttributeValues: {
+        ':v1': {
           N: leagueId
         }
-      }
+      },
+      KeyConditionExpression: 'LeagueId = :v1',
+      ProjectionExpression: 'ChatMessage'
     };
 
     const response = await dynamodb.query(messagesQuery).promise();
