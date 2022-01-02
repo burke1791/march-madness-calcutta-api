@@ -52,7 +52,6 @@ Resources:
           Projection:
             ProjectionType: INCLUDE
             NonKeyAttributes:
-              - ConnectionId
               - Alias
               - UserId
           ProvisionedThroughput:
