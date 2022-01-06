@@ -3,18 +3,14 @@ Resources:
     Type: AWS::DynamoDB::Table
     Properties:
       AttributeDefinitions:
-        -
-          AttributeName: LeagueId
+        - AttributeName: LeagueId
           AttributeType: N
-        -
-          AttributeName: LastBidTimestamp
+        - AttributeName: LastBidTimestamp
           AttributeType: S
       KeySchema:
-        -
-          AttributeName: LeagueId
+        - AttributeName: LeagueId
           KeyType: HASH
-        -
-          AttributeName: LastBidTimestamp
+        - AttributeName: LastBidTimestamp
           KeyType: RANGE
       ProvisionedThroughput:
         ReadCapacityUnits: 25
@@ -22,20 +18,19 @@ Resources:
       TableName: ${self:custom.AUCTION_TABLE}
       TableClass: STANDARD
       Tags:
-        -
-          Key: Description
+        - Key: Description
           Value: 'Contains all auction bidding data'
       
   AuctionConnectionTable:
     Type: AWS::DynamoDB::Table
     Properties:
       AttributeDefinitions:
-        -
-          AttributeName: ConnectionId
+        - AttributeName: ConnectionId
           AttributeType: S
-        -
-          AttributeName: LeagueId
+        - AttributeName: LeagueId
           AttributeType: N
+        - AttributeName: CognitoSub
+          AttributeType: S
       KeySchema:
         -
           AttributeName: ConnectionId
@@ -46,12 +41,12 @@ Resources:
       TableName: ${self:custom.CONNECTION_TABLE}
       TableClass: STANDARD
       GlobalSecondaryIndexes:
-        -
-          IndexName: ${self:custom.CONNECTION_TABLE}_LeagueId
+        - IndexName: ${self:custom.CONNECTION_TABLE}_LeagueId_CognitoSub
           KeySchema:
-            -
-              AttributeName: LeagueId
+            - AttributeName: LeagueId
               KeyType: HASH
+            - AttributeName: CognitoSub
+              KeyType: RANGE
           Projection:
             ProjectionType: INCLUDE
             NonKeyAttributes:
@@ -69,18 +64,14 @@ Resources:
     Type: AWS::DynamoDB::Table
     Properties:
       AttributeDefinitions:
-        -
-          AttributeName: LeagueId
+        - AttributeName: LeagueId
           AttributeType: N
-        -
-          AttributeName: Timestamp
+        - AttributeName: Timestamp
           AttributeType: N
       KeySchema:
-        -
-          AttributeName: LeagueId
+        - AttributeName: LeagueId
           KeyType: HASH
-        -
-          AttributeName: Timestamp
+        - AttributeName: Timestamp
           KeyType: RANGE
       ProvisionedThroughput:
         ReadCapacityUnits: 25
