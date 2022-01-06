@@ -31,7 +31,6 @@ export async function sendChatMessage(event, context, callback) {
     };
 
     let response = await dynamodb.getItem(params).promise();
-    console.log(response);
 
     const userId = response.Item.UserId.N;
     const alias = response.Item.Alias.S;
@@ -101,8 +100,6 @@ export async function sendChatMessage(event, context, callback) {
     };
 
     const connectionIdQuery = await dynamodb.query(queryParams).promise();
-    console.log(connectionIdQuery);
-
     const connectionIds = connectionIdQuery.Items;
 
     const apig = new AWS.ApiGatewayManagementApi({
@@ -111,7 +108,6 @@ export async function sendChatMessage(event, context, callback) {
     });
 
     const postCalls = connectionIds.map(async (connectionId) => {
-      console.log(connectionId);
       const params = {
         ConnectionId: connectionId.ConnectionId.S,
         Data: JSON.stringify(payload)
