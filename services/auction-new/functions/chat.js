@@ -29,10 +29,8 @@ export async function getAllMessages(event, context, callback) {
     };
 
     const connectionResponse = await dynamodb.query(connectionParams).promise();
-    const responsePayload = JSON.parse(connectionResponse.Items);
 
-    if (!responsePayload.length) {
-      console.log('User not found - throw');
+    if (!connectionResponse.Items.length) {
       throw new Error('Could not find a matching registered user');
     }
 
@@ -47,8 +45,6 @@ export async function getAllMessages(event, context, callback) {
     };
 
     const response = await dynamodb.query(messagesQuery).promise();
-
-    console.log(response);
 
     const messages = response.Items.map(message => {
       return {
