@@ -1,12 +1,10 @@
 import AWS from 'aws-sdk';
 
 const dynamodb = new AWS.DynamoDB();
-const lambda = new AWS.Lambda();
 
+const CONNECTION_TABLE = process.env.CONNECTION_TABLE;
+const CONNECTION_INDEX = `${process.env.CONNECTION_TABLE}_LeagueId_CognitoSub`;
 const CHAT_TABLE = process.env.CHAT_TABLE;
-const LAMBDAS = {
-  VERIFY_USER_LEAGUE: `calcutta-auction-service-v2-${process.env.APP_ENV}-verifyUserLeague`
-};
 
 export async function getAllMessages(event, context, callback) {
   context.callbackWaitsForEmptyEventLoop = false;
@@ -15,14 +13,23 @@ export async function getAllMessages(event, context, callback) {
   const leagueId = event.path.leagueId;
 
   try {
-    const lambdaParams = {
-      FunctionName: LAMBDAS.VERIFY_USER_LEAGUE,
-      LogType: 'Tail',
-      Payload: JSON.stringify({ leagueId: leagueId, cognitoSub: cognitoSub })
+    const connectionParams = {
+      TableName: CONNECTION_TABLE,
+      IndexName: CONNECTION_INDEX,
+      ExpressionAttributeValues: {
+        ':v1': {
+          N: leagueId
+        },
+        ':v2': {
+          S: cognitoSub
+        }
+      },
+      KeyConditionExpression: 'LeagueId = :v1 AND CognitoSub = :v2',
+      ProjectionExpression: 'Alias'
     };
 
-    const lambdaResponse = await lambda.invoke(lambdaParams).promise();
-    const responsePayload = JSON.parse(lambdaResponse.Payload);
+    const connectionResponse = await dynamodb.query(connectionParams).promise();
+    const responsePayload = JSON.parse(connectionResponse.Items);
 
     if (!responsePayload.length) {
       console.log('User not found - throw');

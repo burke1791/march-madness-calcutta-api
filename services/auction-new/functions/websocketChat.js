@@ -4,7 +4,7 @@ import { v4 as uuidv4 } from 'uuid';
 const dynamodb = new AWS.DynamoDB();
 
 const CONNECTION_TABLE = process.env.CONNECTION_TABLE;
-const CONNECTION_INDEX = `${process.env.CONNECTION_TABLE}_LeagueId`;
+const CONNECTION_INDEX = `${process.env.CONNECTION_TABLE}_LeagueId_CognitoSub`;
 const CHAT_TABLE = process.env.CHAT_TABLE;
 
 export async function sendChatMessage(event, context, callback) {
