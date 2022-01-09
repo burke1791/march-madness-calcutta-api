@@ -126,7 +126,7 @@ export async function getNextItem(event, context, callback) {
 
     const auctionResponse = await dynamodb.updateItem(auctionParams).promise();
     console.log(auctionResponse);
-    
+
     const updateData = auctionResponse.Attributes;
 
     // send the info to all active websocket connections

@@ -31,7 +31,7 @@ export async function websocketBroadcast(leagueId, payload, domainName, apiStage
       const params = {
         ConnectionId: connectionId.ConnectionId.S,
         Data: JSON.stringify(payload)
-      }
+      };
 
       try {
         await apig.postToConnection(params).promise();
