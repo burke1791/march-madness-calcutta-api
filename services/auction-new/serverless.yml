@@ -11,6 +11,7 @@ custom:
   stage: ${opt:stage, self:provider.stage}
   provider: ${file(../../common/config/provider.json)}
   AUCTION_TABLE: Auctions
+  BID_HISTORY_TABLE: BidHistory
   CONNECTION_TABLE: AuctionConnections
   CHAT_TABLE: AuctionChat
 
@@ -63,8 +64,18 @@ functions:
               - x-cognito-token
 
   # Invokable functions
-  verifyUserLeague:
-    handler: functions/verifyUserLeague.verifyUserLeague
+  rdsVerifyUserLeague:
+    handler: functions/rds/verifyUserLeague.verifyUserLeague
+    vpc:
+      securityGroupIds:
+        - Fn::ImportValue: ${self:custom.provider.vpc.securityGroupIds.LAMBDA_SG}
+      subnetIds:
+        - Fn::ImportValue: ${self:custom.provider.vpc.subnetIds.SUBNET1}
+        - Fn::ImportValue: ${self:custom.provider.vpc.subnetIds.SUBNET2}
+        - Fn::ImportValue: ${self:custom.provider.vpc.subnetIds.SUBNET3}
+
+  rdsGetNextItem:
+    handler: functions/rds/getNextItem.getNextItem
     vpc:
       securityGroupIds:
         - Fn::ImportValue: ${self:custom.provider.vpc.securityGroupIds.LAMBDA_SG}
@@ -95,6 +106,13 @@ functions:
     events:
       - websocket:
           route: $default
+  getNextItem:
+    handler: functions/getNextItem.getNextItem
+    role:
+      Fn::GetAtt: [DynamoDBWebsocketRole, Arn]
+    events:
+      - websocket:
+          route: NEXT_ITEM
 
 resources:
   - ${file(../../common/resources/api-gateway-authorizer.yml)}

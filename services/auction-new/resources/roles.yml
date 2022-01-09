@@ -21,6 +21,7 @@ Resources:
                   - Fn::GetAtt: [AuctionConnectionTable, Arn]
                   - Fn::GetAtt: [AuctionChatTable, Arn]
                   - Fn::GetAtt: [AuctionTable, Arn]
+                  - Fn::GetAtt: [BidHistoryTable, Arn]
                 Action:
                   - dynamodb:PutItem
                   - dynamodb:GetItem
