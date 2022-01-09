@@ -7,7 +7,7 @@ const lambda = new AWS.Lambda();
 const CONNECTION_TABLE = process.env.CONNECTION_TABLE;
 
 const LAMBDAS = {
-  VERIFY_USER_LEAGUE: `calcutta-auction-service-v2-${process.env.APP_ENV}-verifyUserLeague`
+  VERIFY_USER_LEAGUE: `calcutta-auction-service-v2-${process.env.APP_ENV}-rdsVerifyUserLeague`
 };
 
 const headers = {

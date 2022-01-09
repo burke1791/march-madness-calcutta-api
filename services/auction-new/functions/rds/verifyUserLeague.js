@@ -1,4 +1,4 @@
-import { BigInt, connection, Varchar } from '../../../common/utilities/db';
+import { BigInt, connection, Varchar } from '../../../../common/utilities/db';
 
 export async function verifyUserLeague(event, context, callback) {
   context.callbackWaitsForEmptyEventLoop = false;
