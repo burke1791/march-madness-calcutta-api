@@ -152,7 +152,7 @@ export async function getNextItem(event, context, callback) {
     });
   } catch (error) {
     console.log(error);
-    callbbck(null, {
+    callback(null, {
       statusCode: 500,
       body: JSON.stringify({ message: 'error getting next team' })
     });
