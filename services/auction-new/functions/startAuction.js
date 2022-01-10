@@ -4,10 +4,10 @@ import { websocketBroadcast, verifyLeagueConnection, updateAuctionRecord } from 
 const lambda = new AWS.Lambda();
 
 const LAMBDAS = {
-  RDS_GET_NEXT_ITEM: `calcutta-auction-service-v2-${process.env.APP_ENV}-rdsGetNextItem`
+  RDS_START_AUCTION: `calcutta-auction-service-v2-${process.env.APP_ENV}-rdsStartAuction`
 };
 
-export async function getNextItem(event, context, callback) {
+export async function startAuction(event, context, callback) {
   context.callbackWaitsForEmptyEventLoop = false;
 
   const data = JSON.parse(event.body);
@@ -21,24 +21,24 @@ export async function getNextItem(event, context, callback) {
       throw new Error('ConnectionId and LeagueId do not match');
     }
 
-    // get the next item information from RDS
+    // update the auction status in SQL Server
     const lambdaParams = {
-      FunctionName: LAMBDAS.RDS_GET_NEXT_ITEM,
+      FunctionName: LAMBDAS.RDS_START_AUCTION,
       LogType: 'Tail',
       Payload: JSON.stringify({ leagueId: leagueId })
-    };
+    }
 
     const lambdaResponse = await lambda.invoke(lambdaParams).promise();
     const responsePayload = JSON.parse(lambdaResponse.Payload);
     console.log(responsePayload);
-
+    
     if (!responsePayload.length || !!responsePayload[0]?.Error) {
-      throw new Error('No available teams');
+      throw new Error('Could not set league status')
     }
 
     const teamObj = responsePayload[0];
 
-    // write that info to dynamodb
+    // set the next item in dynamodb
     const auctionObj = await updateAuctionRecord(leagueId, teamObj);
     console.log(auctionObj);
 
@@ -57,7 +57,7 @@ export async function getNextItem(event, context, callback) {
     console.log(error);
     callback(null, {
       statusCode: 500,
-      body: JSON.stringify({ message: 'error getting next team' })
+      body: JSON.stringify({ message: 'error starting auction' })
     });
   }
 }
