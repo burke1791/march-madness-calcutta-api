@@ -1,11 +1,8 @@
 import AWS from 'aws-sdk';
 import { websocketBroadcast, verifyLeagueConnection, updateAuctionRecord } from '../utilities';
+import { LAMBDAS } from '../utilities/constants';
 
 const lambda = new AWS.Lambda();
-
-const LAMBDAS = {
-  RDS_GET_NEXT_ITEM: `calcutta-auction-service-v2-${process.env.APP_ENV}-rdsGetNextItem`
-};
 
 export async function getNextItem(event, context, callback) {
   context.callbackWaitsForEmptyEventLoop = false;
@@ -17,7 +14,9 @@ export async function getNextItem(event, context, callback) {
 
   try {
     // verify the leagueId matches the connection
-    if (!await verifyLeagueConnection(leagueId, connectionId)) {
+    const verifyResponse = await verifyLeagueConnection(leagueId, connectionId);
+
+    if (verifyResponse === false) {
       throw new Error('ConnectionId and LeagueId do not match');
     }
 

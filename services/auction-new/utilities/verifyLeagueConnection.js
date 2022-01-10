@@ -1,8 +1,9 @@
 import AWS from 'aws-sdk';
+import { DYNAMODB_TABLES } from './constants';
 
 const dynamodb = new AWS.DynamoDB();
 
-const CONNECTION_TABLE = process.env.CONNECTION_TABLE;
+const CONNECTION_TABLE = DYNAMODB_TABLES.CONNECTION_TABLE;
 
 /**
  * @function verifyLeagueConnection
@@ -19,19 +20,26 @@ export async function verifyLeagueConnection(leagueId, connectionId) {
         S: connectionId
       }
     },
-    ProjectionExpression: 'LeagueId'
+    ProjectionExpression: 'LeagueId, UserId, Alias'
   }
 
   try {
     const connectionResponse = await dynamodb.getItem(connectionParams).promise();
 
-    const connectionLeagueId = connectionResponse.Item.LeagueId.N;
+    const userData = {
+      LeagueId: connectionResponse.Item.LeagueId.N,
+      UserId: connectionResponse.Item.UserId.N,
+      Alias: connectionResponse.Item.Alias.S
+    };
 
     console.log(leagueId);
-    console.log(connectionLeagueId);
-    console.log(+leagueId === +connectionLeagueId);
+    console.log(userData);
 
-    return +leagueId === +connectionLeagueId;
+    if (+userData.LeagueId !== +leagueId) {
+      throw new Error('ConnectionId and LeagueId not found');
+    }
+
+    return userData;
   } catch (error) {
     console.log(error);
     return false;

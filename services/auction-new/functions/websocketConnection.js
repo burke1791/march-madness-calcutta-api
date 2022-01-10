@@ -1,14 +1,11 @@
 import AWS from 'aws-sdk';
 import { verifyToken } from '../../../common/utilities/verify';
+import { DYNAMODB_TABLES, LAMBDAS } from '../utilities/constants';
 
 const dynamodb = new AWS.DynamoDB();
 const lambda = new AWS.Lambda();
 
-const CONNECTION_TABLE = process.env.CONNECTION_TABLE;
-
-const LAMBDAS = {
-  VERIFY_USER_LEAGUE: `calcutta-auction-service-v2-${process.env.APP_ENV}-rdsVerifyUserLeague`
-};
+const CONNECTION_TABLE = DYNAMODB_TABLES.CONNECTION_TABLE;
 
 const headers = {
   'Content-Type': 'application/json',

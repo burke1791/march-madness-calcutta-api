@@ -1,9 +1,10 @@
 import AWS from 'aws-sdk';
+import { DYNAMODB_INDEXES, DYNAMODB_TABLES } from './constants';
 
 const dynamodb = new AWS.DynamoDB();
 
-const CONNECTION_TABLE = process.env.CONNECTION_TABLE;
-const CONNECTION_INDEX = `${process.env.CONNECTION_TABLE}_LeagueId_CognitoSub`;
+const CONNECTION_TABLE = DYNAMODB_TABLES.CONNECTION_TABLE;
+const CONNECTION_INDEX = DYNAMODB_INDEXES.CONNECTION_INDEX;
 
 export async function websocketBroadcast(leagueId, payload, domainName, apiStage) {
   const connectionQueryParams = {

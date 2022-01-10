@@ -84,6 +84,16 @@ functions:
         - Fn::ImportValue: ${self:custom.provider.vpc.subnetIds.SUBNET2}
         - Fn::ImportValue: ${self:custom.provider.vpc.subnetIds.SUBNET3}
 
+  rdsStartAuction:
+    handler: functions/rds/startAuction.startAuction
+    vpc:
+      securityGroupIds:
+        - Fn::ImportValue: ${self:custom.provider.vpc.securityGroupIds.LAMBDA_SG}
+      subnetIds:
+        - Fn::ImportValue: ${self:custom.provider.vpc.subnetIds.SUBNET1}
+        - Fn::ImportValue: ${self:custom.provider.vpc.subnetIds.SUBNET2}
+        - Fn::ImportValue: ${self:custom.provider.vpc.subnetIds.SUBNET3}
+
   # websocket functions
   onConnect:
     handler: functions/websocketConnection.onConnect
@@ -106,6 +116,20 @@ functions:
     events:
       - websocket:
           route: $default
+  startAuction:
+    handler: functions/startAuction.startAuction
+    role:
+      Fn::GetAtt: [DynamoDBWebsocketRole, Arn]
+    events:
+      - websocket:
+          route: START_AUCTION
+  placeBid:
+    handler: functions/placeBid.placeBid
+    role:
+      Fn::GetAtt: [DynamoDBWebsocketRole, Arn]
+    events:
+      - websocket:
+          route: PLACE_BID
   getNextItem:
     handler: functions/getNextItem.getNextItem
     role:

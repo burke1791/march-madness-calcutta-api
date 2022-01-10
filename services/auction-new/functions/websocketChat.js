@@ -1,11 +1,12 @@
 import AWS from 'aws-sdk';
 import { v4 as uuidv4 } from 'uuid';
+import { DYNAMODB_INDEXES, DYNAMODB_TABLES } from '../utilities/constants';
 
 const dynamodb = new AWS.DynamoDB();
 
-const CONNECTION_TABLE = process.env.CONNECTION_TABLE;
-const CONNECTION_INDEX = `${process.env.CONNECTION_TABLE}_LeagueId_CognitoSub`;
-const CHAT_TABLE = process.env.CHAT_TABLE;
+const CONNECTION_TABLE = DYNAMODB_TABLES.CONNECTION_TABLE;
+const CONNECTION_INDEX = DYNAMODB_INDEXES.CONNECTION_INDEX;
+const CHAT_TABLE = DYNAMODB_TABLES.CHAT_TABLE;
 
 export async function sendChatMessage(event, context, callback) {
   context.callbackWaitsForEmptyEventLoop = false;
