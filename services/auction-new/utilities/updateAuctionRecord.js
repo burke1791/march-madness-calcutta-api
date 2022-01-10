@@ -1,8 +1,9 @@
 import AWS from 'aws-sdk';
+import { DYNAMODB_TABLES } from './constants';
 
 const dynamodb = new AWS.DynamoDB();
 
-const AUCTION_TABLE = process.env.AUCTION_TABLE;
+const AUCTION_TABLE = DYNAMODB_TABLES.AUCTION_TABLE;
 
 /**
  * @function updateAuctionRecord
