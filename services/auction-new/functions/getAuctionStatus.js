@@ -80,7 +80,7 @@ export async function getAuctionStatus(event, context, callback) {
       }
     }
 
-    callback(null, auctionObj);
+    callback(null, [auctionObj]);
   } catch (error) {
     console.log(error);
     callback(null, error);
