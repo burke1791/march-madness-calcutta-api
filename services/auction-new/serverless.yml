@@ -111,6 +111,8 @@ functions:
 
   getAuctionStatus:
     handler: functions/getAuctionStatus.getAuctionStatus
+    role:
+      Fn::GetAtt: [DynamoDBWebsocketRole, Arn]
     events:
       - http:
           path: getAuctionStatus/{leagueId}
