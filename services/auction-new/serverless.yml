@@ -63,6 +63,84 @@ functions:
             headers:
               - x-cognito-token
 
+  getAuctionTeams:
+    handler: functions/rds/getAuctionTeams.getAuctionTeams
+    vpc:
+      securityGroupIds:
+        - Fn::ImportValue: ${self:custom.provider.vpc.securityGroupIds.LAMBDA_SG}
+      subnetIds:
+        - Fn::ImportValue: ${self:custom.provider.vpc.subnetIds.SUBNET1}
+        - Fn::ImportValue: ${self:custom.provider.vpc.subnetIds.SUBNET2}
+        - Fn::ImportValue: ${self:custom.provider.vpc.subnetIds.SUBNET3}
+    events:
+      - http:
+          path: getAuctionTeams/{leagueId}
+          method: get
+          integration: lambda
+          authorizer:
+            type: COGNITO_USER_POOLS
+            authorizerId:
+              Ref: ApiGatewayAuthorizer
+          cors:
+            origin: '*'
+            headers:
+              - x-cognito-token
+
+  getAuctionMemberBuyIns:
+    handler: functions/rds/getAuctionMemberBuyIns.getAuctionMemberBuyIns
+    vpc:
+      securityGroupIds:
+        - Fn::ImportValue: ${self:custom.provider.vpc.securityGroupIds.LAMBDA_SG}
+      subnetIds:
+        - Fn::ImportValue: ${self:custom.provider.vpc.subnetIds.SUBNET1}
+        - Fn::ImportValue: ${self:custom.provider.vpc.subnetIds.SUBNET2}
+        - Fn::ImportValue: ${self:custom.provider.vpc.subnetIds.SUBNET3}
+    events:
+      - http:
+          path: getAuctionMemberBuyIns/{leagueId}
+          method: get
+          integration: lambda
+          authorizer:
+            type: COGNITO_USER_POOLS
+            authorizerId:
+              Ref: ApiGatewayAuthorizer
+          cors:
+            origin: '*'
+            headers:
+              - x-cognito-token
+
+  getAuctionStatus:
+    handler: functions/getAuctionStatus.getAuctionStatus
+    events:
+      - http:
+          path: getAuctionStatus/{leagueId}
+          method: get
+          integration: lambda
+          authorizer:
+            type: COGNITO_USER_POOLS
+            authorizerId:
+              Ref: ApiGatewayAuthorizer
+          cors:
+            origin: '*'
+            headers:
+              - x-cognito-token
+
+  getServerTime:
+    handler: functions/getServerTime.getServerTime
+    events:
+      - http:
+          path: getServerTime
+          method: get
+          integration: lambda
+          authorizer:
+            type: COGNITO_USER_POOLS
+            authorizerId:
+              Ref: ApiGatewayAuthorizer
+          cors:
+            origin: '*'
+            headers:
+              - x-cognito-token
+
   # Invokable functions
   rdsVerifyUserLeague:
     handler: functions/rds/verifyUserLeague.verifyUserLeague
