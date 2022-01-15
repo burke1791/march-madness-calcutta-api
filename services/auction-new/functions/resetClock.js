@@ -1,4 +1,4 @@
-import { verifyLeagueConnection } from '../utilities';
+import { verifyLeagueConnection, websocketBroadcast } from '../utilities';
 import { resetAuctionClock } from '../utilities/updateAuctionRecord';
 
 export async function resetClock(event, context, callback) {
