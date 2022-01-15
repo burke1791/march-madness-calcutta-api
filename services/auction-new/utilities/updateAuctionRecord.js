@@ -84,7 +84,6 @@ export async function updateAuctionRecord(leagueId, teamObj) {
 
   try {
     const auctionResponse = await dynamodb.updateItem(auctionParams).promise();
-    console.log(auctionResponse);
 
     const updateData = auctionResponse.Attributes;
 
