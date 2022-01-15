@@ -61,24 +61,24 @@ export async function updateAuctionRecord(leagueId, teamObj) {
       ':P': {
         N: teamObj.CurrentItemPrice != null ? String(teamObj.CurrentItemPrice) : '0'
       },
-      ':W': {
-        N: teamObj.CurrentItemWinner != null ? teamObj.CurrentItemWinner : null
-      },
-      ':A': {
-        S: teamObj.Alias != null ? teamObj.Alias : null
-      },
-      ':L': {
-        S: teamObj.TeamLogoUrl
-      },
+      ':W': teamObj.CurrentItemWinner != null ?
+        { N: teamObj.CurrentItemWinner } :
+        { NULL: true },
+      ':A': teamObj.Alias != null ?
+        { S: teamObj.Alias } :
+        { NULL: true },
+      ':L': teamObj.TeamLogoUrl != null ?
+        { S: teamObj.TeamLogoUrl } :
+        { NULL: true },
       ':IT': {
         N: String(teamObj.ItemTypeId)
       },
       ':N': {
         S: teamObj.ItemName
       },
-      ':Sd': {
-        N: String(teamObj.Seed)
-      },
+      ':Sd': teamObj.Seed != null ?
+        { N: String(teamObj.Seed) } :
+        { NULL: true },
       ':DN': {
         S: teamObj.DisplayName
       }
