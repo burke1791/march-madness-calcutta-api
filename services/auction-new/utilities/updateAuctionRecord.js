@@ -32,7 +32,6 @@ export async function updateAuctionRecord(leagueId, teamObj) {
       }
     },
     ExpressionAttributeNames: {
-      '#LId': 'LeagueId',
       '#TS': 'LastBidTimestamp',
       '#S': 'Status',
       '#CId': 'CurrentItemId',
@@ -46,9 +45,6 @@ export async function updateAuctionRecord(leagueId, teamObj) {
       '#DN': 'DisplayName'
     },
     ExpressionAttributeValues: {
-      ':LId': {
-        N: String(leagueId)
-      },
       ':TS': {
         N: timestamp
       },
@@ -83,7 +79,7 @@ export async function updateAuctionRecord(leagueId, teamObj) {
         S: teamObj.DisplayName
       }
     },
-    UpdateExpression: 'SET #LId = :LId, #TS = :TS, #S = :S, #CId = :CId, #P = :P, #W = :W, #A = :A, #L = :L, #IT = :IT, #N = :N, #Sd = :Sd, #DN = :DN'
+    UpdateExpression: 'SET #TS = :TS, #S = :S, #CId = :CId, #P = :P, #W = :W, #A = :A, #L = :L, #IT = :IT, #N = :N, #Sd = :Sd, #DN = :DN'
   }
 
   try {
