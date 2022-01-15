@@ -217,6 +217,13 @@ functions:
     events:
       - websocket:
           route: NEXT_ITEM
+  resetClock:
+    handler: functions/resetClock.resetClock
+    role:
+      Fn::GetAtt: [DynamoDBWebsocketRole, Arn]
+    events:
+      - websocket:
+          route: START_AUCTION
 
 resources:
   - ${file(../../common/resources/api-gateway-authorizer.yml)}
