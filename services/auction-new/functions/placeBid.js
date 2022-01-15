@@ -37,7 +37,7 @@ export async function placeBid(event, context, callback) {
                 N: String(leagueId)
               }
             },
-            ExpressionAttribureNames: {
+            ExpressionAttributeNames: {
               '#TS': 'LastBidTimestamp',
               '#S': 'Status',
               '#P': 'CurrentItemPrice',

@@ -223,7 +223,7 @@ functions:
       Fn::GetAtt: [DynamoDBWebsocketRole, Arn]
     events:
       - websocket:
-          route: START_AUCTION
+          route: RESET_CLOCK
 
 resources:
   - ${file(../../common/resources/api-gateway-authorizer.yml)}
