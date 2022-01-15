@@ -39,14 +39,18 @@ export async function startAuction(event, context, callback) {
 
     // set the next item in dynamodb
     const auctionObj = await updateAuctionRecord(leagueId, teamObj);
-    console.log(auctionObj);
 
     if (!auctionObj) {
       throw new Error('Error updating auction record');
     }
 
+    const payload = {
+      msgObj: auctionObj,
+      msgType: 'auction'
+    };
+
     // send the info to all active websocket connections
-    await websocketBroadcast(leagueId, auctionObj, event.requestContext.domainName, event.requestContext.stage);
+    await websocketBroadcast(leagueId, payload, event.requestContext.domainName, event.requestContext.stage);
 
     callback(null, {
       statusCode: 200,
