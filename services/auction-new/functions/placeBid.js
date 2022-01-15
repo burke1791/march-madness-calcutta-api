@@ -2,7 +2,7 @@ import AWS from 'aws-sdk';
 import { verifyLeagueConnection } from '../utilities';
 import { DYNAMODB_TABLES } from '../utilities/constants';
 
-const dynamodb = AWS.DynamoDB();
+const dynamodb = new AWS.DynamoDB();
 
 export async function placeBid(event, context, callback) {
   context.callbackWaitsForEmptyEventLoop = false;
@@ -39,18 +39,30 @@ export async function placeBid(event, context, callback) {
             },
             ExpressionAttribureNames: {
               '#TS': 'LastBidTimestamp',
+              '#S': 'Status',
               '#P': 'CurrentItemPrice',
               '#W': 'CurrentItemWinner',
               '#A': 'Alias'
             },
             ExpressionAttributeValues: {
-              ':TS': timestamp,
-              ':P': String(amount),
-              ':W': String(verifyResponse.UserId),
-              ':A': verifyResponse.Alias
+              ':TS': {
+                N: timestamp
+              },
+              ':S': {
+                S: 'bidding'
+              },
+              ':P': {
+                N: String(amount)
+              },
+              ':W': {
+                N: String(verifyResponse.UserId)
+              },
+              ':A': {
+                S: verifyResponse.Alias
+              }
             },
             UpdateExpression: 'SET #TS = :TS, #P = :P, #W = :W, #A = :A',
-            ConditionExpression: ':P > #P'
+            ConditionExpression: ':P > #P and #S = :S'
           }
         },
         {
