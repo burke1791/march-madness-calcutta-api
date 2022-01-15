@@ -25,6 +25,7 @@ provider:
   environment:
     APP_ENV: ${self:custom.stage} # used by the websocket verification function
     AUCTION_TABLE: ${self:custom.AUCTION_TABLE}
+    BID_HISTORY_TABLE: ${self:custom.BID_HISTORY_TABLE}
     CONNECTION_TABLE: ${self:custom.CONNECTION_TABLE}
     CHAT_TABLE: ${self:custom.CHAT_TABLE}
     DB_NAME: ${self:custom.provider.env.DB_NAME}

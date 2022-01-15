@@ -7,6 +7,8 @@ const dynamodb = new AWS.DynamoDB();
 export async function placeBid(event, context, callback) {
   context.callbackWaitsForEmptyEventLoop = false;
 
+  console.log(DYNAMODB_TABLES);
+
   const data = JSON.parse(event.body);
   const leagueId = data.leagueId;
   const connectionId = event.requestContext.connectionId;
