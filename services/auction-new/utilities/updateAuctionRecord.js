@@ -108,3 +108,57 @@ export async function updateAuctionRecord(leagueId, teamObj) {
     return false;
   }
 }
+
+export async function resetAuctionClock(leagueId) {
+  const timestamp = new Date().valueOf().toString();
+
+  const auctionParams = {
+    TableName: AUCTION_TABLE,
+    ReturnValues: 'ALL_NEW',
+    Key: {
+      LeagueId: {
+        N: String(leagueId)
+      }
+    },
+    ExpressionAttributeNames: {
+      '#TS': 'LastBidTimestamp',
+      '#S': 'Status'
+    },
+    ExpressionAttributeValues: {
+      ':TS': {
+        N: timestamp
+      },
+      ':S': {
+        S: 'bidding'
+      }
+    },
+    UpdateExpression: 'SET #TS = :TS',
+    ConditionExpression: ':S = #S'
+  }
+
+  try {
+    const auctionResponse = await dynamodb.updateItem(auctionParams).promise();
+
+    const updateData = auctionResponse.Attributes;
+
+    // send the info to all active websocket connections
+    const auctionObj = {
+      Status: updateData.Status.S,
+      CurrentItemId: updateData.CurrentItemId.N,
+      TeamLogoUrl: updateData.TeamLogoUrl.S,
+      ItemTypeId: updateData.ItemTypeId.N,
+      ItemName: updateData.ItemName.S,
+      Seed: updateData.Seed.N,
+      DisplayName: updateData.DisplayName.S,
+      CurrentItemPrice: updateData.CurrentItemPrice.N,
+      CurrentItemWinner: updateData.CurrentItemWinner.N,
+      Alias: updateData.Alias.S,
+      LastBidTimestamp: updateData.LastBidTimestamp.N
+    };
+
+    return auctionObj;
+  } catch (error) {
+    console.log(error);
+    return false;
+  }
+}
