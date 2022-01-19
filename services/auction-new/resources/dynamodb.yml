@@ -9,8 +9,8 @@ Resources:
         - AttributeName: LeagueId
           KeyType: HASH
       ProvisionedThroughput:
-        ReadCapacityUnits: 25
-        WriteCapacityUnits: 25
+        ReadCapacityUnits: 10
+        WriteCapacityUnits: 10
       TableName: ${self:custom.AUCTION_TABLE}
       TableClass: STANDARD
       Tags:
@@ -31,8 +31,8 @@ Resources:
         - AttributeName: BidTimestamp
           KeyType: RANGE
       ProvisionedThroughput:
-        ReadCapacityUnits: 10
-        WriteCapacityUnits: 25
+        ReadCapacityUnits: 4
+        WriteCapacityUnits: 4
       TableName: ${self:custom.BID_HISTORY_TABLE}
       Tags:
         - Key: Description
@@ -53,8 +53,8 @@ Resources:
           AttributeName: ConnectionId
           KeyType: HASH
       ProvisionedThroughput:
-        ReadCapacityUnits: 5
-        WriteCapacityUnits: 5
+        ReadCapacityUnits: 3
+        WriteCapacityUnits: 3
       TableName: ${self:custom.CONNECTION_TABLE}
       TableClass: STANDARD
       GlobalSecondaryIndexes:
@@ -70,8 +70,8 @@ Resources:
               - Alias
               - UserId
           ProvisionedThroughput:
-            ReadCapacityUnits: 5
-            WriteCapacityUnits: 5
+            ReadCapacityUnits: 4
+            WriteCapacityUnits: 4
       Tags:
         -
           Key: Description
@@ -91,7 +91,7 @@ Resources:
         - AttributeName: Timestamp
           KeyType: RANGE
       ProvisionedThroughput:
-        ReadCapacityUnits: 25
-        WriteCapacityUnits: 25
+        ReadCapacityUnits: 4
+        WriteCapacityUnits: 4
       TableName: ${self:custom.CHAT_TABLE}
       TableClass: STANDARD
