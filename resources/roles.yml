@@ -24,14 +24,14 @@ Resources:
                 Action:
                   - s3:ListBucket
                   - s3:GetBucketLocation
-                Resource: arn:aws:s3:::rds-backups-calcutta-prod
+                Resource: arn:aws:s3:::rds-backups-calcutta
               - Effect: Allow
                 Action:
                   - s3:GetObject
                   - s3:PutObject
                   - s3:ListMultipartUploadParts
                   - s3:AbortMultipartUpload
-                Resource: arn:aws:s3:::rds-backups-calcutta-prod/*
+                Resource: arn:aws:s3:::rds-backups-calcutta/*
 
 # Will need to have different CIDR ranges between dev and prod VPCs before attempting to peer
   CalcuttaVPCPeerRole:
