@@ -8,6 +8,7 @@ export async function placeBid(event, context, callback) {
   context.callbackWaitsForEmptyEventLoop = false;
 
   const data = JSON.parse(event.body);
+  console.log(data);
   const leagueId = data.leagueId;
   const connectionId = event.requestContext.connectionId;
   const amount = data.amount;
@@ -55,7 +56,7 @@ export async function placeBid(event, context, callback) {
                 N: String(amount)
               },
               ':W': {
-                N: String(verifyResponse.UserId)
+                N: verifyResponse.UserId
               },
               ':A': {
                 S: verifyResponse.Alias
@@ -82,7 +83,7 @@ export async function placeBid(event, context, callback) {
                 N: String(itemTypeId)
               },
               UserId: {
-                N: String(verifyResponse.UserId)
+                N: verifyResponse.UserId
               },
               Price: {
                 N: String(amount)
@@ -92,6 +93,8 @@ export async function placeBid(event, context, callback) {
         }
       ]
     }
+
+    console.log(bidParams);
 
     const bidResponse = await dynamodb.transactWriteItems(bidParams).promise();
 
