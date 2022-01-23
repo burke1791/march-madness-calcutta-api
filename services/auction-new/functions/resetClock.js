@@ -12,8 +12,8 @@ export async function resetClock(event, context, callback) {
     // verify the leagueId matches the connection
     const verifyResponse = await verifyLeagueConnection(leagueId, connectionId);
 
-    if (verifyResponse === false) {
-      throw new Error('ConnectionId and LeagueId do not match');
+    if (verifyResponse === false || +verifyResponse.RoleId > 2) {
+      throw new Error('User is not allowed to perform this action');
     }
 
     const resetObj = await resetAuctionClock(leagueId);

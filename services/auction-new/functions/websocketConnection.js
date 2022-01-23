@@ -19,11 +19,9 @@ export async function onConnect(event, context, callback) {
   const leagueId = event.queryStringParameters.leagueId;
   const cognitoSub = await verifyToken(event.queryStringParameters.Authorizer);
 
-  let userId, alias;
-
   try {
     const lambdaParams = {
-      FunctionName: LAMBDAS.VERIFY_USER_LEAGUE,
+      FunctionName: LAMBDAS.RDS_VERIFY_USER_LEAGUE,
       LogType: 'Tail',
       Payload: JSON.stringify({ leagueId: leagueId, cognitoSub: cognitoSub })
     };
@@ -37,45 +35,39 @@ export async function onConnect(event, context, callback) {
       throw new Error('Could not find a matching registered user');
     }
 
-    userId = responsePayload[0].UserId;
-    alias = responsePayload[0].Alias;
-    console.log(userId);
-    console.log(alias);
-  } catch (error) {
-    console.log(error);
-    callback(null, {
-      statusCode: 500,
-      body: JSON.stringify(error),
-      headers: headers
-    });
-  }
+    const userId = responsePayload[0].UserId;
+    const alias = responsePayload[0].Alias;
+    const roleId = responsePayload[0].RoleId
 
-  const params = {
-    TableName: CONNECTION_TABLE,
-    Item: {
-      LeagueId: {
-        N: leagueId
-      },
-      CognitoSub: {
-        S: cognitoSub
-      },
-      ConnectionId: {
-        S: connectionId
-      },
-      UserId: {
-        N: userId
-      },
-      Alias: {
-        S: alias
+    const params = {
+      TableName: CONNECTION_TABLE,
+      Item: {
+        LeagueId: {
+          N: leagueId
+        },
+        CognitoSub: {
+          S: cognitoSub
+        },
+        ConnectionId: {
+          S: connectionId
+        },
+        UserId: {
+          N: userId
+        },
+        Alias: {
+          S: alias
+        },
+        RoleId: {
+          N: roleId
+        }
       }
-    }
-  };
+    };
+  
+    console.log(params);
 
-  console.log(params);
-
-  try {
     const response = await dynamodb.putItem(params).promise();
     console.log(response);
+
     callback(null, {
       statusCode: 200,
       body: JSON.stringify(response),

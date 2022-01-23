@@ -132,8 +132,7 @@ export async function resetAuctionClock(leagueId) {
         S: 'bidding'
       }
     },
-    UpdateExpression: 'SET #TS = :TS',
-    ConditionExpression: ':S = #S'
+    UpdateExpression: 'SET #TS = :TS, #S = :S'
   }
 
   try {
