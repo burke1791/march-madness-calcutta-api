@@ -20,7 +20,7 @@ export async function verifyLeagueConnection(leagueId, connectionId) {
         S: connectionId
       }
     },
-    ProjectionExpression: 'LeagueId, UserId, Alias'
+    ProjectionExpression: 'LeagueId, UserId, Alias, RoleId'
   }
 
   try {
