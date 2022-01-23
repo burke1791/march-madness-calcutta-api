@@ -1,5 +1,5 @@
 import AWS from 'aws-sdk';
-import { verifyLeagueConnection } from '../utilities';
+import { verifyLeagueConnection, websocketBroadcast } from '../utilities';
 import { DYNAMODB_TABLES } from '../utilities/constants';
 
 const dynamodb = new AWS.DynamoDB();
@@ -99,6 +99,21 @@ export async function placeBid(event, context, callback) {
 
     console.log(bidResponse);
     console.log(bidResponse.ItemCollectionMetrics);
+
+    const auctionObj = {
+      Status: 'bidding',
+      CurrentItemPrice: amount,
+      CurrentItemWinner: verifyResponse.UserId,
+      Alias: verifyResponse.Alias,
+      LastBidTimestamp: timestamp
+    }
+
+    const payload = {
+      msgObj: auctionObj,
+      msgType: 'auction'
+    }
+
+    await websocketBroadcast(leagueId, payload, event.requestContext.domainName, event.requestContext.stage);
 
     callback(null, {
       statusCode: 200,
