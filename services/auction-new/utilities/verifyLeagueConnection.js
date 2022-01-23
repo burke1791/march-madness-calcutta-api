@@ -29,11 +29,9 @@ export async function verifyLeagueConnection(leagueId, connectionId) {
     const userData = {
       LeagueId: connectionResponse.Item.LeagueId.N,
       UserId: connectionResponse.Item.UserId.N,
-      Alias: connectionResponse.Item.Alias.S
+      Alias: connectionResponse.Item.Alias.S,
+      RoleId: connectionResponse.Item.RoleId.N
     };
-
-    console.log(leagueId);
-    console.log(userData);
 
     if (+userData.LeagueId !== +leagueId) {
       throw new Error('ConnectionId and LeagueId not found');
