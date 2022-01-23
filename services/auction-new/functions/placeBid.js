@@ -8,7 +8,6 @@ export async function placeBid(event, context, callback) {
   context.callbackWaitsForEmptyEventLoop = false;
 
   const data = JSON.parse(event.body);
-  console.log(data);
   const leagueId = data.leagueId;
   const connectionId = event.requestContext.connectionId;
   const amount = data.amount;
@@ -16,10 +15,11 @@ export async function placeBid(event, context, callback) {
   const itemTypeId = data?.itemTypeId;
 
   try {
+    if (itemId == undefined || itemTypeId == undefined) {
+      throw new Error('ItemId and ItemTypeId must be supplied');
+    }
     // verify the leagueId matches the connection
     const verifyResponse = await verifyLeagueConnection(leagueId, connectionId);
-
-    console.log(verifyResponse);
 
     if (verifyResponse === false) {
       throw new Error('ConnectionId and LeagueId do not match');
@@ -94,14 +94,12 @@ export async function placeBid(event, context, callback) {
       ]
     }
 
-    console.log(bidParams);
-
     const bidResponse = await dynamodb.transactWriteItems(bidParams).promise();
 
     console.log(bidResponse);
 
     callback(null, {
-      statusCode: 500,
+      statusCode: 200,
       body: JSON.stringify({ message: 'bid accepted' })
     });
   } catch (error) {
