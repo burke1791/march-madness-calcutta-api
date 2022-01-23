@@ -29,6 +29,7 @@ export async function placeBid(event, context, callback) {
 
     // place the bid in a transaction
     const bidParams = {
+      ReturnItemCollectionMetrics: 'SIZE',
       TransactItems: [
         {
           Update: {
@@ -97,6 +98,7 @@ export async function placeBid(event, context, callback) {
     const bidResponse = await dynamodb.transactWriteItems(bidParams).promise();
 
     console.log(bidResponse);
+    console.log(bidResponse.ItemCollectionMetrics);
 
     callback(null, {
       statusCode: 200,

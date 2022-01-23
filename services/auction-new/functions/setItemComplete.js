@@ -37,9 +37,6 @@ export async function setItemComplete(event, context, callback) {
         '#S': 'Status'
       },
       ExpressionAttributeValues: {
-        ':TS': {
-          N: timestamp.toString()
-        },
         ':S': {
           S: 'sold'
         },
