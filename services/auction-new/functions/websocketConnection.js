@@ -52,13 +52,13 @@ export async function onConnect(event, context, callback) {
           S: connectionId
         },
         UserId: {
-          N: userId
+          N: String(userId)
         },
         Alias: {
           S: alias
         },
         RoleId: {
-          N: roleId
+          N: String(roleId)
         }
       }
     };
