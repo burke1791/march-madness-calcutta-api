@@ -51,7 +51,7 @@ export async function getNextItem(event, context, callback) {
     }
 
     // send the info to all active websocket connections
-    await websocketBroadcast(leagueId, auctionObj, event.requestContext.domainName, event.requestContext.stage);
+    await websocketBroadcast(leagueId, payload, event.requestContext.domainName, event.requestContext.stage);
 
     callback(null, {
       statusCode: 200,
