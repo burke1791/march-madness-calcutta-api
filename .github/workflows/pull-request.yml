@@ -8,6 +8,20 @@ on:
       - master
 
 jobs:
+  top_level_lint:
+    name: Run linter on project root
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: use nodejs
+        uses: actions/setup-node@v1
+        with:
+          node-version: '14.x'
+      - run: |
+          npm install
+          npm run lint
+          
   user_service_lint:
     name: Run linter on user microservice
     runs-on: ubuntu-latest
