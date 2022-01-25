@@ -10,14 +10,18 @@
     "uuid": "^8.3.2"
   },
   "devDependencies": {
+    "@babel/core": "^7.16.12",
+    "@babel/eslint-parser": "^7.16.5",
     "aws-sdk": "^2.619.0",
     "aws-sdk-mock": "^5.1.0",
+    "eslint": "^8.7.0",
     "jest": "^27.4.5",
     "serverless": "^2.70.0",
     "serverless-bundle": "^5.2.0"
   },
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+    "lint": "eslint . --ext .js"
   },
   "author": "",
   "license": "ISC"
