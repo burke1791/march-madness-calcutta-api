@@ -45,6 +45,11 @@ export async function getNextItem(event, context, callback) {
       throw new Error('Error updating auction record');
     }
 
+    const payload = {
+      msgType: 'auction',
+      msgObj: auctionObj
+    }
+
     // send the info to all active websocket connections
     await websocketBroadcast(leagueId, auctionObj, event.requestContext.domainName, event.requestContext.stage);
 
