@@ -4,3 +4,4 @@ parserOptions:
 rules:
   no-trailing-spaces: off
   semi: off
+  no-unused-vars: error
