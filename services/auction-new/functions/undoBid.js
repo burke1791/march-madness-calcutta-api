@@ -26,6 +26,7 @@ export async function undoBid(event, context, callback) {
     }
 
     const prevBid = await lookupPreviousBid(leagueId);
+    console.log(prevBid);
 
     if (prevBid === false) {
       throw new Error('There is no previous bid');

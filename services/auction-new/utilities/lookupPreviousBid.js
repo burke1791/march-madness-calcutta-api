@@ -21,7 +21,7 @@ export async function lookupPreviousBid(leagueId) {
           N: String(leagueId)
         }
       },
-      ProjectionExpression: 'PrevBidTimestamp'
+      ProjectionExpression: 'PrevBidId'
     }
 
     const currentBidResponse = await dynamodb.getItem(currentBidParams).promise();
@@ -54,10 +54,10 @@ export async function lookupPreviousBid(leagueId) {
       ItemId: prevBidResponse.Item.ItemId.N,
       ItemTypeId: prevBidResponse.Item.ItemTypeId.N,
       Price: prevBidResponse.Item.Price.N,
-      UserId: prevBidResponse.Item.UserId.N,
-      Alias: prevBidResponse.Item.Alias.S,
+      UserId: prevBidResponse.Item.UserId?.N || prevBidResponse.Item.UserId?.NULL,
+      Alias: prevBidResponse.Item.Alias?.S || prevBidResponse.Item.Alias?.NULL,
       BidId: prevBidResponse.Item.BidId.N,
-      PrevBidId: prevBidResponse.Item.PrevBidId.N
+      PrevBidId: prevBidResponse.Item.PrevBidId?.N || prevBidResponse.Item.PrevBidId?.NULL
     };
   } catch (error) {
     console.log(error);
