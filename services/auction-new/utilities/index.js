@@ -1,3 +1,5 @@
 export { websocketBroadcast } from './websocketBroadcast';
 export { verifyLeagueConnection } from './verifyLeagueConnection';
-export { updateAuctionRecord } from './updateAuctionRecord';
+export { setNewAuctionTeam, resetAuctionClock } from './updateAuctionRecord';
+export { lookupPreviousBid } from './lookupPreviousBid';
+export { getAuctionItem } from './getAuctionItem';
