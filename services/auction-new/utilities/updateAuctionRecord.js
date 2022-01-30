@@ -30,7 +30,6 @@ export async function setNewAuctionTeam(leagueId, teamObj) {
       {
         Update: {
           TableName: AUCTION_TABLE,
-          ReturnValues: 'ALL_NEW',
           Key: {
             LeagueId: {
               N: String(leagueId)
