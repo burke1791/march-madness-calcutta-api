@@ -1,5 +1,5 @@
 import AWS from 'aws-sdk';
-import { websocketBroadcast, verifyLeagueConnection, updateAuctionRecord } from '../utilities';
+import { websocketBroadcast, verifyLeagueConnection, setNewAuctionTeam } from '../utilities';
 import { LAMBDAS } from '../utilities/constants';
 
 const lambda = new AWS.Lambda();
@@ -38,7 +38,7 @@ export async function getNextItem(event, context, callback) {
     const teamObj = responsePayload[0];
 
     // write that info to dynamodb
-    const auctionObj = await updateAuctionRecord(leagueId, teamObj);
+    const auctionObj = await setNewAuctionTeam(leagueId, teamObj);
     console.log(auctionObj);
 
     if (!auctionObj) {

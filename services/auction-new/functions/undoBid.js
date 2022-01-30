@@ -1,24 +1,23 @@
 import AWS from 'aws-sdk';
-import { v4 as uuidv4 } from 'uuid';
-import { verifyLeagueConnection, websocketBroadcast } from '../utilities';
+import { lookupPreviousBid, verifyLeagueConnection, websocketBroadcast } from '../utilities';
 import { DYNAMODB_TABLES } from '../utilities/constants';
 
 const dynamodb = new AWS.DynamoDB();
 
-export async function placeBid(event, context, callback) {
+export async function undoBid(event, context, callback) {
   context.callbackWaitsForEmptyEventLoop = false;
 
   const data = JSON.parse(event.body);
   const leagueId = data.leagueId;
   const connectionId = event.requestContext.connectionId;
-  const amount = data.amount;
   const itemId = data?.itemId;
   const itemTypeId = data?.itemTypeId;
 
   try {
     if (itemId == undefined || itemTypeId == undefined) {
-      throw new Error('ItemId and ItemTypeId must be supplied');
+      throw new Error('ItemId and ItemTypeId must be provided');
     }
+
     // verify the leagueId matches the connection
     const verifyResponse = await verifyLeagueConnection(leagueId, connectionId);
 
@@ -26,28 +25,16 @@ export async function placeBid(event, context, callback) {
       throw new Error('ConnectionId and LeagueId do not match');
     }
 
-    const lookupParams = {
-      TableName: DYNAMODB_TABLES.AUCTION_TABLE,
-      Key: {
-        LeagueId: {
-          N: String(leagueId)
-        }
-      },
-      ProjectionExpression: 'BidId'
+    const prevBid = await lookupPreviousBid(leagueId);
+
+    if (prevBid === false) {
+      throw new Error('There is no previous bid');
     }
-
-    const lookupResponse = await dynamodb.getItem(lookupParams).promise();
-
-    if (!lookupResponse.Item) {
-      throw new Error('There is no auction record');
-    }
-
-    const currentBidId = lookupResponse.Item.BidId.N;
 
     const timestamp = new Date().valueOf().toString();
 
-    // place the bid in a transaction
-    const bidParams = {
+    // undo the bid in a transaction
+    const undoBidParams = {
       ReturnItemCollectionMetrics: 'SIZE',
       TransactItems: [
         {
@@ -75,23 +62,29 @@ export async function placeBid(event, context, callback) {
                 S: 'bidding'
               },
               ':P': {
-                N: String(amount)
+                N: String(prevBid.Price)
               },
               ':W': {
-                N: verifyResponse.UserId
+                N: prevBid.UserId
               },
               ':A': {
-                S: verifyResponse.Alias
+                S: prevBid.Alias
               },
-              ':B': {
-                N: timestamp // using timestamp instead of uuid because I want it to be useful in RANGE queries against the BidHistory table
+              ':PBB': {
+                N: prevBid.BidId
               },
-              ':PB': {
-                N: currentBidId
+              ':PB': prevBid.PrevBidId ?
+                { N: prevBid.PrevBidId } :
+                { NULL: true },
+              ':UId': {
+                N: String(verifyResponse.UserId)
+              },
+              ':RId': {
+                N: String(verifyResponse.RoleId)
               }
             },
-            UpdateExpression: 'SET #TS = :TS, #P = :P, #W = :W, #A = :A, #B = :B, #PB = :PB',
-            ConditionExpression: ':P > #P and #S = :S and #B = :PB'
+            UpdateExpression: 'SET #TS = :TS, #P = :P, #W = :W, #A = :A, #B = :TS, #PB = :PB',
+            ConditionExpression: '(#W = :UId or :RId < 3) and #PB = :PBB and #S = :S'
           }
         },
         {
@@ -111,22 +104,22 @@ export async function placeBid(event, context, callback) {
                 N: String(itemTypeId)
               },
               UserId: {
-                N: verifyResponse.UserId
+                N: prevBid.UserId
               },
               Alias: {
-                S: verifyResponse.Alias
+                S: prevBid.Alias
               },
               Price: {
-                N: String(amount)
+                N: prevBid.Price
               },
               BidId: {
                 N: timestamp
               },
               PrevBidId: {
-                N: currentBidId
+                N: prevBid.PrevBidId
               },
               Action: {
-                S: 'bid'
+                S: 'undo'
               }
             }
           }
@@ -134,35 +127,35 @@ export async function placeBid(event, context, callback) {
       ]
     }
 
-    const bidResponse = await dynamodb.transactWriteItems(bidParams).promise();
+    const undoResponse = await dynamodb.transactWriteItems(undoBidParams).promise();
 
-    console.log(bidResponse);
-    console.log(bidResponse.ItemCollectionMetrics);
+    console.log(undoResponse);
+    console.log(undoResponse.ItemCollectionMetrics);
 
     const auctionObj = {
       Status: 'bidding',
-      CurrentItemPrice: amount,
-      CurrentItemWinner: verifyResponse.UserId,
-      Alias: verifyResponse.Alias,
+      CurrentItemPrice: prevBid.Price,
+      CurrentItemWinner: prevBid.UserId,
+      Alias: prevBid.Alias,
       LastBidTimestamp: timestamp
-    }
+    };
 
     const payload = {
       msgObj: auctionObj,
       msgType: 'auction'
-    }
+    };
 
     await websocketBroadcast(leagueId, payload, event.requestContext.domainName, event.requestContext.stage);
 
     callback(null, {
       statusCode: 200,
-      body: JSON.stringify({ message: 'bid accepted' })
+      body: JSON.stringify({ message: 'undo bid successful' })
     });
   } catch (error) {
     console.log(error);
     callback(null, {
       statusCode: 500,
-      body: JSON.stringify({ message: 'bid not accepted' })
+      body: JSON.stringify({ message: 'unable to undo bid' })
     });
   }
 }

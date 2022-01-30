@@ -221,6 +221,13 @@ functions:
     events:
       - websocket:
           route: PLACE_BID
+  undoBid:
+    handler: functions/undoBid.undoBid
+    role:
+      Fn::GetAtt: [DynamoDBWebsocketRole, Arn]
+    events:
+      - websocket:
+          route: UNDO_BID
   getNextItem:
     handler: functions/getNextItem.getNextItem
     role:
