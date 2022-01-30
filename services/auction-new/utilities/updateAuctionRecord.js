@@ -137,9 +137,6 @@ export async function setNewAuctionTeam(leagueId, teamObj) {
   try {
     const auctionResponse = await dynamodb.transactWriteItems(auctionParams).promise();
 
-    console.log(auctionResponse);
-    console.log(auctionResponse.ItemCollectionMetrics);
-
     // send the info to all active websocket connections
     const auctionObj = {
       Status: 'bidding',
@@ -149,10 +146,10 @@ export async function setNewAuctionTeam(leagueId, teamObj) {
       ItemName: teamObj.ItemName,
       Seed: teamObj.Seed,
       DisplayName: teamObj.DisplayName,
-      CurrentItemPrice: teamObj.CurrentItemPrice,
-      CurrentItemWinner: teamObj.CurrentItemWinner,
-      Alias: teamObj.Alias,
-      LastBidTimestamp: teamObj.LastBidTimestamp
+      CurrentItemPrice: 0,
+      CurrentItemWinner: null,
+      Alias: null,
+      LastBidTimestamp: timestamp
     };
 
     return auctionObj;
