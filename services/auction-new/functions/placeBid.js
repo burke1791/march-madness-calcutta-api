@@ -1,5 +1,4 @@
 import AWS from 'aws-sdk';
-import { v4 as uuidv4 } from 'uuid';
 import { verifyLeagueConnection, websocketBroadcast } from '../utilities';
 import { DYNAMODB_TABLES } from '../utilities/constants';
 
