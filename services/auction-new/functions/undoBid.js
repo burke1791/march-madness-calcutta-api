@@ -65,12 +65,12 @@ export async function undoBid(event, context, callback) {
               ':P': {
                 N: String(prevBid.Price)
               },
-              ':W': {
-                N: prevBid.UserId
-              },
-              ':A': {
-                S: prevBid.Alias
-              },
+              ':W': prevBid.UserId === null ?
+                { NULL: true } :
+                { N: prevBid.UserId },
+              ':A': prevBid.Alias === null ?
+                { NULL: true } :
+                { S: prevBid.Alias },
               ':PBB': {
                 N: prevBid.BidId
               },
