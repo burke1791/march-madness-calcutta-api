@@ -107,21 +107,21 @@ export async function undoBid(event, context, callback) {
               ItemTypeId: {
                 N: String(itemTypeId)
               },
-              UserId: {
-                N: prevBid.UserId
-              },
-              Alias: {
-                S: prevBid.Alias
-              },
+              UserId: prevBid.UserId === null ?
+                { NULL: true } :
+                { N: prevBid.UserId },
+              Alias: prevBid.Alias === null ?
+                { NULL: true } :
+                { S: prevBid.Alias },
               Price: {
                 N: prevBid.Price
               },
               BidId: {
                 N: timestamp
               },
-              PrevBidId: {
-                N: prevBid.PrevBidId
-              },
+              PrevBidId: prevBid.PrevBidId ?
+                { N: prevBid.PrevBidId } :
+                { NULL: true },
               Action: {
                 S: 'undo'
               }
