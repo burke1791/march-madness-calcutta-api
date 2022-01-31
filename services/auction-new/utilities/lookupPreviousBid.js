@@ -27,9 +27,9 @@ export async function lookupPreviousBid(leagueId) {
     const currentBidResponse = await dynamodb.getItem(currentBidParams).promise();
     console.log(currentBidResponse);
 
-    const prevBidTimestamp = currentBidResponse.Item.PrevBidId.N;
+    const prevBidId = currentBidResponse.Item.PrevBidId.N;
 
-    if (prevBidTimestamp === '0') {
+    if (prevBidId === '0') {
       throw new Error('There is no previous bid');
     }
 

@@ -123,7 +123,7 @@ export async function setNewAuctionTeam(leagueId, teamObj) {
               N: timestamp
             },
             PrevBidId: {
-              NULL: true
+              N: '0'
             },
             Action: {
               S: 'open'
