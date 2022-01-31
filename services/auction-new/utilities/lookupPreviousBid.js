@@ -39,8 +39,8 @@ export async function lookupPreviousBid(leagueId) {
         LeagueId: {
           N: String(leagueId)
         },
-        BidTimestamp: {
-          N: prevBidTimestamp
+        BidId: {
+          N: prevBidId
         }
       },
       ProjectionExpression: 'BidTimestamp, ItemId, ItemTypeId, Price, UserId, Alias, BidId, PrevBidId'
