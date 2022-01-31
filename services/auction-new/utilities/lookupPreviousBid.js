@@ -54,10 +54,10 @@ export async function lookupPreviousBid(leagueId) {
       ItemId: prevBidResponse.Item.ItemId.N,
       ItemTypeId: prevBidResponse.Item.ItemTypeId.N,
       Price: prevBidResponse.Item.Price.N,
-      UserId: prevBidResponse.Item.UserId?.N || prevBidResponse.Item.UserId?.NULL,
-      Alias: prevBidResponse.Item.Alias?.S || prevBidResponse.Item.Alias?.NULL,
+      UserId: prevBidResponse.Item.UserId?.N || prevBidResponse.Item.UserId?.NULL && null,
+      Alias: prevBidResponse.Item.Alias?.S || prevBidResponse.Item.Alias?.NULL && null,
       BidId: prevBidResponse.Item.BidId.N,
-      PrevBidId: prevBidResponse.Item.PrevBidId?.N || prevBidResponse.Item.PrevBidId?.NULL
+      PrevBidId: prevBidResponse.Item.PrevBidId?.N || prevBidResponse.Item.PrevBidId?.NULL && null
     };
   } catch (error) {
     console.log(error);
