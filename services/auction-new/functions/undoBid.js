@@ -82,10 +82,13 @@ export async function undoBid(event, context, callback) {
               },
               ':RId': {
                 N: String(verifyResponse.RoleId)
+              },
+              ':RIdMax': {
+                N: '3'
               }
             },
             UpdateExpression: 'SET #TS = :TS, #P = :P, #W = :W, #A = :A, #B = :TS, #PB = :PB',
-            ConditionExpression: '(#W = :UId or :RId < 3) and #PB = :PBB and #S = :S'
+            ConditionExpression: '(#W = :UId or :RId < :RIdMax) and #PB = :PBB and #S = :S'
           }
         },
         {
