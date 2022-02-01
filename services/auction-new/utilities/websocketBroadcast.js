@@ -6,8 +6,80 @@ const dynamodb = new AWS.DynamoDB();
 const CONNECTION_TABLE = DYNAMODB_TABLES.CONNECTION_TABLE;
 const CONNECTION_INDEX = DYNAMODB_INDEXES.CONNECTION_INDEX;
 
+/**
+ * @function websocketBroadcast
+ * @param {Number} leagueId - league's unique identifier
+ * @param {Any} payload - Whatever you want to send to connected websocket users
+ * @param {String} domainName - Websocket connection's domain
+ * @param {String} apiStage - Websocket connection's api stage
+ * @returns {Boolean} - true if all messages are sent, false otherwise
+ */
 export async function websocketBroadcast(leagueId, payload, domainName, apiStage) {
-  const connectionQueryParams = {
+  try {
+    const connectionIds = await getConnectionIds(leagueId);
+
+    if (connectionIds === false) {
+      throw new Error('No connectionIds found');
+    }
+
+    const apig = new AWS.ApiGatewayManagementApi({
+      apiVersion: '2018-11-29',
+      endpoint: `https://${domainName}/${apiStage}`
+    });
+
+    const postCalls = connectionIds.map(async (connectionId) => {
+      const params = {
+        ConnectionId: connectionId,
+        Data: JSON.stringify(payload)
+      };
+
+      return apig.postToConnection(params).promise();
+    });
+
+    await Promise.all(postCalls);
+  } catch (error) {
+    console.log(error);
+    return false;
+  }
+
+  return true;
+}
+
+/**
+ * @function websocketBroadcastToConnection
+ * @param {String} endpoint - league's unique identifier
+ * @param {String} connectionId - the connectionId to send a websocket message
+ * @param {Any} payload - Whatever you want to send to connected websocket user
+ * @returns {Boolean} - true if message is sent, false otherwise
+ */
+export async function websocketBroadcastToConnection(endpoint, connectionId, payload) {
+  try {
+    const apig = new AWS.ApiGatewayManagementApi({
+      apiVersion: '2018-11-29',
+      endpoint: endpoint
+    });
+
+    const params = {
+      ConnectionId: connectionId,
+      Data: JSON.stringify(payload)
+    };
+
+    await apig.postToConnection(params).promise();
+  } catch (error) {
+    console.log(error);
+    return false;
+  }
+
+  return true;
+}
+
+/**
+ * @function getConnectionIds
+ * @param {Number} leagueId - league's unique identifier
+ * @returns an array of connectionId strings
+ */
+async function getConnectionIds(leagueId) {
+  const queryParams = {
     TableName: CONNECTION_TABLE,
     IndexName: CONNECTION_INDEX,
     ExpressionAttributeValues: {
@@ -20,32 +92,19 @@ export async function websocketBroadcast(leagueId, payload, domainName, apiStage
   };
 
   try {
-    const connectionQuery = await dynamodb.query(connectionQueryParams).promise();
-    const connectionIds = connectionQuery.Items;
+    const result = await dynamodb.query(queryParams).promise();
 
-    const apig = new AWS.ApiGatewayManagementApi({
-      apiVersion: '2018-11-29',
-      endpoint: `https://${domainName}/${apiStage}`
+    const connectionIds = result.Items.map((connection) => {
+      return connection.ConnectionId.S
     });
 
-    const postCalls = connectionIds.map(async (connectionId) => {
-      const params = {
-        ConnectionId: connectionId.ConnectionId.S,
-        Data: JSON.stringify(payload)
-      };
-
-      try {
-        await apig.postToConnection(params).promise();
-      } catch (error) {
-        console.log(error);
-      }
-    });
-
-    await Promise.all(postCalls);
+    if (connectionIds.length === 0) {
+      throw new Error('No connectionIds found');
+    }
+    
+    return connectionIds;
   } catch (error) {
     console.log(error);
-    return;
+    return false;
   }
-
-  return;
 }
