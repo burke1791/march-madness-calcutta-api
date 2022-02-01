@@ -1,5 +1,5 @@
 import AWS from 'aws-sdk';
-import { verifyLeagueConnection, websocketBroadcast } from '../utilities';
+import { verifyLeagueConnection, websocketBroadcast, websocketBroadcastToConnection } from '../utilities';
 import { DYNAMODB_TABLES } from '../utilities/constants';
 
 const dynamodb = new AWS.DynamoDB();
@@ -159,6 +159,16 @@ export async function placeBid(event, context, callback) {
     });
   } catch (error) {
     console.log(error);
+
+    const endpoint = `https://${event.requestContext.domainName}/${event.requestContext.stage}`;
+    const payload = {
+      msgType: 'auction-error',
+      msgObj: {
+        message: 'Bid Not Accepted'
+      }
+    };
+    await websocketBroadcastToConnection(endpoint, event.requestContext.connectionId, payload);
+
     callback(null, {
       statusCode: 500,
       body: JSON.stringify({ message: 'bid not accepted' })
