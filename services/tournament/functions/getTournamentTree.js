@@ -52,7 +52,7 @@ function parseTournamentTree(tree) {
       matchupNum: game.MatchupNum,
       isPlayInGame: game.IsPlayInGame,
       roundNum: getRoundNum(game.MatchupId, tree, 1),
-      parentMatchupIds: getParentMatchups(game),
+      parentMatchupIds: getParentMatchups(game, tree),
       childMatchupId: game.ChildMatchupId,
       teams: getTeams(game)
     }
