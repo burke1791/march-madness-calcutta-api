@@ -16,22 +16,14 @@ export async function getTournamentTree(event, context, callback) {
       .input('LeagueId', BigInt, leagueId)
       .execute('dbo.up_GetTournamentTree');
 
-    console.log(result.recordsets);
-    console.log(result.recordset[0]);
-
-    let data;
+    let data = {};
 
     if (result.recordset[0]?.Error == 'No bracket available') {
-      data = {
-        errorMessage: 'No bracket available'
-      };
+      data.errorMessage = 'No bracket available';
     } else {
       const bracket = parseTournamentTree(result.recordsets[1]);
-      console.log(bracket);
-      data = {
-        bracketMetadata: result.recordsets[0][0],
-        bracket: bracket
-      };
+      data.bracketMetadata = result.recordsets[0][0];
+      data.bracket = bracket;
     }
 
     callback(null, data);
@@ -87,8 +79,6 @@ function getRoundNum(matchup, tree, round) {
  * @description returns an array of parent matchup objects, containing the parent's matchupId and whether or not the parent is a play-in game
  */
 function getParentMatchups(game, tree) {
-  console.log(game);
-  console.log(tree);
   let parentMatchups = []
 
   if (game.ParentMatchup1 == null && game.ParentMatchup2 == null) return null;
