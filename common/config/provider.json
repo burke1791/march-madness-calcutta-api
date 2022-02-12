@@ -1,6 +1,6 @@
 {
   "runtime": "nodejs14.x",
-  "timeout": 15,
+  "timeout": 20,
   "logRetentionInDays": 7,
   "region": "us-east-1",
   "stage": "dev",
