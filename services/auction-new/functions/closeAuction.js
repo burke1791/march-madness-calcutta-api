@@ -1,5 +1,5 @@
 import AWS from 'aws-sdk';
-import { websocketBroadcast, verifyLeagueConnection, websocketBroadcastToConnection } from '../utilities';
+import { verifyLeagueConnection, websocketBroadcastToConnection } from '../utilities';
 
 const lambda = new AWS.Lambda();
 
