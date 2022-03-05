@@ -1,5 +1,5 @@
 import AWS from 'aws-sdk';
-import { verifyLeagueConnection, websocketBroadcastToConnection } from '../utilities';
+import { verifyLeagueConnection, websocketBroadcastToConnection, closeDynamoDbAuction } from '../utilities';
 import { LAMBDAS } from '../utilities/constants';
 
 const lambda = new AWS.Lambda();
@@ -30,6 +30,12 @@ export async function closeAuction(event, context, callback) {
     const lambdaResponse = await lambda.invoke(lambdaParams).promise();
     const responsePayload = JSON.parse(lambdaResponse.Payload);
     console.log(responsePayload);
+
+    const isAuctionClosed = await closeDynamoDbAuction(leagueId);
+
+    if (!isAuctionClosed) {
+      throw new Error('Unable to close auction in DynamoDb');
+    }
 
     const payload = {
       msgType: 'auction_info',

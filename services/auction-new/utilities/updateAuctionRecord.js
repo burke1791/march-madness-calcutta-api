@@ -213,3 +213,33 @@ export async function resetAuctionClock(leagueId) {
     return false;
   }
 }
+
+export async function closeDynamoDbAuction(leagueId) {
+  const auctionParams = {
+    TableName: AUCTION_TABLE,
+    ReturnValues: 'ALL_NEW',
+    Key: {
+      LeagueId: {
+        N: String(leagueId)
+      }
+    },
+    ExpressionAttributeNames: {
+      '#S': 'Status'
+    },
+    ExpressionAttributeValues: {
+      ':S': {
+        S: 'end'
+      }
+    },
+    UpdateExpression: 'SET #S = :S'
+  }
+
+  try {
+    await dynamodb.updateItem(auctionParams).promise();
+
+    return true;
+  } catch (error) {
+    console.log(error);
+    return false;
+  }
+}
