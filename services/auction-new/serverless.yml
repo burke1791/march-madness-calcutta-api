@@ -175,6 +175,16 @@ functions:
         - Fn::ImportValue: ${self:custom.provider.vpc.subnetIds.SUBNET2}
         - Fn::ImportValue: ${self:custom.provider.vpc.subnetIds.SUBNET3}
 
+  rdsCloseAuction:
+    handler: functions/rds/rdsCloseAuction.closeAuction
+    vpc:
+      securityGroupIds:
+        - Fn::ImportValue: ${self:custom.provider.vpc.securityGroupIds.LAMBDA_SG}
+      subnetIds:
+        - Fn::ImportValue: ${self:custom.provider.vpc.subnetIds.SUBNET1}
+        - Fn::ImportValue: ${self:custom.provider.vpc.subnetIds.SUBNET2}
+        - Fn::ImportValue: ${self:custom.provider.vpc.subnetIds.SUBNET3}
+
   rdsSetItemComplete:
     handler: functions/rds/setItemComplete.setItemComplete
     vpc:
