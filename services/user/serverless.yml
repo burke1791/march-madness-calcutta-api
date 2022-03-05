@@ -51,5 +51,21 @@ functions:
             headers:
               - x-cognito-token
 
+  getUserUpcomingGames:
+    handler: functions/getUserUpcomingGames.getUserUpcomingGames
+    events:
+      - http:
+          path: getUserUpcomingGames
+          method: get
+          integration: lambda
+          authorizer:
+            type: COGNITO_USER_POOLS
+            authorizerId:
+              Ref: ApiGatewayAuthorizer
+          cors:
+            origin: '*'
+            headers:
+              - x-cognito-token
+
 resources:
   - ${file(../../common/resources/api-gateway-authorizer.yml)}
