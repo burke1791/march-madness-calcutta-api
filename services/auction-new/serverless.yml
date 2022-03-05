@@ -214,6 +214,13 @@ functions:
     events:
       - websocket:
           route: START_AUCTION
+  closeAuction:
+    handler: functions/closeAuction.closeAuction
+    role:
+      Fn::GetAtt: [DynamoDBWebsocketRole, Arn]
+    events:
+      - websocket:
+          route: CLOSE_AUCTION
   placeBid:
     handler: functions/placeBid.placeBid
     role:
