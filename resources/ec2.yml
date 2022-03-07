@@ -21,7 +21,7 @@ Resources:
         - Key: Name
           Value: 'Calcutta data volume'
 
-  CalcuttaDB_EC2:
+  CalcuttaDBEC2:
     Type: AWS::EC2::Instance
     DependsOn:
       - CalcuttaGatewayAttachment
