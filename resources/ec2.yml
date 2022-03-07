@@ -1,49 +1,32 @@
 Resources:
-  CalcuttaRootVolume:
-    Type: AWS::EC2::Volume
-    Properties:
-      AvailabilityZone: us-east-1e
-      Size: 10
-      VolumeType: gp2
-      Tags:
-        - Key: Name
-          Value: 'Calcutta root volume'
-
-  CalcuttaDataVolume:
-    Type: AWS::EC2::Volume
-    Properties:
-      AvailabilityZone: us-east-1e
-      Size: 20
-      VolumeType: gp2
-      Tags:
-        - Key: Name
-          Value: 'Calcutta data volume'
-
   CalcuttaDBEC2:
     Type: AWS::EC2::Instance
     DependsOn:
       - CalcuttaGatewayAttachment
-      - CalcuttaRootVolume
-      - CalcuttaDataVolume
     Properties:
+      AvailabilityZone: us-east-1f
       EbsOptimized: True
       ImageId: ami-0c19f80dba70861db
       InstanceType: t3.micro
       KeyName: calcutta-ec2
+      BlockDeviceMappings:
+        - DeviceName: /dev/sda1
+          Ebs:
+            VolumeSize: 10
+            VolumeType: gp2
+            DeleteOnTermination: True
+        - DeviceName: xvdb
+          Ebs:
+            VolumeSize: 20
+            VolumeType: gp2
+            DeleteOnTermination: True
       NetworkInterfaces:
         - AssociatePublicIpAddress: True
           DeviceIndex: '0'
           GroupSet:
             - Ref: DBSG
           SubnetId:
-            Ref: NatSubnet2
-      Volumes:
-        - Device: /dev/sda1
-          VolumeId:
-            Ref: CalcuttaRootVolume
-        - Device: xvdb
-          VolumeId:
-            Ref: CalcuttaDataVolume
+            Ref: NatSubnet3
       Tags:
         - Key: Name
           Value: 'Calcutta SQL Server'
