@@ -1,11 +1,4 @@
 Resources:
-  CalcuttaIamInstanceProfile:
-    Type: AWS::EC2::InstanceProfile
-    Properties:
-      InstanceProfileName: sql-server-ec2-instance-profile
-      Roles:
-        - Ref: SQLServerS3Role
-
   CalcuttaDBEC2:
     Type: AWS::EC2::Instance
     DependsOn:
@@ -15,6 +8,7 @@ Resources:
       EbsOptimized: True
       ImageId: ami-0c19f80dba70861db
       InstanceType: t3.micro
+      IamInstanceProfile: sql-server-ec2-instance-profile
       KeyName: calcutta-ec2
       BlockDeviceMappings:
         - DeviceName: /dev/sda1
