@@ -1,0 +1,7 @@
+Resources:
+  CalcuttaIamInstanceProfile:
+    Type: AWS::IAM::InstanceProfile
+    Properties:
+      InstanceProfileName: sql-server-ec2-instance-profile
+      Roles:
+        - Ref: SQLServerS3Role

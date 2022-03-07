@@ -43,3 +43,4 @@ resources:
   - ${file(resources/roles.yml)}
   - ${file(resources/conditions.yml)}
   - ${file(resources/ec2.yml)}
+  - ${file(resources/instance-profile.yml)}
