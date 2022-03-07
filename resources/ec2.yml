@@ -3,7 +3,6 @@ Resources:
     Type: AWS::EC2::Volume
     Properties:
       AvailabilityZone: us-east-1e
-      Iops: 300
       Size: 10
       VolumeType: gp2
       Tags:
@@ -14,7 +13,6 @@ Resources:
     Type: AWS::EC2::Volume
     Properties:
       AvailabilityZone: us-east-1e
-      Iops: 300
       Size: 20
       VolumeType: gp2
       Tags:
