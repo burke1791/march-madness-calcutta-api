@@ -39,7 +39,7 @@ Resources:
       RoleName:
         Fn::Join:
           - ''
-          - - sql-server-backup-${self:custom.stage}-
+          - - sql-server-s3-${self:custom.stage}-
             - Ref: AWS::Region
       AssumeRolePolicyDocument:
         Version: '2012-10-17'
