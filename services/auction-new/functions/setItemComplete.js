@@ -1,5 +1,5 @@
 import AWS from 'aws-sdk';
-import { verifyLeagueConnection, websocketBroadcast } from '../utilities';
+import { verifyLeagueConnection, websocketBroadcast, websocketBroadcastToConnection } from '../utilities';
 import { DYNAMODB_TABLES, LAMBDAS } from '../utilities/constants';
 
 const AUCTION_TABLE = DYNAMODB_TABLES.AUCTION_TABLE;
@@ -94,12 +94,65 @@ export async function setItemComplete(event, context, callback) {
     const lambdaResponse = await lambda.invoke(lambdaParams).promise();
     console.log(lambdaResponse);
 
+    const itemConfirmedCompleteParams = {
+      TableName: AUCTION_TABLE,
+      ReturnValues: 'ALL_NEW',
+      Key: {
+        LeagueId: {
+          N: String(leagueId)
+        }
+      },
+      ExpressionAttributeNames: {
+        '#S': 'Status'
+      },
+      ExpressionAttributeValues: {
+        ':S': {
+          S: 'confirmed-sold'
+        }
+      },
+      UpdateExpression: 'SET #S = :S'
+    }
+
+    const itemConfirmedCompleteResponse = await dynamodb.updateItem(itemConfirmedCompleteParams).promise();
+
+    const confirmedUpdateData = itemConfirmedCompleteResponse.Attributes;
+    console.log(confirmedUpdateData);
+
+    const confirmedAuctionObj = {
+      Status: confirmedUpdateData.Status.S,
+      CurrentItemId: confirmedUpdateData.CurrentItemId.N,
+      TeamLogoUrl: confirmedUpdateData.TeamLogoUrl.S,
+      ItemTypeId: confirmedUpdateData.ItemTypeId.N,
+      ItemName: confirmedUpdateData.ItemName.S,
+      Seed: confirmedUpdateData.Seed.N,
+      DisplayName: confirmedUpdateData.DisplayName.S,
+      CurrentItemPrice: confirmedUpdateData.CurrentItemPrice.N,
+      CurrentItemWinner: confirmedUpdateData.CurrentItemWinner.N,
+      Alias: confirmedUpdateData.Alias.S,
+      LastBidTimestamp: confirmedUpdateData.LastBidTimestamp.N
+    };
+
+    const confirmedPayload = {
+      msgObj: confirmedAuctionObj,
+      msgType: 'auction'
+    }
+
+    await websocketBroadcast(leagueId, confirmedPayload, event.requestContext.domainName, event.requestContext.stage);
+
     callback(null, {
       statusCode: 200,
       body: JSON.stringify({ message: 'item sold' })
     });
   } catch (error) {
     console.log(error);
+
+    const endpoint = `https://${event.requestContext.domainName}/${event.requestContext.stage}`;
+    const payload = {
+      msgType: 'auction_error',
+      message: 'Unable to mark the item sold'
+    };
+    await websocketBroadcastToConnection(endpoint, event.requestContext.connectionId, payload);
+
     callback(null, {
       statusCode: 500,
       body: JSON.stringify({ message: 'error selling item '})
