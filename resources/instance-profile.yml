@@ -4,4 +4,4 @@ Resources:
     Properties:
       InstanceProfileName: sql-server-ec2-instance-profile
       Roles:
-        - Ref: SQLServerS3Role
+        - !Ref SQLServerS3Role

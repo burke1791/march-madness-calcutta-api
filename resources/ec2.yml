@@ -8,7 +8,7 @@ Resources:
       EbsOptimized: True
       ImageId: ami-0c19f80dba70861db
       InstanceType: t3.micro
-      IamInstanceProfile: sql-server-ec2-instance-profile
+      IamInstanceProfile: !Ref CalcuttaIamInstanceProfile
       KeyName: calcutta-ec2
       BlockDeviceMappings:
         - DeviceName: /dev/sda1
@@ -26,5 +26,3 @@ Resources:
       Tags:
         - Key: Name
           Value: 'Calcutta SQL Server'
-
-  
