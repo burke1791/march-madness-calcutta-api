@@ -94,10 +94,6 @@ export async function setItemComplete(event, context, callback) {
     const lambdaResponse = await lambda.invoke(lambdaParams).promise();
     console.log(lambdaResponse);
 
-    if (lambdaResponse?.Payload[0]?.Message != 'Item sold') {
-      throw new Error('Unable to mark the item sold in the database');
-    }
-
     const itemConfirmedCompleteParams = {
       TableName: AUCTION_TABLE,
       ReturnValues: 'ALL_NEW',
