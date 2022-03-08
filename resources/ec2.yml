@@ -26,3 +26,10 @@ Resources:
       Tags:
         - Key: Name
           Value: 'Calcutta SQL Server'
+
+Outputs:
+  PublicIp:
+    Description: Server public IP
+    Value: !GetAtt CalcuttaDBEC2.PublicIp
+    Export:
+      Name: calcutta-db-ec2-${self:custom.stage}-address
