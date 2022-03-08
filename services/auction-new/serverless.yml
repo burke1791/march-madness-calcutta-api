@@ -1,0 +1,273 @@
+
+service: calcutta-auction-service-v2
+
+package:
+  individually: true
+
+plugins:
+  - serverless-bundle
+
+custom:
+  stage: ${opt:stage, self:provider.stage}
+  provider: ${file(../../common/config/provider.json)}
+  AUCTION_TABLE: Auctions
+  BID_HISTORY_TABLE: BidHistory
+  CONNECTION_TABLE: AuctionConnections
+  CHAT_TABLE: AuctionChat
+
+provider:
+  name: aws
+  runtime: ${self:custom.provider.runtime}
+  timeout: ${self:custom.provider.timeout}
+  logRetentionInDays: ${self:custom.provider.logRetentionInDays}
+  region: ${self:custom.provider.region}
+  stage: ${self:custom.stage}
+  environment:
+    APP_ENV: ${self:custom.stage} # used by the websocket verification function
+    AUCTION_TABLE: ${self:custom.AUCTION_TABLE}
+    BID_HISTORY_TABLE: ${self:custom.BID_HISTORY_TABLE}
+    CONNECTION_TABLE: ${self:custom.CONNECTION_TABLE}
+    CHAT_TABLE: ${self:custom.CHAT_TABLE}
+    DB_NAME: ${self:custom.provider.env.DB_NAME}
+    DB_USER: ${self:custom.provider.env.DB_USER}
+    DB_PASSWORD: ${self:custom.provider.env.DB_PASSWORD}
+    DB_HOST:
+      Fn::ImportValue: ${self:custom.provider.env.DB_HOST}
+    DB_PORT:
+      Fn::ImportValue: ${self:custom.provider.env.DB_PORT}
+    WEBSOCKET_ENDPOINT:
+      Fn::Join:
+        - ''
+        - - Ref: WebsocketsApi
+          - .execute-api.
+          - Ref: AWS::Region
+          - .amazonaws.com/
+          - ${self:custom.stage}
+
+functions:
+  # HTTP functions
+  getAllChatMessages:
+    handler: functions/chat.getAllMessages
+    role:
+      Fn::GetAtt: [DynamoDBWebsocketRole, Arn]
+    events:
+      - http:
+          path: getAllChatMessages/{leagueId}
+          method: get
+          integration: lambda
+          authorizer:
+            type: COGNITO_USER_POOLS
+            authorizerId:
+              Ref: ApiGatewayAuthorizer
+          cors:
+            origin: '*'
+            headers:
+              - x-cognito-token
+
+  getAuctionTeams:
+    handler: functions/rds/getAuctionTeams.getAuctionTeams
+    vpc:
+      securityGroupIds:
+        - Fn::ImportValue: ${self:custom.provider.vpc.securityGroupIds.LAMBDA_SG}
+      subnetIds:
+        - Fn::ImportValue: ${self:custom.provider.vpc.subnetIds.SUBNET1}
+        - Fn::ImportValue: ${self:custom.provider.vpc.subnetIds.SUBNET2}
+        - Fn::ImportValue: ${self:custom.provider.vpc.subnetIds.SUBNET3}
+    events:
+      - http:
+          path: getAuctionTeams/{leagueId}
+          method: get
+          integration: lambda
+          authorizer:
+            type: COGNITO_USER_POOLS
+            authorizerId:
+              Ref: ApiGatewayAuthorizer
+          cors:
+            origin: '*'
+            headers:
+              - x-cognito-token
+
+  getAuctionMemberBuyIns:
+    handler: functions/rds/getAuctionMemberBuyIns.getAuctionMemberBuyIns
+    vpc:
+      securityGroupIds:
+        - Fn::ImportValue: ${self:custom.provider.vpc.securityGroupIds.LAMBDA_SG}
+      subnetIds:
+        - Fn::ImportValue: ${self:custom.provider.vpc.subnetIds.SUBNET1}
+        - Fn::ImportValue: ${self:custom.provider.vpc.subnetIds.SUBNET2}
+        - Fn::ImportValue: ${self:custom.provider.vpc.subnetIds.SUBNET3}
+    events:
+      - http:
+          path: getAuctionMemberBuyIns/{leagueId}
+          method: get
+          integration: lambda
+          authorizer:
+            type: COGNITO_USER_POOLS
+            authorizerId:
+              Ref: ApiGatewayAuthorizer
+          cors:
+            origin: '*'
+            headers:
+              - x-cognito-token
+
+  getAuctionStatus:
+    handler: functions/getAuctionStatus.getAuctionStatus
+    role:
+      Fn::GetAtt: [DynamoDBWebsocketRole, Arn]
+    events:
+      - http:
+          path: getAuctionStatus/{leagueId}
+          method: get
+          integration: lambda
+          authorizer:
+            type: COGNITO_USER_POOLS
+            authorizerId:
+              Ref: ApiGatewayAuthorizer
+          cors:
+            origin: '*'
+            headers:
+              - x-cognito-token
+
+  getServerTime:
+    handler: functions/getServerTime.getServerTime
+    events:
+      - http:
+          path: getServerTime
+          method: get
+          integration: lambda
+          authorizer:
+            type: COGNITO_USER_POOLS
+            authorizerId:
+              Ref: ApiGatewayAuthorizer
+          cors:
+            origin: '*'
+            headers:
+              - x-cognito-token
+
+  # Invokable functions
+  rdsVerifyUserLeague:
+    handler: functions/rds/verifyUserLeague.verifyUserLeague
+    vpc:
+      securityGroupIds:
+        - Fn::ImportValue: ${self:custom.provider.vpc.securityGroupIds.LAMBDA_SG}
+      subnetIds:
+        - Fn::ImportValue: ${self:custom.provider.vpc.subnetIds.SUBNET1}
+        - Fn::ImportValue: ${self:custom.provider.vpc.subnetIds.SUBNET2}
+        - Fn::ImportValue: ${self:custom.provider.vpc.subnetIds.SUBNET3}
+
+  rdsGetNextItem:
+    handler: functions/rds/getNextItem.getNextItem
+    vpc:
+      securityGroupIds:
+        - Fn::ImportValue: ${self:custom.provider.vpc.securityGroupIds.LAMBDA_SG}
+      subnetIds:
+        - Fn::ImportValue: ${self:custom.provider.vpc.subnetIds.SUBNET1}
+        - Fn::ImportValue: ${self:custom.provider.vpc.subnetIds.SUBNET2}
+        - Fn::ImportValue: ${self:custom.provider.vpc.subnetIds.SUBNET3}
+
+  rdsStartAuction:
+    handler: functions/rds/startAuction.startAuction
+    vpc:
+      securityGroupIds:
+        - Fn::ImportValue: ${self:custom.provider.vpc.securityGroupIds.LAMBDA_SG}
+      subnetIds:
+        - Fn::ImportValue: ${self:custom.provider.vpc.subnetIds.SUBNET1}
+        - Fn::ImportValue: ${self:custom.provider.vpc.subnetIds.SUBNET2}
+        - Fn::ImportValue: ${self:custom.provider.vpc.subnetIds.SUBNET3}
+
+  rdsCloseAuction:
+    handler: functions/rds/rdsCloseAuction.closeAuction
+    vpc:
+      securityGroupIds:
+        - Fn::ImportValue: ${self:custom.provider.vpc.securityGroupIds.LAMBDA_SG}
+      subnetIds:
+        - Fn::ImportValue: ${self:custom.provider.vpc.subnetIds.SUBNET1}
+        - Fn::ImportValue: ${self:custom.provider.vpc.subnetIds.SUBNET2}
+        - Fn::ImportValue: ${self:custom.provider.vpc.subnetIds.SUBNET3}
+
+  rdsSetItemComplete:
+    handler: functions/rds/setItemComplete.setItemComplete
+    vpc:
+      securityGroupIds:
+        - Fn::ImportValue: ${self:custom.provider.vpc.securityGroupIds.LAMBDA_SG}
+      subnetIds:
+        - Fn::ImportValue: ${self:custom.provider.vpc.subnetIds.SUBNET1}
+        - Fn::ImportValue: ${self:custom.provider.vpc.subnetIds.SUBNET2}
+        - Fn::ImportValue: ${self:custom.provider.vpc.subnetIds.SUBNET3}
+
+  # websocket functions
+  onConnect:
+    handler: functions/websocketConnection.onConnect
+    role:
+      Fn::GetAtt: [DynamoDBWebsocketRole, Arn]
+    events:
+      - websocket:
+          route: $connect
+  onDisconnect:
+    handler: functions/websocketConnection.onDisconnect
+    role:
+      Fn::GetAtt: [DynamoDBWebsocketRole, Arn]
+    events:
+      - websocket:
+          route: $disconnect
+  handleMessage:
+    handler: functions/websocketChat.sendChatMessage
+    role:
+      Fn::GetAtt: [DynamoDBWebsocketRole, Arn]
+    events:
+      - websocket:
+          route: $default
+  startAuction:
+    handler: functions/startAuction.startAuction
+    role:
+      Fn::GetAtt: [DynamoDBWebsocketRole, Arn]
+    events:
+      - websocket:
+          route: START_AUCTION
+  closeAuction:
+    handler: functions/closeAuction.closeAuction
+    role:
+      Fn::GetAtt: [DynamoDBWebsocketRole, Arn]
+    events:
+      - websocket:
+          route: CLOSE_AUCTION
+  placeBid:
+    handler: functions/placeBid.placeBid
+    role:
+      Fn::GetAtt: [DynamoDBWebsocketRole, Arn]
+    events:
+      - websocket:
+          route: PLACE_BID
+  undoBid:
+    handler: functions/undoBid.undoBid
+    role:
+      Fn::GetAtt: [DynamoDBWebsocketRole, Arn]
+    events:
+      - websocket:
+          route: UNDO_BID
+  getNextItem:
+    handler: functions/getNextItem.getNextItem
+    role:
+      Fn::GetAtt: [DynamoDBWebsocketRole, Arn]
+    events:
+      - websocket:
+          route: NEXT_ITEM
+  resetClock:
+    handler: functions/resetClock.resetClock
+    role:
+      Fn::GetAtt: [DynamoDBWebsocketRole, Arn]
+    events:
+      - websocket:
+          route: RESET_CLOCK
+  setItemComplete:
+    handler: functions/setItemComplete.setItemComplete
+    role:
+      Fn::GetAtt: [DynamoDBWebsocketRole, Arn]
+    events:
+      - websocket:
+          route: ITEM_COMPLETE
+
+resources:
+  - ${file(../../common/resources/api-gateway-authorizer.yml)}
+  - ${file(resources/dynamodb.yml)}
+  - ${file(resources/roles.yml)}

@@ -1,12 +1,13 @@
 {
-  "name": "calcutta-user-service-api",
+  "name": "calcutta-auction-service-api-v2",
   "version": "1.0.0",
   "description": "",
   "main": "",
   "dependencies": {
     "mssql": "^7.3.0",
     "jsonwebtoken": "^8.5.1",
-    "jwk-to-pem": "^2.0.5"
+    "jwk-to-pem": "^2.0.5",
+    "uuid": "^8.3.2"
   },
   "devDependencies": {
     "@babel/core": "^7.16.12",

@@ -1,0 +1,7 @@
+parser: '@babel/eslint-parser'
+parserOptions:
+  requireConfigFile: false
+rules:
+  no-trailing-spaces: off
+  semi: off
+  no-unused-vars: error

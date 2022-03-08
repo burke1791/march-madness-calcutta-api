@@ -1,0 +1,98 @@
+
+name: Stage-Lint
+
+on:
+  pull_request:
+    branches:
+      - develop
+      - master
+
+jobs:
+  top_level_lint:
+    name: Run linter on project root
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: use nodejs
+        uses: actions/setup-node@v1
+        with:
+          node-version: '14.x'
+      - run: |
+          npm install
+          npm run lint
+          
+  user_service_lint:
+    name: Run linter on user microservice
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: use nodejs
+        uses: actions/setup-node@v1
+        with:
+          node-version: '14.x'
+      - run: |
+          cd services/user
+          npm install
+          npm run lint
+
+  league_service_lint:
+    name: Run linter on league microservice
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: use nodejs
+        uses: actions/setup-node@v1
+        with:
+          node-version: '14.x'
+      - run: |
+          cd services/league
+          npm install
+          npm run lint
+
+  auction_service_lint:
+    name: Run linter on auction microservice
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: use nodejs
+        uses: actions/setup-node@v1
+        with:
+          node-version: '14.x'
+      - run: |
+          cd services/auction
+          npm install
+          npm run lint
+
+  tournament_service_lint:
+    name: Run linter on tournament microservice
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: use nodejs
+        uses: actions/setup-node@v1
+        with:
+          node-version: '14.x'
+      - run: |
+          cd services/tournament
+          npm install
+          npm run lint
+
+  auction-v2_service_lint:
+    name: Run linter on auction-v2 microservice
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: use nodejs
+        uses: actions/setup-node@v1
+        with:
+          node-version: '14.x'
+      - run: |
+          cd services/auction-new
+          npm install
+          npm run lint

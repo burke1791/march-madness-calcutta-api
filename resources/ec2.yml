@@ -1,0 +1,28 @@
+Resources:
+  CalcuttaDBEC2:
+    Type: AWS::EC2::Instance
+    DependsOn:
+      - CalcuttaGatewayAttachment
+    Properties:
+      AvailabilityZone: us-east-1f
+      EbsOptimized: True
+      ImageId: ami-0c19f80dba70861db
+      InstanceType: t3.micro
+      IamInstanceProfile: !Ref CalcuttaIamInstanceProfile
+      KeyName: calcutta-ec2
+      BlockDeviceMappings:
+        - DeviceName: /dev/sda1
+          Ebs:
+            VolumeSize: 30
+            VolumeType: gp2
+            DeleteOnTermination: True
+      NetworkInterfaces:
+        - AssociatePublicIpAddress: True
+          DeviceIndex: '0'
+          GroupSet:
+            - Ref: DBSG
+          SubnetId:
+            Ref: NatSubnet3
+      Tags:
+        - Key: Name
+          Value: 'Calcutta SQL Server'

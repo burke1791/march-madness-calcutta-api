@@ -17,7 +17,7 @@ provider:
   timeout: ${self:custom.provider.timeout}
   logRetentionInDays: ${self:custom.provider.logRetentionInDays}
   region: ${self:custom.provider.region}
-  stage: ${self:custom.provider.stage}
+  stage: ${self:custom.stage}
   environment:
     DB_NAME: ${self:custom.provider.env.DB_NAME}
     DB_USER: ${self:custom.provider.env.DB_USER}
@@ -40,6 +40,22 @@ functions:
     events:
       - http:
           path: getUserMetadata
+          method: get
+          integration: lambda
+          authorizer:
+            type: COGNITO_USER_POOLS
+            authorizerId:
+              Ref: ApiGatewayAuthorizer
+          cors:
+            origin: '*'
+            headers:
+              - x-cognito-token
+
+  getUserUpcomingGames:
+    handler: functions/getUserUpcomingGames.getUserUpcomingGames
+    events:
+      - http:
+          path: getUserUpcomingGames
           method: get
           integration: lambda
           authorizer:

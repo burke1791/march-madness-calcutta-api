@@ -24,14 +24,48 @@ Resources:
                 Action:
                   - s3:ListBucket
                   - s3:GetBucketLocation
-                Resource: arn:aws:s3:::rds-backups-calcutta-prod
+                Resource: arn:aws:s3:::rds-backups-calcutta
               - Effect: Allow
                 Action:
                   - s3:GetObject
                   - s3:PutObject
                   - s3:ListMultipartUploadParts
                   - s3:AbortMultipartUpload
-                Resource: arn:aws:s3:::rds-backups-calcutta-prod/*
+                Resource: arn:aws:s3:::rds-backups-calcutta/*
+
+  SQLServerS3Role:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName:
+        Fn::Join:
+          - ''
+          - - sql-server-s3-${self:custom.stage}-
+            - Ref: AWS::Region
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: ec2.amazonaws.com
+            Action: sts:AssumeRole
+      Path: /
+      Policies:
+        - PolicyName: root
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - s3:ListBucket
+                  - s3:GetBucketLocation
+                Resource: arn:aws:s3:::rds-backups-calcutta
+              - Effect: Allow
+                Action:
+                  - s3:GetObject
+                  - s3:PutObject
+                  - s3:ListMultipartUploadParts
+                  - s3:AbortMultipartUpload
+                Resource: arn:aws:s3:::rds-backups-calcutta/*
 
 # Will need to have different CIDR ranges between dev and prod VPCs before attempting to peer
   CalcuttaVPCPeerRole:

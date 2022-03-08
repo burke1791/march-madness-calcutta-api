@@ -1,0 +1,97 @@
+Resources:
+  AuctionTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      AttributeDefinitions:
+        - AttributeName: LeagueId
+          AttributeType: N
+      KeySchema:
+        - AttributeName: LeagueId
+          KeyType: HASH
+      ProvisionedThroughput:
+        ReadCapacityUnits: 10
+        WriteCapacityUnits: 10
+      TableName: ${self:custom.AUCTION_TABLE}
+      TableClass: STANDARD
+      Tags:
+        - Key: Description
+          Value: 'Contains all auction bidding data'
+
+  BidHistoryTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      AttributeDefinitions:
+        - AttributeName: LeagueId
+          AttributeType: N
+        - AttributeName: BidId
+          AttributeType: N
+      KeySchema:
+        - AttributeName: LeagueId
+          KeyType: HASH
+        - AttributeName: BidId
+          KeyType: RANGE
+      ProvisionedThroughput:
+        ReadCapacityUnits: 4
+        WriteCapacityUnits: 4
+      TableName: ${self:custom.BID_HISTORY_TABLE}
+      Tags:
+        - Key: Description
+          Value: 'Contains the bidding history for all auctions'
+      
+  AuctionConnectionTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      AttributeDefinitions:
+        - AttributeName: ConnectionId
+          AttributeType: S
+        - AttributeName: LeagueId
+          AttributeType: N
+        - AttributeName: CognitoSub
+          AttributeType: S
+      KeySchema:
+        -
+          AttributeName: ConnectionId
+          KeyType: HASH
+      ProvisionedThroughput:
+        ReadCapacityUnits: 3
+        WriteCapacityUnits: 3
+      TableName: ${self:custom.CONNECTION_TABLE}
+      TableClass: STANDARD
+      GlobalSecondaryIndexes:
+        - IndexName: ${self:custom.CONNECTION_TABLE}_LeagueId_CognitoSub
+          KeySchema:
+            - AttributeName: LeagueId
+              KeyType: HASH
+            - AttributeName: CognitoSub
+              KeyType: RANGE
+          Projection:
+            ProjectionType: INCLUDE
+            NonKeyAttributes:
+              - Alias
+              - UserId
+          ProvisionedThroughput:
+            ReadCapacityUnits: 4
+            WriteCapacityUnits: 4
+      Tags:
+        -
+          Key: Description
+          Value: 'Contains the websocket connection Ids for each user'
+
+  AuctionChatTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      AttributeDefinitions:
+        - AttributeName: LeagueId
+          AttributeType: N
+        - AttributeName: Timestamp
+          AttributeType: N
+      KeySchema:
+        - AttributeName: LeagueId
+          KeyType: HASH
+        - AttributeName: Timestamp
+          KeyType: RANGE
+      ProvisionedThroughput:
+        ReadCapacityUnits: 4
+        WriteCapacityUnits: 4
+      TableName: ${self:custom.CHAT_TABLE}
+      TableClass: STANDARD
