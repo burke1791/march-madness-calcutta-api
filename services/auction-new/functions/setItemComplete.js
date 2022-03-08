@@ -119,17 +119,17 @@ export async function setItemComplete(event, context, callback) {
     console.log(confirmedUpdateData);
 
     const confirmedAuctionObj = {
-      Status: updateData.Status.S,
-      CurrentItemId: updateData.CurrentItemId.N,
-      TeamLogoUrl: updateData.TeamLogoUrl.S,
-      ItemTypeId: updateData.ItemTypeId.N,
-      ItemName: updateData.ItemName.S,
-      Seed: updateData.Seed.N,
-      DisplayName: updateData.DisplayName.S,
-      CurrentItemPrice: updateData.CurrentItemPrice.N,
-      CurrentItemWinner: updateData.CurrentItemWinner.N,
-      Alias: updateData.Alias.S,
-      LastBidTimestamp: updateData.LastBidTimestamp.N
+      Status: confirmedUpdateData.Status.S,
+      CurrentItemId: confirmedUpdateData.CurrentItemId.N,
+      TeamLogoUrl: confirmedUpdateData.TeamLogoUrl.S,
+      ItemTypeId: confirmedUpdateData.ItemTypeId.N,
+      ItemName: confirmedUpdateData.ItemName.S,
+      Seed: confirmedUpdateData.Seed.N,
+      DisplayName: confirmedUpdateData.DisplayName.S,
+      CurrentItemPrice: confirmedUpdateData.CurrentItemPrice.N,
+      CurrentItemWinner: confirmedUpdateData.CurrentItemWinner.N,
+      Alias: confirmedUpdateData.Alias.S,
+      LastBidTimestamp: confirmedUpdateData.LastBidTimestamp.N
     };
 
     const confirmedPayload = {
