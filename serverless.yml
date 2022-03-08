@@ -19,9 +19,10 @@ provider:
     DB_USER: ${env:DB_USER}
     DB_PASSWORD: ${env:DB_PASSWORD}
     DB_HOST:
-      Fn::GetAtt: [ CalcuttaDB, Endpoint.Address ]
-    DB_PORT:
-      Fn::GetAtt: [ CalcuttaDB, Endpoint.Port ]
+      Fn::GetAtt: [CalcuttaDBEC2, PublicIp]
+    #   Fn::GetAtt: [ CalcuttaDB, Endpoint.Address ]
+    DB_PORT: 1433
+    #   Fn::GetAtt: [ CalcuttaDB, Endpoint.Port ]
   vpc:
     securityGroupIds:
       - Ref: LambdaSG
