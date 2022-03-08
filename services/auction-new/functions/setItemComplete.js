@@ -1,5 +1,5 @@
 import AWS from 'aws-sdk';
-import { verifyLeagueConnection, websocketBroadcast } from '../utilities';
+import { verifyLeagueConnection, websocketBroadcast, websocketBroadcastToConnection } from '../utilities';
 import { DYNAMODB_TABLES, LAMBDAS } from '../utilities/constants';
 
 const AUCTION_TABLE = DYNAMODB_TABLES.AUCTION_TABLE;
