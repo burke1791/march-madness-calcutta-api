@@ -141,7 +141,7 @@ export async function setItemComplete(event, context, callback) {
       msgType: 'auction'
     }
 
-    await websocketBroadcast(leagueId, payload, event.requestContext.domainName, event.requestContext.stage);
+    await websocketBroadcast(leagueId, confirmedPayload, event.requestContext.domainName, event.requestContext.stage);
 
     callback(null, {
       statusCode: 200,
