@@ -1,6 +1,6 @@
 
 service: calcutta-auction-service-v2
-projectDir: ../..
+projectDir: ../../
 
 package:
   individually: true
