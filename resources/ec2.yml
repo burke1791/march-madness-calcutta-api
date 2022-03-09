@@ -28,8 +28,8 @@ Resources:
           Value: 'Calcutta SQL Server'
 
 Outputs:
-  PublicIp:
-    Description: Server public IP
-    Value: !GetAtt CalcuttaDBEC2.PublicIp
+  PublicDns:
+    Description: Server public DNS
+    Value: !GetAtt CalcuttaDBEC2.PublicDnsName
     Export:
       Name: calcutta-db-ec2-${self:custom.stage}-address
