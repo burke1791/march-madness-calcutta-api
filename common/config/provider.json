@@ -8,7 +8,7 @@
     "DB_NAME": "${env:DB_NAME}",
     "DB_USER": "${env:DB_USER}",
     "DB_PASSWORD": "${env:DB_PASSWORD}",
-    "DB_HOST": "calcutta-db-ec2-${self:custom.stage}-address",
+    "DB_HOST": "calcutta-db-ec2-${self:custom.stage}-dns-address",
     "DB_PORT": 1433
   },
   "vpc": {
