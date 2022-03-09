@@ -24,8 +24,8 @@ provider:
     DB_PASSWORD: ${self:custom.provider.env.DB_PASSWORD}
     DB_HOST:
       Fn::ImportValue: ${self:custom.provider.env.DB_HOST}
-    DB_PORT:
-      Fn::ImportValue: ${self:custom.provider.env.DB_PORT}
+    DB_PORT: ${self:custom.provider.env.DB_PORT}
+      # Fn::ImportValue: ${self:custom.provider.env.DB_PORT}
     WEBSOCKET_ENDPOINT:
       Fn::Join:
         - ''
