@@ -32,4 +32,4 @@ Outputs:
     Description: Server public DNS
     Value: !GetAtt CalcuttaDBEC2.PublicDnsName
     Export:
-      Name: calcutta-db-ec2-${self:custom.stage}-address
+      Name: calcutta-db-ec2-${self:custom.stage}-dns-address
