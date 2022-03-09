@@ -1,5 +1,6 @@
 
 service: calcutta-league-service
+projectDir: ../..
 
 package:
   individually: true

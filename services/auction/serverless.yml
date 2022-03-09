@@ -1,5 +1,6 @@
 
 service: calcutta-auction-service
+projectDir: ../..
 
 package:
   individually: true
