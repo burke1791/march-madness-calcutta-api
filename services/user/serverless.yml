@@ -1,6 +1,6 @@
 
 service: calcutta-user-service
-projectDir: ../..
+projectDir: ../../
 
 package:
   individually: true
