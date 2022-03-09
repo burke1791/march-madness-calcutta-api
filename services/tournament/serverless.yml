@@ -1,5 +1,6 @@
 
 service: calcutta-tournament-service
+projectDir: ../..
 
 package:
   individually: true
