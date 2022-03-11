@@ -30,7 +30,7 @@ export async function getUserUpcomingGames(event, context, callback) {
 function parseUserUpcomingGames(games) {
   return games.map(game => {
     return {
-      eventDate: new Date(game.EventDate),
+      eventDate: game.EventDate,
       leagueId:  +game.LeagueId,
       leagueName: game.LeagueName,
       matchupId: +game.MatchupId,
