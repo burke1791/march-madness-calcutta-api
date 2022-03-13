@@ -26,3 +26,15 @@ Resources:
       Tags:
         - Key: Name
           Value: 'Calcutta SQL Server'
+
+Outputs:
+  PublicDns:
+    Description: Server public DNS
+    Value: !GetAtt CalcuttaDBEC2.PublicDnsName
+    Export:
+      Name: calcutta-db-ec2-${self:custom.stage}-dns-address
+  PublicIp:
+    Description: Server public IP
+    Value: !GetAtt CalcuttaDBEC2.PublicIp
+    Export:
+      Name: calcutta-db-ec2-${self:custom.stage}-address

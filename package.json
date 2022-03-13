@@ -16,7 +16,7 @@
     "aws-sdk-mock": "^5.1.0",
     "eslint": "^8.7.0",
     "jest": "^27.4.5",
-    "serverless": "^2.70.0",
+    "serverless": "^3.7.2",
     "serverless-bundle": "^5.2.0"
   },
   "scripts": {
