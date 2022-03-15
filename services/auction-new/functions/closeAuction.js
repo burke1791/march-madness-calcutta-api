@@ -38,7 +38,7 @@ export async function closeAuction(event, context, callback) {
     }
 
     const payload = {
-      msgType: 'auction_info',
+      msgType: 'auction_close',
       message: 'Auction closed'
     };
 
