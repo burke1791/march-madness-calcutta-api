@@ -17,12 +17,12 @@ export async function getAuctionMemberBuyIns(event, context, callback) {
       .input('CognitoSub', Varchar(256), cognitoSub)
       .execute('dbo.up_GetAuctionMemberBuyIns');
 
-    const data = {
-      buyIns: result.recordsets[0],
-      tax: result.recordsets[1]
-    };
+    // const data = {
+    //   buyIns: result.recordsets[0],
+    //   tax: result.recordsets[1]
+    // };
 
-    callback(null, data);
+    callback(null, result.recordset);
   } catch (error) {
     console.log(error);
     callback(null, { message: 'ERROR!' });
