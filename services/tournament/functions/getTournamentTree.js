@@ -64,7 +64,7 @@ function parseTournamentTree(tree) {
 function getRoundNum(matchup, tree, round) {
   let parentMatchupId = tree.find(game => game.MatchupId == matchup).ParentMatchup1;
   
-  if (parentMatchupId == undefined || parentMatchupId == null) {
+  if (parentMatchupId == undefined) {
     return round;
   } else {
     return getRoundNum(parentMatchupId, tree, round + 1)
