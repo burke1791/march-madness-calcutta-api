@@ -210,5 +210,8 @@ async function verifyBid(leagueId, userId, bidAmount) {
 
   console.log(lambdaResponse);
 
-  return !!lambdaResponse.Payload[0].IsValid;
+  const responsePayload = JSON.parse(lambdaResponse.Payload);
+  console.log(responsePayload);
+
+  return !!responsePayload[0].IsValid;
 }
