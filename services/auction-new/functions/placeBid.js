@@ -1,8 +1,9 @@
 import AWS from 'aws-sdk';
 import { verifyLeagueConnection, websocketBroadcast, websocketBroadcastToConnection } from '../utilities';
-import { DYNAMODB_TABLES } from '../utilities/constants';
+import { DYNAMODB_TABLES, LAMBDAS } from '../utilities/constants';
 
 const dynamodb = new AWS.DynamoDB();
+const lambda = new AWS.Lambda();
 
 export async function placeBid(event, context, callback) {
   context.callbackWaitsForEmptyEventLoop = false;
@@ -23,6 +24,15 @@ export async function placeBid(event, context, callback) {
 
     if (verifyResponse === false) {
       throw new Error('ConnectionId and LeagueId do not match');
+    }
+
+    const userId = verifyResponse.UserId;
+    const alias = verifyResponse.Alias;
+
+    const isBidValid = await verifyBid(leagueId, userId, amount);
+
+    if (!isBidValid) {
+      throw new Error('Bid is not valid');
     }
 
     const lookupParams = {
@@ -77,10 +87,10 @@ export async function placeBid(event, context, callback) {
                 N: String(amount)
               },
               ':W': {
-                N: verifyResponse.UserId
+                N: userId
               },
               ':A': {
-                S: verifyResponse.Alias
+                S: alias
               },
               ':B': {
                 N: timestamp // using timestamp instead of uuid because I want it to be useful in RANGE queries against the BidHistory table
@@ -110,10 +120,10 @@ export async function placeBid(event, context, callback) {
                 N: String(itemTypeId)
               },
               UserId: {
-                N: verifyResponse.UserId
+                N: userId
               },
               Alias: {
-                S: verifyResponse.Alias
+                S: alias
               },
               Price: {
                 N: String(amount)
@@ -141,8 +151,8 @@ export async function placeBid(event, context, callback) {
     const auctionObj = {
       Status: 'bidding',
       CurrentItemPrice: amount,
-      CurrentItemWinner: verifyResponse.UserId,
-      Alias: verifyResponse.Alias,
+      CurrentItemWinner: userId,
+      Alias: alias,
       LastBidTimestamp: timestamp
     }
 
@@ -172,4 +182,33 @@ export async function placeBid(event, context, callback) {
       body: JSON.stringify({ message: 'bid not accepted' })
     });
   }
+}
+
+
+/**
+ * @function verifyBid
+ * @param {Number} leagueId - leagueId (league primary key in SQL Server)
+ * @param {Number} userId - userId (user primary key in SQL Server)
+ * @param {Number} bidAmount - the proposed bid amount
+ * @returns {boolean}
+ * @description verifies whether or not the proposed bid by the user is valid
+ */
+async function verifyBid(leagueId, userId, bidAmount) {
+  const payload = {
+    leagueId: leagueId,
+    userId: userId,
+    bidAmount: bidAmount
+  };
+
+  const lambdaParams = {
+    FunctionName: LAMBDAS.RDS_VERIFY_BID,
+    LogType: 'Tail',
+    Payload: JSON.stringify(payload)
+  }
+
+  const lambdaResponse = await lambda.invoke(lambdaParams).promise();
+
+  console.log(lambdaResponse);
+
+  return !!lambdaResponse.Payload[0].IsValid;
 }
