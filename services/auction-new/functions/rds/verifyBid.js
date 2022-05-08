@@ -1,4 +1,4 @@
-import { connection, BigInt, Decimal } from "../../../../common/utilities/db";
+import { connection, BigInt, Decimal, Bit, Varchar } from "../../../../common/utilities/db";
 
 
 export async function verifyBid(event, context, callback) {
@@ -15,9 +15,13 @@ export async function verifyBid(event, context, callback) {
       .input('LeagueId', BigInt, leagueId)
       .input('UserId', BigInt, userId)
       .input('BidAmount', Decimal, bidAmount)
+      .output('IsValid', Bit)
+      .output('ValidationMessage', Varchar(100))
       .execute('dbo.up_AuctionVerifyBid');
+
+    console.log(result);
     
-    callback(null, result.recordset);
+    callback(null, result.output);
   } catch (error) {
     console.log(error);
     callback(null, error);

@@ -29,10 +29,10 @@ export async function placeBid(event, context, callback) {
     const userId = verifyResponse.UserId;
     const alias = verifyResponse.Alias;
 
-    const isBidValid = await verifyBid(leagueId, userId, amount);
+    const bidValidation = await verifyBid(leagueId, userId, amount);
 
-    if (!isBidValid) {
-      throw new Error('Bid is not valid');
+    if (!bidValidation.isValid) {
+      throw new Error(bidValidation.errorMessage);
     }
 
     const lookupParams = {
@@ -184,13 +184,18 @@ export async function placeBid(event, context, callback) {
   }
 }
 
+/**
+ * @typedef verifyBidReturn
+ * @property {Boolean} isValid - whether or not the bid passes validation
+ * @property {String} errorMessage - error text explaining why the bid did not pass validation
+ */
 
 /**
  * @function verifyBid
  * @param {Number} leagueId - leagueId (league primary key in SQL Server)
  * @param {Number} userId - userId (user primary key in SQL Server)
  * @param {Number} bidAmount - the proposed bid amount
- * @returns {boolean}
+ * @returns {verifyBidReturn}
  * @description verifies whether or not the proposed bid by the user is valid
  */
 async function verifyBid(leagueId, userId, bidAmount) {
@@ -213,5 +218,8 @@ async function verifyBid(leagueId, userId, bidAmount) {
   const responsePayload = JSON.parse(lambdaResponse.Payload);
   console.log(responsePayload);
 
-  return !!responsePayload[0].IsValid;
+  return {
+    isValid: responsePayload.IsValid,
+    errorMessage: responsePayload.ValidationMessage
+  };
 }
