@@ -1,4 +1,4 @@
-import { BigInt, Table, TinyInt, Varchar } from '../../../common/utilities/db';
+import { BigInt, Int, Table, TinyInt, Varchar } from '../../../common/utilities/db';
 
 const connection = require('../../../common/utilities/db').connection;
 
@@ -41,7 +41,7 @@ export async function deleteLeagueSeedGroup(event, context, callback) {
 
   let cognitoSub = event.cognitoPoolClaims.sub;
 
-  let { leagueId, groupName } = event.body;
+  let { leagueId, groupId } = event.body;
 
   try {
     if (!connection.isConnected) {
@@ -51,7 +51,7 @@ export async function deleteLeagueSeedGroup(event, context, callback) {
     let result = await connection.pool.request()
       .input('LeagueId', BigInt, leagueId)
       .input('CognitoSub', Varchar(256), cognitoSub)
-      .input('SeedGroupName', Varchar(128), groupName)
+      .input('SeedGroupId', Int, groupId)
       .execute('dbo.up_DeleteLeagueSeedGroup');
 
     callback(null, result.recordset);
