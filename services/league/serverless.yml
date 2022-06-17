@@ -381,5 +381,38 @@ functions:
               - Content-Type
               - x-cognito-token
 
+  getAuctionTaxRules:
+    handler: functions/auctionTaxRule.getAuctionTaxRule
+    events:
+      - http:
+          path: auctionTaxRule/{leagueId}
+          method: get
+          integration: lambda
+          authorizer:
+            type: COGNITO_USER_POOLS
+            authorizerId:
+              Ref: ApiGatewayAuthorizer
+          cors:
+            origin: '*'
+            headers:
+              - x-cognito-token
+
+  setAuctionTaxRules:
+    handler: functions/auctionTaxRule.setAuctionTaxRule
+    events:
+      - http:
+          path: auctionTaxRule/{leagueId}
+          method: post
+          integration: lambda
+          authorizer:
+            type: COGNITO_USER_POOLS
+            authorizerId:
+              Ref: ApiGatewayAuthorizer
+          cors:
+            origin: '*'
+            headers:
+              - Content-Type
+              - x-cognito-token
+
 resources:
   - ${file(../../common/resources/api-gateway-authorizer.yml)}
