@@ -45,3 +45,12 @@ resources:
   - ${file(resources/conditions.yml)}
   - ${file(resources/ec2.yml)}
   - ${file(resources/instance-profile.yml)}
+
+Parameters:
+  CalcuttaDBEC2_ImageId_PROD:
+    Type: String
+    Default: ami-041306c411c38a789
+
+  CalcuttaDBEC2_ImageId_DEV:
+    Type: String
+    Default: ami-0c19f80dba70861db
