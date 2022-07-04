@@ -1,7 +1,6 @@
 Resources:
   CalcuttaDBEC2:
     Type: AWS::EC2::Instance
-    Condition: IsDev
     DependsOn:
       - CalcuttaGatewayAttachment
     Properties:
