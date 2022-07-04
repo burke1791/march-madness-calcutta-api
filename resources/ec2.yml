@@ -6,7 +6,7 @@ Resources:
     Properties:
       AvailabilityZone: us-east-1f
       EbsOptimized: True
-      ImageId: ami-0c19f80dba70861db
+      ImageId: !If [IsDev, !Ref CalcuttaDBEC2_ImageId_DEV, !Ref CalcuttaDBEC2_ImageId_PROD]
       InstanceType: t3.micro
       IamInstanceProfile: !Ref CalcuttaIamInstanceProfile
       KeyName: calcutta-ec2
