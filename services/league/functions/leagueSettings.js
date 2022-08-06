@@ -41,9 +41,12 @@ export async function getLeagueSettings(event, context, callback) {
   context.callbackWaitsForEmptyEventLoop = false;
 
   try {
-    let cognitoSub = event.cognitoPoolClaims.sub;
+    console.log(event);
+    console.log(event.queryStringParameters);
 
-    let leagueId = event.path.leagueId;
+    const cognitoSub = event.cognitoPoolClaims.sub;
+    const leagueId = event.path.leagueId;
+    const settingClass = event.queryStringParameters.settingClass;
 
     if (!connection.isConnected) {
       await connection.createConnection();
@@ -52,6 +55,7 @@ export async function getLeagueSettings(event, context, callback) {
     let result = await connection.pool.request()
       .input('LeagueId', BigInt, leagueId)
       .input('CognitoSub', Varchar(256), cognitoSub)
+      .input('SettingClass', settingClass)
       .execute('dbo.up_GetLeagueSettings');
 
     callback(null, result.recordset);
