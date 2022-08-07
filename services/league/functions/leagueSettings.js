@@ -41,12 +41,9 @@ export async function getLeagueSettings(event, context, callback) {
   context.callbackWaitsForEmptyEventLoop = false;
 
   try {
-    console.log(event);
-    console.log(event.queryStringParameters);
-
     const cognitoSub = event.cognitoPoolClaims.sub;
     const leagueId = event.path.leagueId;
-    const settingClass = event.queryStringParameters.settingClass;
+    const settingClass = event.query.settingClass;
 
     if (!connection.isConnected) {
       await connection.createConnection();
