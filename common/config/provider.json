@@ -1,5 +1,5 @@
 {
-  "runtime": "nodejs14.x",
+  "runtime": "nodejs16.x",
   "timeout": 20,
   "logRetentionInDays": 7,
   "region": "us-east-1",
