@@ -57,7 +57,7 @@ export async function getLeagueSettings(event, context, callback) {
 
     callback(null, {
       settings: result.recordset,
-      allowed: result.recordsets[1]
+      allowed: result.recordsets[1] || []
     });
   } catch (error) {
     console.log(error);
