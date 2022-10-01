@@ -55,7 +55,10 @@ export async function getLeagueSettings(event, context, callback) {
       .input('SettingClass', settingClass)
       .execute('dbo.up_GetLeagueSettings');
 
-    callback(null, result.recordset);
+    callback(null, {
+      settings: result.recordset,
+      allowed: result.recordsets[1]
+    });
   } catch (error) {
     console.log(error);
     callback(null, { message: 'ERROR!' });
