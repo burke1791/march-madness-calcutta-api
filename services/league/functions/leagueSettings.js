@@ -101,14 +101,12 @@ export async function updateLeaguePayoutSettings(event, context, callback) {
       await connection.createConnection();
     }
 
-    let payoutSettings = constructUpdatedPayoutSettingsArray(settings);
-
     let tvp = Table();
     tvp.columns.add('TournamentPayoutId', BigInt, { nullable: false });
     tvp.columns.add('PayoutRate', Decimal(9, 4), { nullable: true });
     tvp.columns.add('PayoutThreshold', Decimal(9, 4), { nullable: true });
 
-    payoutSettings.forEach(obj => {
+    settings.forEach(obj => {
       tvp.rows.add(obj.tournamentPayoutId, obj.payoutRate, obj.payoutThreshold);
     });
 
@@ -148,28 +146,4 @@ export async function updateLeagueName(event, context, callback) {
     console.log(error);
     callback(null, { message: 'ERROR!' });
   }
-}
-
-function constructUpdatedPayoutSettingsArray(settings) {
-  let arr = [];
-
-  settings.forEach((obj) => {
-    let existingSetting = arr.find(e => e.tournamentPayoutId == obj.settingParameterId);
-
-    if (existingSetting !== undefined && obj.type == 'payoutRate') {
-      existingSetting.payoutRate = obj.settingValue;
-    } else if (existingSetting !== undefined && obj.type == 'payoutThreshold') {
-      existingSetting.payoutThreshold = obj.settingValue;
-    } else {
-      let newSetting = {
-        tournamentPayoutId: obj.settingParameterId,
-        payoutRate: obj.type == 'payoutRate' ? obj.settingValue : null,
-        payoutThreshold: obj.type == 'payoutThreshold' ? obj.settingValue : null
-      };
-
-      arr.push(newSetting);
-    }
-  });
-
-  return arr;
 }
