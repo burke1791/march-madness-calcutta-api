@@ -101,14 +101,14 @@ export async function updateLeaguePayoutSettings(event, context, callback) {
       await connection.createConnection();
     }
 
-    let payoutSettings = constructUpdatedPayoutSettingsArray(settings);
+    // let payoutSettings = constructUpdatedPayoutSettingsArray(settings);
 
     let tvp = Table();
     tvp.columns.add('TournamentPayoutId', BigInt, { nullable: false });
     tvp.columns.add('PayoutRate', Decimal(9, 4), { nullable: true });
     tvp.columns.add('PayoutThreshold', Decimal(9, 4), { nullable: true });
 
-    payoutSettings.forEach(obj => {
+    settings.forEach(obj => {
       tvp.rows.add(obj.tournamentPayoutId, obj.payoutRate, obj.payoutThreshold);
     });
 
