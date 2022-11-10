@@ -15,7 +15,7 @@ jobs:
       - name: use nodejs
         uses: actions/setup-node@v3
         with:
-          node-version: 16
+          node-version: 14
       - run: npm install -g serverless
       - run: npm install
       - run: serverless deploy -s $STAGE_NAME --verbose
@@ -30,12 +30,11 @@ jobs:
       - name: use nodejs
         uses: actions/setup-node@v3
         with:
-          node-version: 16
+          node-version: 14
       - run: npm install -g serverless
       - run: npm install
       - run: |
           cd services/user
-          serverless doctor
           serverless deploy -s $STAGE_NAME --verbose
 
   league_service:
@@ -48,7 +47,7 @@ jobs:
       - name: use nodejs
         uses: actions/setup-node@v3
         with:
-          node-version: 16
+          node-version: 14
       - run: npm install -g serverless
       - run: npm install
       - run: |
@@ -65,7 +64,7 @@ jobs:
       - name: use nodejs
         uses: actions/setup-node@v3
         with:
-          node-version: 16
+          node-version: 14
       - run: npm install -g serverless
       - run: npm install
       - run: |
@@ -82,7 +81,7 @@ jobs:
       - name: use nodejs
         uses: actions/setup-node@v3
         with:
-          node-version: 16
+          node-version: 14
       - run: npm install -g serverless
       - run: npm install
       - run: |
@@ -99,7 +98,7 @@ jobs:
       - name: use nodejs
         uses: actions/setup-node@v3
         with:
-          node-version: 16
+          node-version: 14
       - run: npm install -g serverless
       - run: npm install
       - run: |
