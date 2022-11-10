@@ -35,6 +35,7 @@ jobs:
       - run: npm install
       - run: |
           cd services/user
+          serverless doctor
           serverless deploy -s $STAGE_NAME --verbose
 
   league_service:
