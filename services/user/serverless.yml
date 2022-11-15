@@ -1,5 +1,7 @@
 
 service: calcutta-user-service
+disabledDeprecations:
+  - '*'
 projectDir: ../../
 
 package:

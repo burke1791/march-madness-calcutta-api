@@ -11,14 +11,14 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: use nodejs
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v3
         with:
-          node-version: '14.x'
+          node-version: 14
       - run: npm install -g serverless
       - run: npm install
-      - run: serverless deploy -s $STAGE_NAME
+      - run: serverless deploy -s $STAGE_NAME --verbose
   
   user_service:
     name: Deploy user service API
@@ -26,16 +26,16 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: use nodejs
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v3
         with:
-          node-version: '14.x'
+          node-version: 14
       - run: npm install -g serverless
       - run: npm install
       - run: |
           cd services/user
-          serverless deploy -s $STAGE_NAME
+          serverless deploy -s $STAGE_NAME --verbose
 
   league_service:
     name: Deploy league service API
@@ -43,16 +43,16 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: use nodejs
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v3
         with:
-          node-version: '14.x'
+          node-version: 14
       - run: npm install -g serverless
       - run: npm install
       - run: |
           cd services/league
-          serverless deploy -s $STAGE_NAME
+          serverless deploy -s $STAGE_NAME --verbose
 
   auction_service:
     name: Deploy auction service API
@@ -60,16 +60,16 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: use nodejs
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v3
         with:
-          node-version: '14.x'
+          node-version: 14
       - run: npm install -g serverless
       - run: npm install
       - run: |
           cd services/auction
-          serverless deploy -s $STAGE_NAME
+          serverless deploy -s $STAGE_NAME --verbose
 
   tournament_service:
     name: Deploy tournament service API
@@ -77,16 +77,16 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: use nodejs
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v3
         with:
-          node-version: '14.x'
+          node-version: 14
       - run: npm install -g serverless
       - run: npm install
       - run: |
           cd services/tournament
-          serverless deploy -s $STAGE_NAME
+          serverless deploy -s $STAGE_NAME --verbose
 
   auction_service_v2:
     name: Deploy auction service API-v2
@@ -94,16 +94,16 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: use nodejs
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v3
         with:
-          node-version: '14.x'
+          node-version: 14
       - run: npm install -g serverless
       - run: npm install
       - run: |
           cd services/auction-new
-          serverless deploy -s $STAGE_NAME
+          serverless deploy -s $STAGE_NAME --verbose
   
 env:
   STAGE_NAME: dev
