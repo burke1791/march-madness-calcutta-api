@@ -48,7 +48,7 @@ export async function sendChatMessage(event, context, callback) {
       TableName: CHAT_TABLE,
       Item: {
         LeagueId: {
-          N: leagueId
+          N: String(leagueId)
         },
         Timestamp: {
           N: timestamp
