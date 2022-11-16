@@ -48,7 +48,7 @@ export async function sendChatMessage(event, context, callback) {
       TableName: CHAT_TABLE,
       Item: {
         LeagueId: {
-          N: leagueId
+          N: String(leagueId)
         },
         Timestamp: {
           N: timestamp
@@ -93,7 +93,7 @@ export async function sendChatMessage(event, context, callback) {
       IndexName: CONNECTION_INDEX,
       ExpressionAttributeValues: {
         ':v1': {
-          N: leagueId
+          N: String(leagueId)
         }
       },
       KeyConditionExpression: 'LeagueId = :v1',
