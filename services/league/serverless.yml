@@ -413,6 +413,22 @@ functions:
             headers:
               - Content-Type
               - x-cognito-token
+        
+  getLeagueSupplementalPages:
+    handler: functions/getLeagueSupplementalPages.getLeagueSupplementalPages
+    events:
+      - http:
+          path: getLeagueSupplementalPages/{leagueId}
+          method: get
+          integration: lambda
+          authorizer:
+            type: COGNITO_USER_POOLS
+            authorizerId:
+              Ref: ApiGatewayAuthorizer
+          cors:
+            origin: '*'
+            headers:
+              - x-cognito-token
 
 resources:
   - ${file(../../common/resources/api-gateway-authorizer.yml)}
