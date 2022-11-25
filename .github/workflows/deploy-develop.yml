@@ -54,22 +54,23 @@ jobs:
           cd services/league
           serverless deploy -s $STAGE_NAME --verbose
 
-  auction_service:
-    name: Deploy auction service API
-    needs: base_deploy
-    runs-on: ubuntu-latest
+# Completely replaced by auction-v2
+  # auction_service:
+  #   name: Deploy auction service API
+  #   needs: base_deploy
+  #   runs-on: ubuntu-latest
 
-    steps:
-      - uses: actions/checkout@v3
-      - name: use nodejs
-        uses: actions/setup-node@v3
-        with:
-          node-version: 14
-      - run: npm install -g serverless
-      - run: npm install
-      - run: |
-          cd services/auction
-          serverless deploy -s $STAGE_NAME --verbose
+  #   steps:
+  #     - uses: actions/checkout@v3
+  #     - name: use nodejs
+  #       uses: actions/setup-node@v3
+  #       with:
+  #         node-version: 14
+  #     - run: npm install -g serverless
+  #     - run: npm install
+  #     - run: |
+  #         cd services/auction
+  #         serverless deploy -s $STAGE_NAME --verbose
 
   tournament_service:
     name: Deploy tournament service API
