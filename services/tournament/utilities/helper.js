@@ -52,14 +52,14 @@ function getParentMatchups(game, tree) {
   if (game.ParentMatchup1 !== null) {
     parentMatchups.push({
       parentMatchupId: game.ParentMatchup1,
-      isPlayInGame: tree.find(node => node.MatchupId === game.ParentMatchup1).IsPlayInGame
+      isPlayInGame: !!tree.find(node => node.MatchupId === game.ParentMatchup1)?.IsPlayInGame
     });
   }
 
   if (game.ParentMatchup2 !== null) {
     parentMatchups.push({
       parentMatchupId: game.ParentMatchup2,
-      isPlayInGame: tree.find(node => node.MatchupId === game.ParentMatchup2).IsPlayInGame
+      isPlayInGame: !!tree.find(node => node.MatchupId === game.ParentMatchup2)?.IsPlayInGame
     });
   }
 
