@@ -28,7 +28,7 @@ export function parseTournamentTree(tree) {
  * @description recursively searches the bracket tree to calculate a round number
  */
  function getRoundNum(matchup, tree, round) {
-  let parentMatchupId = tree.find(game => game.MatchupId == matchup).ParentMatchup1;
+  let parentMatchupId = tree.find(game => game.MatchupId == matchup)?.ParentMatchup1;
   
   if (parentMatchupId == undefined) {
     return round;
