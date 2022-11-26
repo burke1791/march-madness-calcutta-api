@@ -68,5 +68,21 @@ functions:
             headers:
               - x-cognito-token
 
+  getWorldCupBracket:
+    handler: functions/world-cup/getWorldCupBracket.getWorldCupBracket
+    events:
+      - http:
+          path: getWorldCupBracket/{leagueId}
+          method: get
+          integration: lambda
+          authorizer:
+            type: COGNITO_USER_POOLS
+            authorizerId:
+              Ref: ApiGatewayAuthorizer
+          cors:
+            origin: '*'
+            headers:
+              - x-cognito-token
+
 resources:
   - ${file(../../common/resources/api-gateway-authorizer.yml)}
