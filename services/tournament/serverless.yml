@@ -52,11 +52,45 @@ functions:
             headers:
               - x-cognito-token
             
+# World Cup Endpoints
   getWorldCupTables:
     handler: functions/world-cup/getWorldCupTables.getWorldCupTables
     events:
       - http:
           path: getWorldCupTables/{leagueId}
+          method: get
+          integration: lambda
+          authorizer:
+            type: COGNITO_USER_POOLS
+            authorizerId:
+              Ref: ApiGatewayAuthorizer
+          cors:
+            origin: '*'
+            headers:
+              - x-cognito-token
+
+  getWorldCupBracket:
+    handler: functions/world-cup/getWorldCupBracket.getWorldCupBracket
+    events:
+      - http:
+          path: getWorldCupBracket/{leagueId}
+          method: get
+          integration: lambda
+          authorizer:
+            type: COGNITO_USER_POOLS
+            authorizerId:
+              Ref: ApiGatewayAuthorizer
+          cors:
+            origin: '*'
+            headers:
+              - x-cognito-token
+
+# March Madness Endpoints
+  getMarchMadnessBracket:
+    handler: functions/march-madness/getMarchMadnessBracket.getMarchMadnessBracket
+    events:
+      - http:
+          path: getMarchMadnessBracket/{leagueId}
           method: get
           integration: lambda
           authorizer:
