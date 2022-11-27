@@ -21,18 +21,34 @@ export function parseTournamentTree(tree) {
 
 /**
  * @function getRoundNum
- * @param {Number} matchup - unique identifier for the current matchup
+ * @param {Number} matchupId - unique identifier for the current matchup
  * @param {Array<Object>} tree - the entire tournament tree
  * @param {Number} round - the current round number
  * @returns {Number}
  * @description recursively searches the bracket tree to calculate a round number
  */
- function getRoundNum(matchup, tree, round) {
-  let parentMatchupId = tree.find(game => game.MatchupId == matchup)?.ParentMatchup1;
+ function getRoundNum(matchupId, tree, round) {
+  const game = tree.find(game => game.MatchupId == matchupId);
   
-  if (parentMatchupId == undefined) {
+  if (game == undefined) {
+    console.log('something is funky');
+    return round;
+  }
+
+  const parentMatchup1Id = game.ParentMatchup1;
+  const parentMatchup2Id = game.ParentMatchup2;
+  const parentMatchup1Exists = !!tree.find(game => game.MatchupId == parentMatchup1Id)?.MatchupId;
+  const parentMatchup2Exists = !!tree.find(game => game.MatchupId == parentMatchup2Id)?.MatchupId;  
+
+
+  if (!parentMatchup1Exists && !parentMatchup2Exists) {
+    // if neither parent matchups exist in the tree, then short-circuit
     return round;
   } else {
+    // continue searching the tree through one of the parent matchups
+    // this is flawed in that a non-symmetric bracket (e.g. Big Ten Tournament) will
+    // yield incorrect roundNums
+    const parentMatchupId = parentMatchup1Id || parentMatchup2Id;
     return getRoundNum(parentMatchupId, tree, round + 1)
   }
 }
