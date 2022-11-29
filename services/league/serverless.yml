@@ -430,5 +430,38 @@ functions:
             headers:
               - x-cognito-token
 
+  getManualPayoutInfo:
+    handler: functions/manualPayoutInfo.getManualPayoutInfo
+    events:
+      - http:
+          path: getManualPayoutInfo/{leagueId}
+          method: get
+          integration: lambda
+          authorizer:
+            type: COGNITO_USER_POOLS
+            authorizerId:
+              Ref: ApiGatewayAuthorizer
+          cors:
+            origin: '*'
+            headers:
+              - x-cognito-token
+
+  setManualPayoutInfo:
+    handler: functions/manualPayoutInfo.setManualPayoutInfo
+    events:
+      - http:
+          path: setManualPayoutInfo/{leagueId}
+          method: post
+          integration: lambda
+          authorizer:
+            type: COGNITO_USER_POOLS
+            authorizerId:
+              Ref: ApiGatewayAuthorizer
+          cors:
+            origin: '*'
+            headers:
+              - Content-Type
+              - x-cognito-token
+
 resources:
   - ${file(../../common/resources/api-gateway-authorizer.yml)}
