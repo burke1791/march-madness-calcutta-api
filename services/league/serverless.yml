@@ -463,5 +463,21 @@ functions:
               - Content-Type
               - x-cognito-token
 
+  getLeagueTeamPayouts:
+    handler: functions/leagueTeamPayouts.getLeagueTeamPayouts
+    events:
+      - http:
+          path: getLeagueTeamPayouts/{leagueId}
+          method: get
+          integration: lambda
+          authorizer:
+            type: COGNITO_USER_POOLS
+            authorizerId:
+              Ref: ApiGatewayAuthorizer
+          cors:
+            origin: '*'
+            headers:
+              - x-cognito-token
+
 resources:
   - ${file(../../common/resources/api-gateway-authorizer.yml)}
