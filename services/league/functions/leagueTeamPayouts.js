@@ -1,4 +1,5 @@
 import { BigInt, connection, Varchar } from "../../../common/utilities/db";
+import { populateLeagueTeamPayoutTypeTVP } from "../common/leagueTeamPayoutType";
 
 export async function getLeagueTeamPayouts(event, context, callback) {
   context.callbackWaitsForEmptyEventLoop = false;
@@ -20,5 +21,32 @@ export async function getLeagueTeamPayouts(event, context, callback) {
   } catch (error) {
     console.log(error);
     callback(null, { message: 'SERVER ERROR!' });
+  }
+}
+
+export async function setLeagueTeamPayouts(event, context, callback) {
+  context.callbackWaitsForEmptyEventLoop = false;
+
+  const cognitoSub = event.cognitoPoolClaims.sub;
+  const leagueId = event.path.leagueId;
+  const { payouts } = event.body;
+
+  try {
+    if (!connection.isConnected) {
+      await connection.createConnection();
+    }
+
+    const tvp = populateLeagueTeamPayoutTypeTVP(payouts);
+
+    const result = await connection.pool.request()
+      .input('LeagueId', BigInt, leagueId)
+      .input('CognitoSub', Varchar(256), cognitoSub)
+      .input('Payouts', tvp)
+      .execute('dbo.up_SetLeagueTeamPayouts');
+
+    callback(null, result.recordset);
+  } catch (error) {
+    console.log(error);
+    callback(null, error);
   }
 }
