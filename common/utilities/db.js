@@ -34,6 +34,7 @@ const SmallInt = sql.SmallInt;
 const Int = sql.Int;
 const BigInt = sql.BigInt;
 const Varchar = (length) => sql.VarChar(length);
+const NVarchar = (length) => sql.NVarChar(length);
 const Decimal = (digits, precision) => sql.Decimal(digits, precision);
 const Table = () => new sql.Table();
 
@@ -45,6 +46,7 @@ export {
   Int,
   BigInt,
   Varchar,
+  NVarchar,
   Decimal,
   Table
 };
