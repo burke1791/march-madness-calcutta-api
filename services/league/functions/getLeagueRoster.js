@@ -70,7 +70,8 @@ function parseRoster(members, roles) {
   const currentUserRoleId = members.find(m => !!m.IsCurrentUser)?.RoleId;
 
   const roster = members.map(m => {
-    m.AllowedRoles = computeAllowedRoles(currentUserRoleId, leagueUser, roles)
+    const leagueUser = Object.assign({}, m);
+    leagueUser.AllowedRoles = computeAllowedRoles(currentUserRoleId, leagueUser, roles)
     return leagueUser;
   });
 
