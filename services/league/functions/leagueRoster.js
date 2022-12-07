@@ -5,15 +5,15 @@ const connection = require('../../../common/utilities/db').connection;
 export async function kickLeagueMember(event, context, callback) {
   context.callbackWaitsForEmptyEventLoop = false;
 
-  let cognitoSub = event.cognitoPoolClaims.sub;
-  let { leagueId, userId } = event.body;
+  const cognitoSub = event.cognitoPoolClaims.sub;
+  const { leagueId, userId } = event.body;
 
   try {
     if (!connection.isConnected) {
       await connection.createConnection();
     }
 
-    let result = await connection.pool.request()
+    const result = await connection.pool.request()
       .input('LeagueId', BigInt, leagueId)
       .input('CognitoSub', Varchar(256), cognitoSub)
       .input('UserIdToKick', BigInt, userId)
