@@ -347,6 +347,23 @@ functions:
               - Content-Type
               - x-cognito-token
 
+  setLeagueMemberRole:
+    handler: functions/setLeagueMemberRoles.setLeagueMemberRole
+    events:
+      - http:
+          path: setLeagueMemberRoles/{leagueId}
+          method: post
+          integration: lambda
+          authorizer:
+            type: COGNITO_USER_POOLS
+            authorizerId:
+              Ref: ApiGatewayAuthorizer
+          cors:
+            origin: '*'
+            headers:
+              - Content-Type
+              - x-cognito-token
+
   updateLeagueName:
     handler: functions/leagueSettings.updateLeagueName
     events:
