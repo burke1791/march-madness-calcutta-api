@@ -32,7 +32,7 @@ export async function startAuction(event, context, callback) {
     console.log(responsePayload);
     
     if (!responsePayload.length || !!responsePayload[0]?.Error) {
-      throw new Error('Could not set league status')
+      throw new Error('Could not set league status');
     }
 
     const teamObj = responsePayload[0];
