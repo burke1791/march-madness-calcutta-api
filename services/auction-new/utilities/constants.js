@@ -4,7 +4,8 @@ export const LAMBDAS = {
   RDS_VERIFY_USER_LEAGUE: `calcutta-auction-service-v2-${process.env.APP_ENV}-rdsVerifyUserLeague`,
   RDS_SET_ITEM_COMPLETE: `calcutta-auction-service-v2-${process.env.APP_ENV}-rdsSetItemComplete`,
   RDS_CLOSE_AUCTION: `calcutta-auction-service-v2-${process.env.APP_ENV}-rdsCloseAuction`,
-  RDS_VERIFY_BID: `calcutta-auction-service-v2-${process.env.APP_ENV}-rdsVerifyBid`
+  RDS_VERIFY_BID: `calcutta-auction-service-v2-${process.env.APP_ENV}-rdsVerifyBid`,
+  RDS_RESET_AUCTION: `calcutta-auction-service-v2-${process.env.APP_ENV}-rdsResetAuction`
 }
 
 export const DYNAMODB_TABLES = {

@@ -145,6 +145,23 @@ functions:
             headers:
               - x-cognito-token
 
+  resetAuction:
+    handler: functions/resetAuction.resetAuction
+    events:
+      - http:
+          path: resetAuction/{leagueId}
+          method: post
+          integration: lambda
+          authorizer:
+            type: COGNITO_USER_POOLS
+            authorizerId:
+              Ref: ApiGatewayAuthorizer
+          cors:
+            origin: '*'
+            headers:
+              - x-cognito-token
+              - Content-Type
+
   # Invokable functions
   rdsVerifyUserLeague:
     handler: functions/rds/verifyUserLeague.verifyUserLeague
@@ -198,6 +215,16 @@ functions:
 
   rdsVerifyBid:
     handler: functions/rds/verifyBid.verifyBid
+    vpc:
+      securityGroupIds:
+        - Fn::ImportValue: ${self:custom.provider.vpc.securityGroupIds.LAMBDA_SG}
+      subnetIds:
+        - Fn::ImportValue: ${self:custom.provider.vpc.subnetIds.SUBNET1}
+        - Fn::ImportValue: ${self:custom.provider.vpc.subnetIds.SUBNET2}
+        - Fn::ImportValue: ${self:custom.provider.vpc.subnetIds.SUBNET3}
+
+  rdsResetAuction:
+    handler: functions/rds/rdsResetAuction.resetAuction
     vpc:
       securityGroupIds:
         - Fn::ImportValue: ${self:custom.provider.vpc.securityGroupIds.LAMBDA_SG}
