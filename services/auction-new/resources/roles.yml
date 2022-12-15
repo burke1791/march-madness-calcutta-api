@@ -3,6 +3,8 @@ Resources:
     Type: AWS::IAM::Role
     Properties:
       RoleName: calcutta-${self:custom.stage}-dynamodb-websocket-role
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole
       AssumeRolePolicyDocument:
         Version: '2012-10-17'
         Statement:
