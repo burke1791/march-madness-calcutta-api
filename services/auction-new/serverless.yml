@@ -154,8 +154,6 @@ functions:
         - Fn::ImportValue: ${self:custom.provider.vpc.subnetIds.SUBNET1}
         - Fn::ImportValue: ${self:custom.provider.vpc.subnetIds.SUBNET2}
         - Fn::ImportValue: ${self:custom.provider.vpc.subnetIds.SUBNET3}
-    role:
-      Fn::GetAtt: [DynamoDBWebsocketRole, Arn]
     events:
       - http:
           path: resetAuction/{leagueId}
@@ -241,6 +239,19 @@ functions:
         - Fn::ImportValue: ${self:custom.provider.vpc.subnetIds.SUBNET1}
         - Fn::ImportValue: ${self:custom.provider.vpc.subnetIds.SUBNET2}
         - Fn::ImportValue: ${self:custom.provider.vpc.subnetIds.SUBNET3}
+
+  dynamodbResetAuction:
+    handler: functions/resetAuction.dynamodbResetAuction
+    role:
+      Fn::GetAtt: [DynamoDBWebsocketRole, Arn]
+    vpc:
+      securityGroupIds:
+        - Fn::ImportValue: ${self:custom.provider.vpc.securityGroupIds.LAMBDA_SG}
+      subnetIds:
+        - Fn::ImportValue: ${self:custom.provider.vpc.subnetIds.SUBNET1}
+        - Fn::ImportValue: ${self:custom.provider.vpc.subnetIds.SUBNET2}
+        - Fn::ImportValue: ${self:custom.provider.vpc.subnetIds.SUBNET3}
+
 
   # websocket functions
   onConnect:

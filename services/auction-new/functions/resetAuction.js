@@ -25,6 +25,29 @@ export async function resetAuction(event, context, callback) {
       throw new Error(responsePayload[0].Error);
     }
 
+    // reset all data in dynamodb (except for the chat)
+    const dynamodbLambdaParams = {
+      FunctionName: LAMBDAS.DYNAMODB_RESET_AUCTION,
+      LogType: 'Tail',
+      Payload: JSON.stringify({ leagueId: leagueId })
+    };
+
+    const dynamodbLambdaResponse = await lambda.invoke(dynamodbLambdaParams).promise();
+    console.log(dynamodbLambdaResponse);
+
+    callback(null, { message: 'Auction reset successful' });
+  } catch (error) {
+    console.log(error);
+    callback(null, { error: 'Auction reset failed'});
+  }
+}
+
+export async function dynamodbResetAuction(event, context, callback) {
+  context.callbackWaitsForEmptyEventLoop = false;
+
+  const { leagueId } = event;
+
+  try {
     // delete the auction record in dynamodb
     const deleteAuctionParams = {
       TableName: DYNAMODB_TABLES.AUCTION_TABLE,
@@ -53,9 +76,9 @@ export async function resetAuction(event, context, callback) {
     const bidHistoryResults = await dynamodb.query(bidHistoryQuery).promise();
     console.log(bidHistoryResults);
 
-    callback(null, { message: 'Auction reset' });
+    callback(null, { message: 'Auction reset successful' });
   } catch (error) {
     console.log(error);
-    callback(null, { error: 'Auction reset failed'});
+    callback(null, error);
   }
 }
