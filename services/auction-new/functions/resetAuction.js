@@ -49,6 +49,9 @@ export async function dynamodbResetAuction(event, context, callback) {
 
   const { leagueId } = event;
 
+  console.log(event);
+  console.log(leagueId);
+
   try {
     // delete the auction record in dynamodb
     const deleteAuctionParams = {
