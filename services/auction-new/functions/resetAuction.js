@@ -51,6 +51,7 @@ export async function dynamodbResetAuction(event, context, callback) {
 
   console.log(event);
   console.log(leagueId);
+  console.log(AWS.VERSION);
 
   try {
     // delete the auction record in dynamodb
