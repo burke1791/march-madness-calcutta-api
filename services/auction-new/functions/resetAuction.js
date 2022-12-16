@@ -59,7 +59,7 @@ export async function dynamodbResetAuction(event, context, callback) {
       TableName: DYNAMODB_TABLES.AUCTION_TABLE,
       Key: {
         LeagueId: {
-          N: '262' // String(leagueId)
+          N: String(leagueId)
         }
       }
     }
