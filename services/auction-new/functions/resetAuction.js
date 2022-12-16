@@ -88,12 +88,12 @@ export async function dynamodbResetAuction(event, context, callback) {
     console.log(itemsToDelete);
 
     let deleteRequests = [];
+    let deleteItemCount = 0;
 
     while (itemsToDelete.length > 0) {
       // can only send 25 delete requests at once
       const item = itemsToDelete.pop();
       console.log(item);
-      let deleteItemCount = 0;
 
       if (deleteItemCount > 0 && (item == undefined || deleteItemCount >= 25)) {
         const deleteBidHistoryParams = {
