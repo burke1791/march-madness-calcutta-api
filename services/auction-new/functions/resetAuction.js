@@ -21,9 +21,11 @@ export async function resetAuction(event, context, callback) {
     const lambdaResponse = await lambda.invoke(lambdaParams).promise();
     const responsePayload = JSON.parse(lambdaResponse.Payload);
 
-    if (!responsePayload || !!responsePayload[0]?.Error) {
-      throw new Error(responsePayload[0].Error);
-    }
+    console.log(responsePayload);
+
+    // if (!responsePayload || !!responsePayload[0]?.Error) {
+    //   throw new Error(responsePayload[0].Error);
+    // }
 
     // reset all data in dynamodb (except for the chat)
     const dynamodbLambdaParams = {
