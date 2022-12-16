@@ -58,10 +58,12 @@ export async function dynamodbResetAuction(event, context, callback) {
       TableName: DYNAMODB_TABLES.AUCTION_TABLE,
       Key: {
         LeagueId: {
-          N: String(leagueId)
+          N: '262' // String(leagueId)
         }
       }
     }
+
+    console.log(deleteAuctionParams);
 
     const deleteAuctionResponse = await dynamodb.deleteItem(deleteAuctionParams).promise();
     console.log(deleteAuctionResponse);
