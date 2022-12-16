@@ -84,6 +84,47 @@ export async function dynamodbResetAuction(event, context, callback) {
     const bidHistoryResults = await dynamodb.query(bidHistoryQuery).promise();
     console.log(bidHistoryResults);
 
+    const itemsToDelete = [...bidHistoryResults.Items];
+
+    const deleteBidHistoryParams = {
+      RequestItems: {
+        [DYNAMODB_TABLES.BID_HISTORY_TABLE]: []
+      }
+    }
+
+    if (bidHistoryResults.Count > 0) {
+      let retryCount = 0;
+
+      while (retryCount < 5 && itemsToDelete.length > 0) {
+        // can only send 25 delete requests at once
+        const item = itemsToDelete.pop();
+        let deleteItemCount = 0;
+
+        if (pop == undefined || deleteItemCount >= 25) {
+          console.log('delete count: ' + deleteItemCount);
+          const deleteResult = await dynamodb.batchWriteItem(deleteBidHistoryParams).promise();
+          console.log(deleteResult);
+          console.log('itemsToDeleteLength: ' + itemsToDelete.length);
+          deleteItemCount = 0;
+        } else {
+          deleteBidHistoryParams.RequestItems[DYNAMODB_TABLES.BID_HISTORY_TABLE].push({
+            DeleteRequest: {
+              Key: {
+                'LeagueId': {
+                  N: item.LeagueId.N
+                },
+                'BidId': {
+                  N: item.BidId.N
+                }
+              }
+            }
+          });
+
+          deleteItemCount++;
+        }
+      }
+    }
+
     callback(null, { message: 'Auction reset successful' });
   } catch (error) {
     console.log(error);
