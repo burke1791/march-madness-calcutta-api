@@ -92,36 +92,32 @@ export async function dynamodbResetAuction(event, context, callback) {
       }
     }
 
-    if (bidHistoryResults.Count > 0) {
-      let retryCount = 0;
+    while (itemsToDelete.length > 0) {
+      // can only send 25 delete requests at once
+      const item = itemsToDelete.pop();
+      let deleteItemCount = 0;
 
-      while (retryCount < 5 && itemsToDelete.length > 0) {
-        // can only send 25 delete requests at once
-        const item = itemsToDelete.pop();
-        let deleteItemCount = 0;
-
-        if (item == undefined || deleteItemCount >= 25) {
-          console.log('delete count: ' + deleteItemCount);
-          const deleteResult = await dynamodb.batchWriteItem(deleteBidHistoryParams).promise();
-          console.log(deleteResult);
-          console.log('itemsToDeleteLength: ' + itemsToDelete.length);
-          deleteItemCount = 0;
-        } else {
-          deleteBidHistoryParams.RequestItems[DYNAMODB_TABLES.BID_HISTORY_TABLE].push({
-            DeleteRequest: {
-              Key: {
-                'LeagueId': {
-                  N: item.LeagueId.N
-                },
-                'BidId': {
-                  N: item.BidId.N
-                }
+      if (deleteItemCount > 0 && (item == undefined || deleteItemCount >= 25)) {
+        console.log('delete count: ' + deleteItemCount);
+        const deleteResult = await dynamodb.batchWriteItem(deleteBidHistoryParams).promise();
+        console.log(deleteResult);
+        console.log('itemsToDeleteLength: ' + itemsToDelete.length);
+        deleteItemCount = 0;
+      } else {
+        deleteBidHistoryParams.RequestItems[DYNAMODB_TABLES.BID_HISTORY_TABLE].push({
+          DeleteRequest: {
+            Key: {
+              'LeagueId': {
+                N: item.LeagueId.N
+              },
+              'BidId': {
+                N: item.BidId.N
               }
             }
-          });
+          }
+        });
 
-          deleteItemCount++;
-        }
+        deleteItemCount++;
       }
     }
 
