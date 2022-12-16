@@ -100,7 +100,7 @@ export async function dynamodbResetAuction(event, context, callback) {
         const item = itemsToDelete.pop();
         let deleteItemCount = 0;
 
-        if (pop == undefined || deleteItemCount >= 25) {
+        if (item == undefined || deleteItemCount >= 25) {
           console.log('delete count: ' + deleteItemCount);
           const deleteResult = await dynamodb.batchWriteItem(deleteBidHistoryParams).promise();
           console.log(deleteResult);
