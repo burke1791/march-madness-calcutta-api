@@ -18,7 +18,7 @@ export async function deleteLeague(event, context, callback) {
       .input('CognitoSub', Varchar(256), cognitoSub)
       .execute('dbo.up_DeleteLeague');
 
-    callback(null, result);
+    callback(null, result.recordset);
   } catch (error) {
     console.log(error);
     callback(null, { message: 'SERVER ERROR!' });
