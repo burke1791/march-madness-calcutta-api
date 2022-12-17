@@ -95,20 +95,7 @@ export async function dynamodbResetAuction(event, context, callback) {
       const item = itemsToDelete.pop();
       console.log(item);
 
-      if (deleteItemCount > 0 && (item == undefined || deleteItemCount >= 25)) {
-        const deleteBidHistoryParams = {
-          RequestItems: {
-            [DYNAMODB_TABLES.BID_HISTORY_TABLE]: deleteRequests
-          }
-        };
-        console.log(deleteBidHistoryParams);
-        console.log('delete count: ' + deleteItemCount);
-        const deleteResult = await dynamodb.batchWriteItem(deleteBidHistoryParams).promise();
-        console.log(deleteResult);
-        console.log('itemsToDeleteLength: ' + itemsToDelete.length);
-        deleteItemCount = 0;
-        deleteRequests = [];
-      } else {
+      if (item != undefined) {
         deleteRequests.push({
           DeleteRequest: {
             Key: {
@@ -123,6 +110,21 @@ export async function dynamodbResetAuction(event, context, callback) {
         });
 
         deleteItemCount++;
+      }
+
+      if (deleteItemCount > 0 && (itemsToDelete.length == 0 || deleteItemCount >= 25)) {
+        const deleteBidHistoryParams = {
+          RequestItems: {
+            [DYNAMODB_TABLES.BID_HISTORY_TABLE]: deleteRequests
+          }
+        };
+        console.log(deleteBidHistoryParams);
+        console.log('delete count: ' + deleteItemCount);
+        const deleteResult = await dynamodb.batchWriteItem(deleteBidHistoryParams).promise();
+        console.log(deleteResult);
+        console.log('itemsToDeleteLength: ' + itemsToDelete.length);
+        deleteItemCount = 0;
+        deleteRequests = [];
       }
     }
 
