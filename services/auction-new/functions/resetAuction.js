@@ -49,10 +49,6 @@ export async function dynamodbResetAuction(event, context, callback) {
 
   const { leagueId } = event;
 
-  console.log(event);
-  console.log(leagueId);
-  console.log(AWS.VERSION);
-
   try {
     // delete the auction record in dynamodb
     const deleteAuctionParams = {
@@ -63,8 +59,6 @@ export async function dynamodbResetAuction(event, context, callback) {
         }
       }
     }
-
-    console.log(deleteAuctionParams);
 
     const deleteAuctionResponse = await dynamodb.deleteItem(deleteAuctionParams).promise();
     console.log(deleteAuctionResponse);
@@ -82,10 +76,8 @@ export async function dynamodbResetAuction(event, context, callback) {
     };
 
     const bidHistoryResults = await dynamodb.query(bidHistoryQuery).promise();
-    console.log(bidHistoryResults);
 
     const itemsToDelete = [...bidHistoryResults.Items];
-    console.log(itemsToDelete);
 
     let deleteRequests = [];
     let deleteItemCount = 0;
@@ -93,7 +85,6 @@ export async function dynamodbResetAuction(event, context, callback) {
     while (itemsToDelete.length > 0) {
       // can only send 25 delete requests at once
       const item = itemsToDelete.pop();
-      console.log(item);
 
       if (item != undefined) {
         deleteRequests.push({
@@ -118,11 +109,10 @@ export async function dynamodbResetAuction(event, context, callback) {
             [DYNAMODB_TABLES.BID_HISTORY_TABLE]: deleteRequests
           }
         };
-        console.log(deleteBidHistoryParams);
-        console.log('delete count: ' + deleteItemCount);
+
         const deleteResult = await dynamodb.batchWriteItem(deleteBidHistoryParams).promise();
         console.log(deleteResult);
-        console.log('itemsToDeleteLength: ' + itemsToDelete.length);
+
         deleteItemCount = 0;
         deleteRequests = [];
       }
