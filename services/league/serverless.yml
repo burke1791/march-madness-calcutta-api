@@ -314,6 +314,23 @@ functions:
               - Content-Type
               - x-cognito-token
 
+  updateLeagueSeedGroup:
+    handler: functions/updateLeagueSeedGroups.updateLeagueSeedGroup
+    events:
+      - http:
+          path: updateLeagueSeedGroup/{leagueId}
+          method: post
+          integration: lambda
+          authorizer:
+            type: COGNITO_USER_POOLS
+            authorizerId:
+              Ref: ApiGatewayAuthorizer
+          cors:
+            origin: '*'
+            headers:
+              - Content-Type
+              - x-cognito-token
+
   getLeagueRoster:
     handler: functions/getLeagueRoster.getLeagueRoster
     events:
