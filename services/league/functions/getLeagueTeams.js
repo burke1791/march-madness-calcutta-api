@@ -15,7 +15,7 @@ export async function getLeagueTeams(event, context, callback) {
     const result = await connection.pool.request()
       .input('CognitoSub', Varchar(256), cognitoSub)
       .input('LeagueId', BigInt, leagueId)
-      .execute('dbo.up_GetLeagueAuctionTeams');
+      .execute('dbo.up_GetLeagueTeams');
 
     callback(null, result.recordset);
   } catch (error) {
