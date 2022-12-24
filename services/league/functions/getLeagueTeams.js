@@ -1,6 +1,6 @@
-import { BigInt, connection, Varchar } from '../../../../common/utilities/db';
+import { BigInt, connection, Varchar } from '../../../common/utilities/db';
 
-export async function getAuctionTeams(event, context, callback) {
+export async function getLeagueTeams(event, context, callback) {
   context.callbackWaitsForEmptyEventLoop = false;
 
   const cognitoSub = event.cognitoPoolClaims.sub;
@@ -15,7 +15,7 @@ export async function getAuctionTeams(event, context, callback) {
     const result = await connection.pool.request()
       .input('CognitoSub', Varchar(256), cognitoSub)
       .input('LeagueId', BigInt, leagueId)
-      .execute('dbo.up_GetAuctionTeams');
+      .execute('dbo.up_GetLeagueAuctionTeams');
 
     callback(null, result.recordset);
   } catch (error) {
