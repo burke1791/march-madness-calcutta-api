@@ -74,7 +74,7 @@ export async function updateLeagueSeedGroup(event, context, callback) {
       await connection.createConnection();
     }
 
-    const tvp = new Table();
+    const tvp = Table();
     tvp.columns.add('ItemTypeId', TinyInt, { nullable: false });
     tvp.columns.add('ItemId', BigInt, { nullable: false });
 
