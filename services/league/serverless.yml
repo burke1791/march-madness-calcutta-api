@@ -314,6 +314,23 @@ functions:
               - Content-Type
               - x-cognito-token
 
+  updateLeagueSeedGroup:
+    handler: functions/updateLeagueSeedGroups.updateLeagueSeedGroup
+    events:
+      - http:
+          path: updateLeagueSeedGroup/{leagueId}
+          method: post
+          integration: lambda
+          authorizer:
+            type: COGNITO_USER_POOLS
+            authorizerId:
+              Ref: ApiGatewayAuthorizer
+          cors:
+            origin: '*'
+            headers:
+              - Content-Type
+              - x-cognito-token
+
   getLeagueRoster:
     handler: functions/getLeagueRoster.getLeagueRoster
     events:
@@ -527,6 +544,56 @@ functions:
             origin: '*'
             headers:
               - Content-Type
+              - x-cognito-token
+
+  deleteLeague:
+    handler: functions/deleteLeague.deleteLeague
+    events:
+      - http:
+          path: deleteLeague/{leagueId}
+          method: post
+          integration: lambda
+          authorizer:
+            type: COGNITO_USER_POOLS
+            authorizerId:
+              Ref: ApiGatewayAuthorizer
+          cors:
+            origin: '*'
+            headers:
+              - Content-Type
+              - x-cognito-token
+
+  leaveLeague:
+    handler: functions/leaveLeague.leaveLeague
+    events:
+      - http:
+          path: leaveLeague/{leagueId}
+          method: post
+          integration: lambda
+          authorizer:
+            type: COGNITO_USER_POOLS
+            authorizerId:
+              Ref: ApiGatewayAuthorizer
+          cors:
+            origin: '*'
+            headers:
+              - Content-Type
+              - x-cognito-token
+
+  getLeagueTeams:
+    handler: functions/getLeagueTeams.getLeagueTeams
+    events:
+      - http:
+          path: getLeagueTeams/{leagueId}
+          method: get
+          integration: lambda
+          authorizer:
+            type: COGNITO_USER_POOLS
+            authorizerId:
+              Ref: ApiGatewayAuthorizer
+          cors:
+            origin: '*'
+            headers:
               - x-cognito-token
 
 resources:

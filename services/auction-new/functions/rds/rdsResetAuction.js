@@ -1,21 +1,19 @@
 import { BigInt, connection, Varchar } from '../../../../common/utilities/db';
 
-export async function getAuctionTeams(event, context, callback) {
+export async function resetAuction(event, context, callback) {
   context.callbackWaitsForEmptyEventLoop = false;
 
-  const cognitoSub = event.cognitoPoolClaims.sub;
+  const { leagueId, cognitoSub } = event;
 
   try {
-    const leagueId = event.path.leagueId;
-
     if (!connection.isConnected) {
       await connection.createConnection();
     }
 
     const result = await connection.pool.request()
-      .input('CognitoSub', Varchar(256), cognitoSub)
       .input('LeagueId', BigInt, leagueId)
-      .execute('dbo.up_GetAuctionTeams');
+      .input('CognitoSub', Varchar(256), cognitoSub)
+      .execute('dbo.up_AdminResetAuction');
 
     callback(null, result.recordset);
   } catch (error) {
