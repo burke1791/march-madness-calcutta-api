@@ -67,12 +67,14 @@ export async function onConnect(event, context, callback) {
 
     const payload = {
       msgType: 'connection',
-      msgObj: {
-        userId: userId,
-        alias: alias,
-        roleId: roleId,
-        isConnected: true
-      }
+      msgObj: [
+        {
+          userId: userId,
+          alias: alias,
+          roleId: roleId,
+          isConnected: true
+        }
+      ]
     };
 
     // broadcast the connection event to all connected users
@@ -117,12 +119,14 @@ export async function onDisconnect(event, context, callback) {
 
     const payload = {
       msgType: 'connection',
-      msgObj: {
-        userId: deletedItem.UserId.N,
-        alias: deletedItem.Alias.S,
-        roleId: deletedItem.RoleId.N,
-        isConnected: false
-      }
+      msgObj: [
+        {
+          userId: deletedItem.UserId.N,
+          alias: deletedItem.Alias.S,
+          roleId: deletedItem.RoleId.N,
+          isConnected: false
+        }
+      ]
     };
 
     // broadcast the connection event to all connected users

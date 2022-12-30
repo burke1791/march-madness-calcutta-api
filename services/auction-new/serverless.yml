@@ -311,6 +311,13 @@ functions:
     events:
       - websocket:
           route: ITEM_COMPLETE
+  getConnectedUsers:
+    handler: functions/getConnectedUsers.getConnectedUsers
+    role:
+      Fn::GetAtt: [DynamoDBWebsocketRole, Arn]
+    events:
+      - websocket:
+          route: CONNECTED_USERS
 
 resources:
   - ${file(../../common/resources/api-gateway-authorizer.yml)}

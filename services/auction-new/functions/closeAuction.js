@@ -48,7 +48,7 @@ export async function closeAuction(event, context, callback) {
 
     callback(null, {
       statusCode: 200,
-      body: JSON.stringify({ message: 'next team set' })
+      body: JSON.stringify({ message: 'auction closed' })
     });
   } catch (error) {
     console.log(error);
