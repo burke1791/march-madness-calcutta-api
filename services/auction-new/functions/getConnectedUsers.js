@@ -19,7 +19,7 @@ export async function getConnectedUsers(event, context, callback) {
     // verify the leagueId matches the connection
     const verifyResponse = await verifyLeagueConnection(leagueId, connectionId);
 
-    if (verifyResponse === false || +verifyResponse.RoleId > 2) {
+    if (verifyResponse === false) {
       throw new Error('User is not allowed to perform this action');
     }
 
