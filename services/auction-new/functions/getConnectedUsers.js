@@ -1,5 +1,5 @@
 import AWS from 'aws-sdk';
-import { websocketBroadcastToConnection } from '../utilities';
+import { verifyLeagueConnection, websocketBroadcastToConnection } from '../utilities';
 import { DYNAMODB_INDEXES, DYNAMODB_TABLES } from '../utilities/constants';
 
 const dynamodb = new AWS.DynamoDB();
