@@ -12,9 +12,10 @@ const CONNECTION_INDEX = DYNAMODB_INDEXES.CONNECTION_INDEX;
  * @param {Any} payload - Whatever you want to send to connected websocket users
  * @param {String} domainName - Websocket connection's domain
  * @param {String} apiStage - Websocket connection's api stage
+ * @param {Array<String>} excludeConnectionIds - list of connectionIds to exclude from the broadcast
  * @returns {Boolean} - true if all messages are sent, false otherwise
  */
-export async function websocketBroadcast(leagueId, payload, domainName, apiStage) {
+export async function websocketBroadcast(leagueId, payload, domainName, apiStage, excludeConnectionIds = []) {
   try {
     const connectionIds = await getConnectionIds(leagueId);
 
@@ -33,7 +34,10 @@ export async function websocketBroadcast(leagueId, payload, domainName, apiStage
         Data: JSON.stringify(payload)
       };
 
-      return apig.postToConnection(params).promise();
+      // only broadcast if the connectionId is not in the exclude list
+      if (!excludeConnectionIds.includes(connectionId)) {
+        return apig.postToConnection(params).promise();
+      }
     });
 
     await Promise.all(postCalls);

@@ -76,7 +76,7 @@ export async function onConnect(event, context, callback) {
     };
 
     // broadcast the connection event to all connected users
-    await websocketBroadcast(leagueId, payload, event.requestContext.domainName, event.requestContext.stage);
+    await websocketBroadcast(leagueId, payload, event.requestContext.domainName, event.requestContext.stage, [connectionId]);
 
     callback(null, {
       statusCode: 200,
@@ -126,7 +126,7 @@ export async function onDisconnect(event, context, callback) {
     };
 
     // broadcast the connection event to all connected users
-    await websocketBroadcast(leagueId, payload, event.requestContext.domainName, event.requestContext.stage);
+    await websocketBroadcast(leagueId, payload, event.requestContext.domainName, event.requestContext.stage, [connectionId]);
 
     callback(null, {
       statusCode: 200,
