@@ -1,5 +1,6 @@
 import AWS from 'aws-sdk';
 import { verifyToken } from '../../../common/utilities/verify';
+import { websocketBroadcast } from '../utilities';
 import { DYNAMODB_TABLES, LAMBDAS } from '../utilities/constants';
 
 const dynamodb = new AWS.DynamoDB();
@@ -27,7 +28,6 @@ export async function onConnect(event, context, callback) {
     };
 
     const lambdaResponse = await lambda.invoke(lambdaParams).promise();
-    console.log(lambdaResponse);
     const responsePayload = JSON.parse(lambdaResponse.Payload);
 
     if (!responsePayload.length) {
@@ -62,11 +62,21 @@ export async function onConnect(event, context, callback) {
         }
       }
     };
-  
-    console.log(params);
 
     const response = await dynamodb.putItem(params).promise();
-    console.log(response);
+
+    const payload = {
+      msgType: 'connection',
+      msgObj: {
+        userId: userId,
+        alias: alias,
+        roleId: roleId,
+        isConnected: true
+      }
+    };
+
+    // broadcast the connection event to all connected users
+    await websocketBroadcast(leagueId, payload, event.requestContext.domainName, event.requestContext.stage);
 
     callback(null, {
       statusCode: 200,
@@ -94,12 +104,29 @@ export async function onDisconnect(event, context, callback) {
       ConnectionId: {
         S: connectionId
       }
-    }
+    },
+    ReturnValues: 'ALL_OLD'
   };
 
   try {
     const response = await dynamodb.deleteItem(deleteItemParams).promise();
     console.log(response);
+
+    const deletedItem = response.Attributes;
+    const leagueId = deletedItem.LeagueId.N;
+
+    const payload = {
+      msgType: 'connection',
+      msgObj: {
+        userId: deletedItem.UserId.N,
+        alias: deletedItem.Alias.S,
+        roleId: deletedItem.RoleId.N,
+        isConnected: false
+      }
+    };
+
+    // broadcast the connection event to all connected users
+    await websocketBroadcast(leagueId, payload, event.requestContext.domainName, event.requestContext.stage);
 
     callback(null, {
       statusCode: 200,
