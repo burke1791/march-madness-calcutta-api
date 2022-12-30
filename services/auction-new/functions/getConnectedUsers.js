@@ -32,7 +32,7 @@ export async function getConnectedUsers(event, context, callback) {
         }
       },
       KeyConditionExpression: 'LeagueId = :v1',
-      ProjectionExpression: 'UserId, Alias, RoleId'
+      ProjectionExpression: 'UserId, Alias'
     };
 
     const result = await dynamodb.query(queryParams).promise();

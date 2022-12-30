@@ -71,7 +71,6 @@ export async function onConnect(event, context, callback) {
         {
           userId: userId,
           alias: alias,
-          roleId: roleId,
           isConnected: true
         }
       ]
@@ -123,7 +122,6 @@ export async function onDisconnect(event, context, callback) {
         {
           userId: deletedItem.UserId.N,
           alias: deletedItem.Alias.S,
-          roleId: deletedItem.RoleId.N,
           isConnected: false
         }
       ]
