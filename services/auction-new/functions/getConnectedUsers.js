@@ -39,7 +39,8 @@ export async function getConnectedUsers(event, context, callback) {
 
     const users = result.Items.map(user => {
       return {
-        ...user,
+        userId: user.UserId.N,
+        alias: user.Alias.S,
         isConnected: true
       }
     });
