@@ -72,7 +72,7 @@ export async function setItemComplete(event, context, callback) {
 
     const payload = {
       msgObj: auctionObj,
-      msgType: 'auction'
+      msgType: 'auction_sale'
     }
 
     await websocketBroadcast(leagueId, payload, event.requestContext.domainName, event.requestContext.stage);
@@ -134,7 +134,7 @@ export async function setItemComplete(event, context, callback) {
 
     const confirmedPayload = {
       msgObj: confirmedAuctionObj,
-      msgType: 'auction'
+      msgType: 'auction_sale'
     }
 
     await websocketBroadcast(leagueId, confirmedPayload, event.requestContext.domainName, event.requestContext.stage);

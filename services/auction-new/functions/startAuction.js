@@ -46,7 +46,7 @@ export async function startAuction(event, context, callback) {
 
     const payload = {
       msgObj: auctionObj,
-      msgType: 'auction'
+      msgType: 'auction_open'
     };
 
     // send the info to all active websocket connections
