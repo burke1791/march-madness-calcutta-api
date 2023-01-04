@@ -52,21 +52,6 @@ jobs:
           npm install
           npm run lint
 
-  auction_service_lint:
-    name: Run linter on auction microservice
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v3
-      - name: use nodejs
-        uses: actions/setup-node@v3
-        with:
-          node-version: 16
-      - run: |
-          cd services/auction
-          npm install
-          npm run lint
-
   tournament_service_lint:
     name: Run linter on tournament microservice
     runs-on: ubuntu-latest
