@@ -146,7 +146,7 @@ export async function undoBid(event, context, callback) {
 
     const payload = {
       msgObj: auctionObj,
-      msgType: 'auction'
+      msgType: 'auction_bid'
     };
 
     await websocketBroadcast(leagueId, payload, event.requestContext.domainName, event.requestContext.stage);

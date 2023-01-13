@@ -23,7 +23,7 @@ export async function resetClock(event, context, callback) {
 
     const payload = {
       msgObj: resetObj,
-      msgType: 'auction'
+      msgType: 'auction_bid'
     }
 
     // send the info to all active websocket connections

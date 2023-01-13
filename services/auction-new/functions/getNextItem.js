@@ -46,7 +46,7 @@ export async function getNextItem(event, context, callback) {
     }
 
     const payload = {
-      msgType: 'auction',
+      msgType: 'auction_bid',
       msgObj: auctionObj
     }
 
