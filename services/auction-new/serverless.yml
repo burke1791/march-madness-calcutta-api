@@ -187,30 +187,6 @@ functions:
             headers:
               - x-cognito-token
 
-  rdsResetAuctionItem:
-    handler: functions/rds/rdsResetAuctionItem.resetAuctionItem
-    vpc:
-      securityGroupIds:
-        - Fn::ImportValue: ${self:custom.provider.vpc.securityGroupIds.LAMBDA_SG}
-      subnetIds:
-        - Fn::ImportValue: ${self:custom.provider.vpc.subnetIds.SUBNET1}
-        - Fn::ImportValue: ${self:custom.provider.vpc.subnetIds.SUBNET2}
-        - Fn::ImportValue: ${self:custom.provider.vpc.subnetIds.SUBNET3}
-    events:
-      - http:
-          path: resetAuctionItem/{leagueId}
-          method: post
-          integration: lambda
-          authorizer:
-            type: COGNITO_USER_POOLS
-            authorizerId:
-              Ref: ApiGatewayAuthorizer
-          cors:
-            origin: '*'
-            headers:
-              - x-cognito-token
-              - Content-Type
-
   # Invokable functions
   rdsVerifyUserLeague:
     handler: functions/rds/verifyUserLeague.verifyUserLeague
@@ -286,6 +262,16 @@ functions:
     handler: functions/resetAuction.dynamodbResetAuction
     role:
       Fn::GetAtt: [DynamoDBWebsocketRole, Arn]
+
+  rdsResetAuctionItem:
+    handler: functions/rds/rdsResetAuctionItem.resetAuctionItem
+    vpc:
+      securityGroupIds:
+        - Fn::ImportValue: ${self:custom.provider.vpc.securityGroupIds.LAMBDA_SG}
+      subnetIds:
+        - Fn::ImportValue: ${self:custom.provider.vpc.subnetIds.SUBNET1}
+        - Fn::ImportValue: ${self:custom.provider.vpc.subnetIds.SUBNET2}
+        - Fn::ImportValue: ${self:custom.provider.vpc.subnetIds.SUBNET3}
 
   # websocket functions
   onConnect:
@@ -365,6 +351,13 @@ functions:
     events:
       - websocket:
           route: CONNECTED_USERS
+  resetAuctionItem:
+    handler: functions/resetAuctionItem.resetAuctionItem
+    role:
+      Fn::GetAtt: [DynamoDBWebsocketRole, Arn]
+    events:
+      - websocket:
+          route: RESET_ITEM
 
 resources:
   - ${file(../../common/resources/api-gateway-authorizer.yml)}
