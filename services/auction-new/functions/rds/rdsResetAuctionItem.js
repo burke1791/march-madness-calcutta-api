@@ -3,9 +3,7 @@ import { BigInt, connection, TinyInt, Varchar } from '../../../../common/utiliti
 export async function resetAuctionItem(event, context, callback) {
   context.callbackWaitsForEmptyEventLoop = false;
 
-  const cognitoSub = event.cognitoPoolClaims.sub;
-  const leagueId = event.path.leagueId;
-  const { itemId, itemTypeId } = event.body;
+  const { leagueId, itemId, itemTypeId } = event;
 
   try {
     if (!connection.isConnected) {
@@ -13,13 +11,16 @@ export async function resetAuctionItem(event, context, callback) {
     }
 
     const result = await connection.pool.request()
-      .input('CognitoSub', Varchar(256), cognitoSub)
       .input('LeagueId', BigInt, leagueId)
       .input('ItemId', BigInt, itemId)
       .input('ItemTypeId', TinyInt, itemTypeId)
       .execute('dbo.up_AdminResetAuctionItem');
+    
+    const data = {
+      ...result.recordset[0]
+    };
 
-    callback(null, result.recordset);
+    callback(null, data);
   } catch (error) {
     console.log(error);
     callback(null, { message: 'ERROR!' });
