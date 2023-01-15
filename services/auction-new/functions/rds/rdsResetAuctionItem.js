@@ -1,4 +1,4 @@
-import { BigInt, connection, TinyInt, Varchar } from '../../../../common/utilities/db';
+import { BigInt, connection, TinyInt } from '../../../../common/utilities/db';
 
 export async function resetAuctionItem(event, context, callback) {
   context.callbackWaitsForEmptyEventLoop = false;

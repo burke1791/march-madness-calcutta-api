@@ -34,6 +34,7 @@ export async function resetAuctionItem(event, context, callback) {
     console.log(lambdaResponse);
 
     const msgObj = {
+      action: 'RESET_ITEM',
       notifLevel: 'info',
       notifMessage: `${verifyResponse.Alias} reset ${lambdaResponse.DisplayName}`,
       refreshData: true,
