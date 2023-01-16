@@ -25,7 +25,7 @@ export async function resetAuctionItem(event, context, callback) {
     };
 
     const lambdaParams = {
-      FunctionName: LAMBDAS.RDS_RESET_AUCTION,
+      FunctionName: LAMBDAS.RDS_RESET_ITEM,
       LogType: 'Tail',
       Payload: JSON.stringify(lambdaPayload)
     }
