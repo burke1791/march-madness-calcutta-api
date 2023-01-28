@@ -33,10 +33,12 @@ export async function resetAuctionItem(event, context, callback) {
     const lambdaResponse = await lambda.invoke(lambdaParams).promise();
     console.log(lambdaResponse);
 
+    const resetResponse = JSON.parse(lambdaResponse.Payload);
+
     const msgObj = {
       action: 'RESET_ITEM',
       notifLevel: 'info',
-      notifMessage: `${verifyResponse.Alias} reset ${lambdaResponse.Payload.DisplayName}`,
+      notifMessage: `${verifyResponse.Alias} reset ${resetResponse.DisplayName}`,
       refreshData: true,
       data: null
     };
