@@ -10,11 +10,6 @@ export async function getNextItem(event, context, callback) {
       await connection.createConnection();
     }
 
-    if (itemId == undefined || itemTypeId == undefined) {
-      itemId = null;
-      itemTypeId = null;
-    }
-
     const result = await connection.pool.request()
       .input('LeagueId', BigInt, leagueId)
       .input('ItemId', BigInt, itemId)
