@@ -358,6 +358,13 @@ functions:
     events:
       - websocket:
           route: RESET_ITEM
+  resetAuction:
+    handler: functions/resetAuctionWebsocket/resetAuctionWebsocket
+    role:
+      Fn::GetAtt: [DynamoDBWebsocketRole, Arn]
+    events:
+      - websocket:
+          route: RESET_AUCTION
 
 resources:
   - ${file(../../common/resources/api-gateway-authorizer.yml)}
