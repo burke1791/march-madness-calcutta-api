@@ -3,7 +3,6 @@ import { verifyLeagueConnection, websocketBroadcast, websocketBroadcastToConnect
 import { LAMBDAS } from '../utilities/constants';
 
 const lambda = new AWS.Lambda();
-const dynamodb = new AWS.DynamoDB();
 
 export async function resetAuctionWebsocket(event, context, callback) {
   context.callbackWaitsForEmptyEventLoop = false;
