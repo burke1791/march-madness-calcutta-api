@@ -20,7 +20,7 @@ export async function verifyLeagueConnection(leagueId, connectionId) {
         S: connectionId
       }
     },
-    ProjectionExpression: 'LeagueId, UserId, Alias, RoleId'
+    ProjectionExpression: 'LeagueId, UserId, CognitoSub, Alias, RoleId'
   }
 
   try {
@@ -29,6 +29,7 @@ export async function verifyLeagueConnection(leagueId, connectionId) {
     const userData = {
       LeagueId: connectionResponse.Item.LeagueId.N,
       UserId: connectionResponse.Item.UserId.N,
+      CognitoSub: connectionResponse.Item.CognitoSub.S,
       Alias: connectionResponse.Item.Alias.S,
       RoleId: connectionResponse.Item.RoleId.N
     };
