@@ -359,7 +359,7 @@ functions:
       - websocket:
           route: RESET_ITEM
   resetAuctionWebsocket:
-    handler: functions/resetAuctionWebsocket/resetAuctionWebsocket
+    handler: functions/resetAuctionWebsocket.resetAuctionWebsocket
     role:
       Fn::GetAtt: [DynamoDBWebsocketRole, Arn]
     events:
