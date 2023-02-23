@@ -18,17 +18,12 @@ export async function resetAuctionWebsocket(event, context, callback) {
       throw new Error('User is not allowed to perform this action');
     }
 
-    console.log(verifyResponse);
-
     const cognitoSub = verifyResponse.CognitoSub;
-    console.log('cognitoSub', cognitoSub);
-
-    console.log(JSON.parse({ leagueId: leagueId, cognitoSub: cognitoSub }));
 
     const lambdaParams = {
       FunctionName: LAMBDAS.RDS_RESET_AUCTION,
       LogType: 'Tail',
-      Payload: JSON.parse({ leagueId: leagueId, cognitoSub: cognitoSub })
+      Payload: JSON.stringify({ leagueId: leagueId, cognitoSub: cognitoSub })
     };
 
     const lambdaResponse = await lambda.invoke(lambdaParams).promise();
@@ -46,7 +41,7 @@ export async function resetAuctionWebsocket(event, context, callback) {
     console.log(dynamodbLambdaResponse);
 
     const msgObj = {
-      auction: 'RESET_AUCTION',
+      action: 'RESET_AUCTION',
       notifLevel: 'info',
       notifMessage: `${verifyResponse.Alias} reset all auction data`,
       refreshData: true,
