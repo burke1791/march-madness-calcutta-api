@@ -1,6 +1,6 @@
-import { BigInt, connection } from "../../../../common/utilities/db";
+import { BigInt, connection, TinyInt } from '../../../../common/utilities/db';
 
-export async function getNextItem(event, context, callback) {
+export async function resetAuctionItem(event, context, callback) {
   context.callbackWaitsForEmptyEventLoop = false;
 
   const { leagueId, itemId, itemTypeId } = event;
@@ -13,10 +13,14 @@ export async function getNextItem(event, context, callback) {
     const result = await connection.pool.request()
       .input('LeagueId', BigInt, leagueId)
       .input('ItemId', BigInt, itemId)
-      .input('ItemTypeId', BigInt, itemTypeId)
-      .execute('dbo.up_AuctionGetNextItem');
+      .input('ItemTypeId', TinyInt, itemTypeId)
+      .execute('dbo.up_AdminResetAuctionItem');
+    
+    const data = {
+      ...result.recordset[0]
+    };
 
-    callback(null, result.recordset);
+    callback(null, data);
   } catch (error) {
     console.log(error);
     callback(null, { message: 'ERROR!' });

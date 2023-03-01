@@ -9,7 +9,7 @@ export async function getNextItem(event, context, callback) {
 
   const data = JSON.parse(event.body);
   console.log(data);
-  const leagueId = data.leagueId;
+  const { leagueId, itemId, itemTypeId } = data;
   const connectionId = event.requestContext.connectionId;
 
   try {
@@ -24,7 +24,11 @@ export async function getNextItem(event, context, callback) {
     const lambdaParams = {
       FunctionName: LAMBDAS.RDS_GET_NEXT_ITEM,
       LogType: 'Tail',
-      Payload: JSON.stringify({ leagueId: leagueId })
+      Payload: JSON.stringify({
+        leagueId: leagueId,
+        itemId: itemId,
+        itemTypeId: itemTypeId
+      })
     };
 
     const lambdaResponse = await lambda.invoke(lambdaParams).promise();
