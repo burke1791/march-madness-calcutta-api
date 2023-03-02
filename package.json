@@ -17,7 +17,7 @@
     "eslint": "^8.7.0",
     "jest": "^27.4.5",
     "serverless": "^3.7.2",
-    "serverless-bundle": "^5.2.0"
+    "serverless-bundle": "^6.0.0"
   },
   "scripts": {
     "test": "jest",
