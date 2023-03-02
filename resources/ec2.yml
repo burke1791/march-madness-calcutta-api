@@ -16,7 +16,7 @@ Resources:
       AvailabilityZone: us-east-1f
       EbsOptimized: True
       ImageId: !If [IsDev, !Ref CalcuttaDBEC2ImageIdDEV, !Ref CalcuttaDBEC2ImageIdPROD]
-      InstanceType: t2.micro
+      InstanceType: !If [IsDev, t2.micro, t3.micro]
       IamInstanceProfile: !Ref CalcuttaIamInstanceProfile
       KeyName: calcutta-ec2
       BlockDeviceMappings:
