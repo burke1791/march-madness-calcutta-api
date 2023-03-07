@@ -96,7 +96,7 @@ env:
   DB_MASTER_USER: ${{ secrets.DB_MASTER_USER }}
   DB_MASTER_PASSWORD: ${{ secrets.DB_MASTER_PASSWORD }}
   DB_USER: ${{ secrets.DB_USER }}
-  DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+  DB_PASSWORD: ${{ secrets.DB_PASSWORD_STAGE }}
   USER_POOL_ARN: ${{ secrets.USER_POOL_ARN_DEV }}
   AWS_COGNITO_VPC_ID: ${{ secrets.AWS_COGNITO_VPC_ID_DEV }}
   AWS_COGNITO_LAMBDA_SG_ID: ${{ secrets.AWS_COGNITO_LAMBDA_SG_ID_DEV }}
