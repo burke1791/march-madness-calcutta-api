@@ -173,7 +173,7 @@ export async function placeBid(event, context, callback) {
     const endpoint = `https://${event.requestContext.domainName}/${event.requestContext.stage}`;
     const payload = {
       msgType: 'auction_error',
-      message: 'Bid Not Accepted'
+      message: 'Bid Rejected'
     };
     await websocketBroadcastToConnection(endpoint, event.requestContext.connectionId, payload);
 
