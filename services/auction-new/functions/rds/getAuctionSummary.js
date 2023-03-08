@@ -16,10 +16,7 @@ export async function getAuctionSummary(event, context, callback) {
       .input('LeagueId', BigInt, leagueId)
       .execute('dbo.up_GetAuctionSummary');
     
-    callback(null, {
-      sstatusCode: 200,
-      body: result.recordset
-    });
+    callback(null, result.recordset);
   } catch (error) {
     console.log(error);
     callback(null, {
