@@ -125,7 +125,9 @@ functions:
             authorizerId:
               Ref: ApiGatewayAuthorizer
           cors:
-            origin: '*'
+            origin:
+              - http://localhost:3000
+              - https://*.calcuttaleague.com
             headers:
               - x-cognito-token
 
