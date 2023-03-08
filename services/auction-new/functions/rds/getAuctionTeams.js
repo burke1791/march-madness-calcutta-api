@@ -19,9 +19,15 @@ export async function getAuctionTeams(event, context, callback) {
       .input('TargetUserId', BigInt, userId || null)
       .execute('dbo.up_GetAuctionTeams');
 
-    callback(null, result.recordset);
+    callback(null, {
+      statusCode: 200,
+      body: result.recordset
+    });
   } catch (error) {
     console.log(error);
-    callback(null, { message: 'ERROR!' });
+    callback(null, {
+      statusCode: 500,
+      body: 'ERROR!'
+    });
   }
 }
