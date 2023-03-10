@@ -1,6 +1,7 @@
 import AWS from 'aws-sdk';
 import { verifyLeagueConnection, websocketBroadcast, websocketBroadcastToConnection } from '../utilities';
 import { DYNAMODB_TABLES, LAMBDAS } from '../utilities/constants';
+import { getUpdatedAuctionData } from './rds/getUpdatedAuctionData';
 
 const AUCTION_TABLE = DYNAMODB_TABLES.AUCTION_TABLE;
 
@@ -138,6 +139,19 @@ export async function setItemComplete(event, context, callback) {
     }
 
     await websocketBroadcast(leagueId, confirmedPayload, event.requestContext.domainName, event.requestContext.stage);
+
+    const updatedData = await getUpdatedAuctionData(leagueId);
+
+    if (updatedData === false) {
+      console.log('Assuming the happy path - hoping this won\'t happen');
+    }
+
+    const dataSyncPayload = {
+      msgObj: updatedData,
+      msgType: 'auction_sync'
+    };
+
+    await websocketBroadcast(leagueId, dataSyncPayload, event.requestContext.domainName, event.requestContext.stage);
 
     callback(null, {
       statusCode: 200,
