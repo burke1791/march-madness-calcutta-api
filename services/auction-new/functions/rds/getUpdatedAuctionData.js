@@ -37,14 +37,11 @@ import { BigInt, connection } from '../../../../common/utilities/db';
  * @property {Array<AuctionMemberBuyIn>} memberBuyIns
  */
 
-/**
- * @function
- * Returns all updated auction data required to keep the auction room page in sync
- * Caller is responsible for verifying user permissions
- * @param {Number} leagueId
- * @returns {AuctionData|false}
- */
-export async function getUpdatedAuctionData(leagueId) {
+
+export async function getUpdatedAuctionData(event, context, callback) {
+  context.callbackWaitsForEmptyEventLoop = false;
+
+  const { leagueId } = event;
 
   try {
     if (!connection.isConnected) {
@@ -63,14 +60,16 @@ export async function getUpdatedAuctionData(leagueId) {
     console.log(teams);
     console.log(memberBuyIns);
 
-    return {
+    const data = {
       summary: summary,
       teams: teams,
       memberBuyIns: memberBuyIns
     };
+
+    callback(null, data);
   } catch (error) {
     console.log(error);
 
-    return false;
+    callback(null, error);
   }
 }
