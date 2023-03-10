@@ -22,6 +22,9 @@ export async function getAuctionTeams(event, context, callback) {
     callback(null, result.recordset);
   } catch (error) {
     console.log(error);
-    callback(null, { message: 'ERROR!' });
+    callback(null, {
+      statusCode: 500,
+      body: 'ERROR!'
+    });
   }
 }

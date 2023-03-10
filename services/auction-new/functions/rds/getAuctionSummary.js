@@ -19,6 +19,9 @@ export async function getAuctionSummary(event, context, callback) {
     callback(null, result.recordset);
   } catch (error) {
     console.log(error);
-    callback(null, { message: 'SERVER ERROR!' });
+    callback(null, {
+      statusCode: 500,
+      message: 'SERVER ERROR!'
+    });
   }
 }
