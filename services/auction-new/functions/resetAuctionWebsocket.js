@@ -55,6 +55,23 @@ export async function resetAuctionWebsocket(event, context, callback) {
 
     await websocketBroadcast(leagueId, websocketPayload, event.requestContext.domainName, event.requestContext.stage);
 
+    // get a full data update
+    lambdaParams.FunctionName = LAMBDAS.RDS_GET_UPDATED_AUCTION_DATA;
+    lambdaParams.Payload = JSON.stringify({ leagueId: leagueId });
+
+    const updatedData = await lambda.invoke(lambdaParams).promise();
+    console.log(updatedData);
+
+    const syncData = JSON.parse(updatedData.Payload);
+    console.log(syncData);
+
+    const dataSyncPayload = {
+      msgObj: syncData,
+      msgType: 'auction_sync'
+    };
+
+    await websocketBroadcast(leagueId, dataSyncPayload, event.requestContext.domainName, event.requestContext.stage);
+
     callback(null, {
       statusCode: 200,
       body: JSON.stringify({ message: 'auction reset' })
