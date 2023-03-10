@@ -1,7 +1,6 @@
 import AWS from 'aws-sdk';
 import { verifyLeagueConnection, websocketBroadcast, websocketBroadcastToConnection } from '../utilities';
 import { DYNAMODB_TABLES, LAMBDAS } from '../utilities/constants';
-import { getUpdatedAuctionData } from './rds/getUpdatedAuctionData';
 
 const AUCTION_TABLE = DYNAMODB_TABLES.AUCTION_TABLE;
 
@@ -140,14 +139,19 @@ export async function setItemComplete(event, context, callback) {
 
     await websocketBroadcast(leagueId, confirmedPayload, event.requestContext.domainName, event.requestContext.stage);
 
-    const updatedData = await getUpdatedAuctionData(leagueId);
+    
+    // get a full data update
+    lambdaParams.FunctionName = LAMBDAS.RDS_GET_UPDATED_AUCTION_DATA;
+    lambdaParams.Payload = JSON.stringify({ leagueId: leagueId });
 
-    if (updatedData === false) {
-      console.log('Assuming the happy path - hoping this won\'t happen');
-    }
+    const updatedData = await lambda.invoke(lambdaParams).promise();
+    console.log(updatedData);
+
+    const syncData = JSON.parse(updatedData.Payload);
+    console.log(syncData);
 
     const dataSyncPayload = {
-      msgObj: updatedData,
+      msgObj: syncData,
       msgType: 'auction_sync'
     };
 
