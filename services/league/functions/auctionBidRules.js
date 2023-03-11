@@ -44,6 +44,9 @@ export async function setAuctionBidRules(event, context, callback) {
       .input('AuctionBidRules', tvp)
       .execute('dbo.up_SetAuctionBidRules');
 
+    // broadcast a websocket message to anyone connected to the auction room
+    
+
     callback(null, result.recordset);
   } catch (error) {
     console.log(error);

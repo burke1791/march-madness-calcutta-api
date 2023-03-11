@@ -8,6 +8,10 @@ const lambda = new AWS.Lambda();
 export async function placeBid(event, context, callback) {
   context.callbackWaitsForEmptyEventLoop = false;
 
+  console.log(event);
+  console.log(event.requestContext);
+  console.log(event.stage);
+
   const data = JSON.parse(event.body);
   const leagueId = data.leagueId;
   const connectionId = event.requestContext.connectionId;
