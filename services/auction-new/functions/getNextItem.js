@@ -1,5 +1,5 @@
 import AWS from 'aws-sdk';
-import { websocketBroadcast, verifyLeagueConnection, setNewAuctionTeam } from '../utilities';
+import { websocketBroadcast, verifyLeagueConnection, setNewAuctionTeam, websocketBroadcastToConnection } from '../utilities';
 import { LAMBDAS } from '../utilities/constants';
 
 const lambda = new AWS.Lambda();
@@ -63,6 +63,14 @@ export async function getNextItem(event, context, callback) {
     });
   } catch (error) {
     console.log(error);
+
+    const endpoint = `https://${event.requestContext.domainName}/${event.requestContext.stage}`;
+    const payload = {
+      msgType: 'auction_error',
+      message: 'No available items'
+    };
+    await websocketBroadcastToConnection(endpoint, connectionId, payload);
+
     callback(null, {
       statusCode: 500,
       body: JSON.stringify({ message: 'error getting next team' })
