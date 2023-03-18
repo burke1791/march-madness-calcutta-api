@@ -26,11 +26,13 @@ export async function createLeague(event, context, callback) {
       .input('TournamentRegimeId', Int, tournamentRegimeId)
       .execute('dbo.up_CreateLeague');
 
-    console.log(result);
+    if (result.recordset?.Error) {
+      throw new Error(result.recordset.Error);
+    }
 
     callback(null, { message: 'league created' });
   } catch (error) {
     console.log(error);
-    callback(null, { message: 'ERROR!' });
+    callback({ message: error });
   }
 }
