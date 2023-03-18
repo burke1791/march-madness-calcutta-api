@@ -26,7 +26,7 @@ export async function createLeague(event, context, callback) {
       .input('TournamentRegimeId', Int, tournamentRegimeId)
       .execute('dbo.up_CreateLeague');
 
-    if (result.recordset?.Error) {
+    if (Array.isArray(result.recordset) && result.recordset[0]?.Error) {
       throw new Error(result.recordset.Error);
     }
 
