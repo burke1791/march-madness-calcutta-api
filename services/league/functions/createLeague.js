@@ -29,7 +29,7 @@ export async function createLeague(event, context, callback) {
     console.log(result);
 
     if (Array.isArray(result.recordset) && result.recordset[0]?.Error) {
-      throw new Error(result.recordset.Error);
+      throw new Error(result.recordset[0].Error);
     }
 
     callback(null, { message: 'league created' });
