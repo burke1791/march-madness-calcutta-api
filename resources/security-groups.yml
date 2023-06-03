@@ -13,7 +13,7 @@ Resources:
   DBSG:
     Type: AWS::EC2::SecurityGroup
     Properties:
-      GroupDescription: 'Sql Server Security Group'
+      GroupDescription: 'RDS Security Group'
       GroupName: sql-server-calcutta
       SecurityGroupEgress:
         - IpProtocol: -1
