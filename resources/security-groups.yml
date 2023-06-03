@@ -2,7 +2,7 @@ Resources:
   LambdaSG:
     Type: AWS::EC2::SecurityGroup
     Properties:
-      GroupDescription: 'Lambda access to DB'
+      GroupDescription: 'Lambda access to RDS'
       GroupName: Lambda_DMZ
       SecurityGroupEgress:
         - IpProtocol: -1
