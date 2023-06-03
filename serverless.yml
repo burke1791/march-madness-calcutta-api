@@ -40,7 +40,7 @@ resources:
   - ${file(resources/internet-gateways.yml)}
   - ${file(resources/routes.yml)}
   - ${file(resources/security-groups.yml)}
-  - ${file(resources/rds.yml)}
+  # - ${file(resources/rds.yml)}
   - ${file(resources/roles.yml)}
   - ${file(resources/conditions.yml)}
   - ${file(resources/ec2.yml)}
