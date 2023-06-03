@@ -2,7 +2,7 @@ Resources:
   LambdaSG:
     Type: AWS::EC2::SecurityGroup
     Properties:
-      GroupDescription: 'Lambda access to RDS'
+      GroupDescription: 'Lambda access to DB'
       GroupName: Lambda_DMZ
       SecurityGroupEgress:
         - IpProtocol: -1
@@ -13,7 +13,7 @@ Resources:
   DBSG:
     Type: AWS::EC2::SecurityGroup
     Properties:
-      GroupDescription: 'RDS Security Group'
+      GroupDescription: 'Sql Server Security Group'
       GroupName: sql-server-calcutta
       SecurityGroupEgress:
         - IpProtocol: -1
