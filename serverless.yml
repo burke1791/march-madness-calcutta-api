@@ -20,9 +20,7 @@ provider:
     DB_PASSWORD: ${env:DB_PASSWORD}
     DB_HOST:
       Fn::GetAtt: [CalcuttaDBEC2, PublicIp]
-    #   Fn::GetAtt: [ CalcuttaDB, Endpoint.Address ]
     DB_PORT: 1433
-    #   Fn::GetAtt: [ CalcuttaDB, Endpoint.Port ]
   vpc:
     securityGroupIds:
       - Ref: LambdaSG
@@ -40,7 +38,6 @@ resources:
   - ${file(resources/internet-gateways.yml)}
   - ${file(resources/routes.yml)}
   - ${file(resources/security-groups.yml)}
-  # - ${file(resources/rds.yml)}
   - ${file(resources/roles.yml)}
   - ${file(resources/conditions.yml)}
   - ${file(resources/ec2.yml)}
