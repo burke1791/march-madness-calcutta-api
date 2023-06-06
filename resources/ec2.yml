@@ -1,7 +1,7 @@
 Parameters:
   CalcuttaDBEC2ImageIdPROD:
     Type: String
-    Default: ami-0d86c69530d0a048e
+    Default: ami-0261755bbcb8c4a84
 
   CalcuttaDBEC2ImageIdDEV:
     Type: String
