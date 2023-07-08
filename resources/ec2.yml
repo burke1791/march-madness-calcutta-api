@@ -5,7 +5,7 @@ Parameters:
 
   CalcuttaDBEC2ImageIdDEV:
     Type: String
-    Default: ami-0c2b0d3fb02824d92
+    Default: ami-0261755bbcb8c4a84
 
 Resources:
   CalcuttaDBEC2:
@@ -16,7 +16,7 @@ Resources:
       AvailabilityZone: us-east-1f
       EbsOptimized: False
       ImageId: !If [IsDev, !Ref CalcuttaDBEC2ImageIdDEV, !Ref CalcuttaDBEC2ImageIdPROD]
-      InstanceType: t2.micro
+      InstanceType: !If [IsDev, t4g.small, t4g.medium]
       IamInstanceProfile: !Ref CalcuttaIamInstanceProfile
       KeyName: calcutta-ec2
       BlockDeviceMappings:
