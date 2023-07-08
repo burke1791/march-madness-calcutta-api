@@ -14,9 +14,9 @@ Resources:
       - CalcuttaGatewayAttachment
     Properties:
       AvailabilityZone: us-east-1f
-      EbsOptimized: False
+      EbsOptimized: True
       ImageId: !If [IsDev, !Ref CalcuttaDBEC2ImageIdDEV, !Ref CalcuttaDBEC2ImageIdPROD]
-      InstanceType: !If [IsDev, t4g.small, t4g.medium]
+      InstanceType: !If [IsDev, t3.small, t3a.medium]
       IamInstanceProfile: !Ref CalcuttaIamInstanceProfile
       KeyName: calcutta-ec2
       BlockDeviceMappings:
