@@ -9,7 +9,7 @@ provider:
   runtime: nodejs16.x
   timeout: 15
   region: us-east-1
-  stage: dev
+  stage: stage
   websocketsApiName: calcutta-websockets-api-${self:custom.stage}
   websocketsApiRouteSelectionExpression: $request.body.action
   environment:
