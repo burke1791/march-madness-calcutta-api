@@ -3,11 +3,12 @@ name: Stage
 
 on:
   push:
-    branches: develop
+    branches: stage
 
 jobs:
   base_deploy:
     name: Deploy base service
+    environment: stage
     runs-on: ubuntu-latest
     
     steps:
@@ -22,6 +23,7 @@ jobs:
   
   user_service:
     name: Deploy user service API
+    environment: stage
     needs: base_deploy
     runs-on: ubuntu-latest
 
@@ -39,6 +41,7 @@ jobs:
 
   league_service:
     name: Deploy league service API
+    environment: stage
     needs: base_deploy
     runs-on: ubuntu-latest
 
@@ -56,6 +59,7 @@ jobs:
 
   tournament_service:
     name: Deploy tournament service API
+    environment: stage
     needs: base_deploy
     runs-on: ubuntu-latest
 
@@ -73,6 +77,7 @@ jobs:
 
   auction_service_v2:
     name: Deploy auction service API-v2
+    environment: stage
     needs: base_deploy
     runs-on: ubuntu-latest
 
@@ -89,18 +94,13 @@ jobs:
           serverless deploy -s $STAGE_NAME --verbose
   
 env:
-  STAGE_NAME: dev
-  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID_DEV }}
-  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY_DEV }}
+  STAGE_NAME: stage
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
   DB_NAME: ${{ secrets.DB_NAME }}
-  DB_MASTER_USER: ${{ secrets.DB_MASTER_USER }}
-  DB_MASTER_PASSWORD: ${{ secrets.DB_MASTER_PASSWORD }}
   DB_USER: ${{ secrets.DB_USER }}
-  DB_PASSWORD: ${{ secrets.DB_PASSWORD_STAGE }}
-  USER_POOL_ARN: ${{ secrets.USER_POOL_ARN_DEV }}
-  AWS_COGNITO_VPC_ID: ${{ secrets.AWS_COGNITO_VPC_ID_DEV }}
-  AWS_COGNITO_LAMBDA_SG_ID: ${{ secrets.AWS_COGNITO_LAMBDA_SG_ID_DEV }}
+  DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+  USER_POOL_ARN: ${{ secrets.USER_POOL_ARN }}
+  AWS_COGNITO_VPC_ID: ${{ secrets.AWS_COGNITO_VPC_ID }}
+  AWS_COGNITO_LAMBDA_SG_ID: ${{ secrets.AWS_COGNITO_LAMBDA_SG_ID }}
   AWS_COGNITO_ACCOUNT_ID: ${{ secrets.AWS_COGNITO_ACCOUNT_ID }}
-  AWS_LINKED_SERVER_SG_ID: ${{ secrets.AWS_PROD_DB_SG_ID }}
-  AWS_LINKED_SERVER_ACCOUNT_ID: ${{ secrets.AWS_PROD_ACCOUNT_ID }}
-  AWS_LINKED_SERVER_VPC_ID: ${{ secrets.AWS_PROD_VPC_ID }}
