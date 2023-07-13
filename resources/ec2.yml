@@ -36,6 +36,12 @@ Resources:
         - Key: Name
           Value: 'Calcutta SQL Server'
 
+  CalcuttaEIP:
+    Type: AWS::EC2::EIP
+    Properties:
+      InstanceId: !Ref CalcuttaDBEC2
+
+
 Outputs:
   PublicDns:
     Description: Server public DNS
@@ -44,6 +50,6 @@ Outputs:
       Name: calcutta-db-ec2-${self:custom.stage}-dns-address
   PublicIp:
     Description: Server public IP
-    Value: !GetAtt CalcuttaDBEC2.PublicIp
+    Value: !GetAtt CalcuttaEIP.PublicIp
     Export:
       Name: calcutta-db-ec2-${self:custom.stage}-address
