@@ -4,7 +4,7 @@ name: Stage-Lint
 on:
   pull_request:
     branches:
-      - develop
+      - stage
       - master
 
 jobs:

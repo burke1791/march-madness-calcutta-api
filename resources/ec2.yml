@@ -5,7 +5,7 @@ Parameters:
 
   CalcuttaDBEC2ImageIdDEV:
     Type: String
-    Default: ami-0c2b0d3fb02824d92
+    Default: ami-0261755bbcb8c4a84
 
 Resources:
   CalcuttaDBEC2:
@@ -14,9 +14,9 @@ Resources:
       - CalcuttaGatewayAttachment
     Properties:
       AvailabilityZone: us-east-1f
-      EbsOptimized: False
+      EbsOptimized: True
       ImageId: !If [IsDev, !Ref CalcuttaDBEC2ImageIdDEV, !Ref CalcuttaDBEC2ImageIdPROD]
-      InstanceType: t2.micro
+      InstanceType: !If [IsDev, t3.small, t3.small] # we will manually upsize the prod instance during expected high traffic times
       IamInstanceProfile: !Ref CalcuttaIamInstanceProfile
       KeyName: calcutta-ec2
       BlockDeviceMappings:
@@ -36,6 +36,12 @@ Resources:
         - Key: Name
           Value: 'Calcutta SQL Server'
 
+  CalcuttaEIP:
+    Type: AWS::EC2::EIP
+    Properties:
+      InstanceId: !Ref CalcuttaDBEC2
+
+
 Outputs:
   PublicDns:
     Description: Server public DNS
@@ -44,6 +50,6 @@ Outputs:
       Name: calcutta-db-ec2-${self:custom.stage}-dns-address
   PublicIp:
     Description: Server public IP
-    Value: !GetAtt CalcuttaDBEC2.PublicIp
+    Value: !GetAtt CalcuttaEIP.PublicIp
     Export:
       Name: calcutta-db-ec2-${self:custom.stage}-address

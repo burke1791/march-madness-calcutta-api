@@ -8,6 +8,7 @@ on:
 jobs:
   base_deploy:
     name: Deploy base service
+    environment: prod
     runs-on: ubuntu-latest
     
     steps:
@@ -15,13 +16,14 @@ jobs:
       - name: use nodejs
         uses: actions/setup-node@v3
         with:
-          node-version: 14
+          node-version: 16
       - run: npm install -g serverless
       - run: npm install
       - run: serverless deploy -s $STAGE_NAME
 
   user_service:
     name: Deploy user service API
+    environment: prod
     needs: base_deploy
     runs-on: ubuntu-latest
 
@@ -30,15 +32,17 @@ jobs:
       - name: use nodejs
         uses: actions/setup-node@v3
         with:
-          node-version: 14
+          node-version: 16
       - run: npm install -g serverless
       - run: npm install
       - run: |
           cd services/user
+          npm install
           serverless deploy -s $STAGE_NAME
 
   league_service:
     name: Deploy league service API
+    environment: prod
     needs: base_deploy
     runs-on: ubuntu-latest
 
@@ -47,15 +51,17 @@ jobs:
       - name: use nodejs
         uses: actions/setup-node@v3
         with:
-          node-version: 14
+          node-version: 16
       - run: npm install -g serverless
       - run: npm install
       - run: |
           cd services/league
+          npm install
           serverless deploy -s $STAGE_NAME
 
   tournament_service:
     name: Deploy tournament service API
+    environment: prod
     needs: base_deploy
     runs-on: ubuntu-latest
 
@@ -64,15 +70,17 @@ jobs:
       - name: use nodejs
         uses: actions/setup-node@v3
         with:
-          node-version: 14
+          node-version: 16
       - run: npm install -g serverless
       - run: npm install
       - run: |
           cd services/tournament
+          npm install
           serverless deploy -s $STAGE_NAME
 
   auction_service_v2:
     name: Deploy auction service API-v2
+    environment: prod
     needs: base_deploy
     runs-on: ubuntu-latest
 
@@ -81,26 +89,22 @@ jobs:
       - name: use nodejs
         uses: actions/setup-node@v3
         with:
-          node-version: 14
+          node-version: 16
       - run: npm install -g serverless
       - run: npm install
       - run: |
           cd services/auction-new
+          npm install
           serverless deploy -s $STAGE_NAME
   
 env:
   STAGE_NAME: prod
-  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID_PROD }}
-  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY_PROD }}
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
   DB_NAME: ${{ secrets.DB_NAME }}
-  DB_MASTER_USER: ${{ secrets.DB_MASTER_USER }}
-  DB_MASTER_PASSWORD: ${{ secrets.DB_MASTER_PASSWORD }}
   DB_USER: ${{ secrets.DB_USER }}
   DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-  USER_POOL_ARN: ${{ secrets.USER_POOL_ARN_PROD }}
-  AWS_COGNITO_VPC_ID: ${{ secrets.AWS_COGNITO_VPC_ID_PROD }}
-  AWS_COGNITO_LAMBDA_SG_ID: ${{ secrets.AWS_COGNITO_LAMBDA_SG_ID_PROD }}
+  USER_POOL_ARN: ${{ secrets.USER_POOL_ARN }}
+  AWS_COGNITO_VPC_ID: ${{ secrets.AWS_COGNITO_VPC_ID }}
+  AWS_COGNITO_LAMBDA_SG_ID: ${{ secrets.AWS_COGNITO_LAMBDA_SG_ID }}
   AWS_COGNITO_ACCOUNT_ID: ${{ secrets.AWS_COGNITO_ACCOUNT_ID }}
-  AWS_LINKED_SERVER_SG_ID: ${{ secrets.AWS_DEV_DB_SG_ID }}
-  AWS_LINKED_SERVER_ACCOUNT_ID: ${{ secrets.AWS_DEV_ACCOUNT_ID }}
-  AWS_LINKED_SERVER_VPC_ID: ${{ secrets.AWS_DEV_VPC_ID }}
