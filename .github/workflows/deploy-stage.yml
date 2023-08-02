@@ -56,6 +56,7 @@ jobs:
       - run: npm install
       - run: |
           cd services/league
+          npm install
           serverless deploy -s $STAGE_NAME --verbose
 
   tournament_service:
@@ -74,6 +75,7 @@ jobs:
       - run: npm install
       - run: |
           cd services/tournament
+          npm install
           serverless deploy -s $STAGE_NAME --verbose
 
   auction_service_v2:
@@ -92,6 +94,7 @@ jobs:
       - run: npm install
       - run: |
           cd services/auction-new
+          npm install
           serverless deploy -s $STAGE_NAME --verbose
   
 env:
