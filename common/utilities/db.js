@@ -14,6 +14,7 @@ const connection = {
   isConnected: false,
   pool: null,
   createConnection: async function() {
+    console.log(config);
     if (this.pool == null) {
       try {
         console.log('creating connection');
