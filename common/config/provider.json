@@ -1,5 +1,5 @@
 {
-  "runtime": "nodejs14.x",
+  "runtime": "nodejs18.x",
   "timeout": 20,
   "logRetentionInDays": 7,
   "region": "us-east-1",
@@ -9,7 +9,9 @@
     "DB_USER": "${env:DB_USER}",
     "DB_PASSWORD": "${env:DB_PASSWORD}",
     "DB_HOST": "calcutta-db-ec2-${self:custom.stage}-dns-address",
-    "DB_PORT": 1433
+    "DB_PORT": 1433,
+    "USER_POOL_ID": "${env:USER_POOL_ID}",
+    "USER_POOL_CLIENT_ID": "${env:USER_POOL_CLIENT_ID}"
   },
   "vpc": {
     "securityGroupIds": {
