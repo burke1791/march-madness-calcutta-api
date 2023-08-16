@@ -1,16 +1,16 @@
 import { CognitoJwtVerifier } from 'aws-jwt-verify';
 
-const jwt = require('jsonwebtoken');
-const jwkToPem = require('jwk-to-pem');
+// const jwt = require('jsonwebtoken');
+// const jwkToPem = require('jwk-to-pem');
 
-const jwk = require('../config/jwks.json');
+// const jwk = require('../config/jwks.json');
 
 console.log(process.env.APP_ENV);
-console.log(jwk);
+// console.log(jwk);
 console.log(process.env.USER_POOL_ID);
 console.log(process.env.USER_POOL_CLIENT_ID);
 
-let pem = jwkToPem(jwk[process.env.APP_ENV].keys[0]);
+// let pem = jwkToPem(jwk[process.env.APP_ENV].keys[0]);
 
 const verifier = CognitoJwtVerifier.create({
   userPoolId: process.env.USER_POOL_ID,
