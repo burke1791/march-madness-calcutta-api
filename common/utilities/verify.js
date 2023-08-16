@@ -14,7 +14,7 @@ console.log(process.env.USER_POOL_CLIENT_ID);
 
 const verifier = CognitoJwtVerifier.create({
   userPoolId: process.env.USER_POOL_ID,
-  tokenUse: 'access',
+  tokenUse: null,
   clientId: process.env.USER_POOL_CLIENT_ID
 });
 
@@ -28,6 +28,7 @@ export async function verifyToken(token) {
     return payload.sub;
   } catch (error) {
     console.log('Error validating token');
+    console.log(error);
     return null;
   }
 }
