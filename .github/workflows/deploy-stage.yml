@@ -105,6 +105,8 @@ env:
   DB_USER: ${{ secrets.DB_USER }}
   DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
   USER_POOL_ARN: ${{ secrets.USER_POOL_ARN }}
+  USER_POOL_ID: ${{ secrets.USER_POOL_ID }}
+  USER_POOL_CLIENT_ID: ${{ secrets.USER_POOL_CLIENT_ID }}
   AWS_COGNITO_VPC_ID: ${{ secrets.AWS_COGNITO_VPC_ID }}
   AWS_COGNITO_LAMBDA_SG_ID: ${{ secrets.AWS_COGNITO_LAMBDA_SG_ID }}
   AWS_COGNITO_ACCOUNT_ID: ${{ secrets.AWS_COGNITO_ACCOUNT_ID }}

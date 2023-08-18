@@ -4,6 +4,7 @@
   "description": "",
   "main": "handler.js",
   "dependencies": {
+    "aws-jwt-verify": "^4.0.0",
     "jsonwebtoken": "^8.5.1",
     "jwk-to-pem": "^2.0.2",
     "mssql": "^7.3.0",
