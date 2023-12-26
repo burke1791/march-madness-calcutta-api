@@ -8,9 +8,7 @@ Resources:
       KeySchema:
         - AttributeName: LeagueId
           KeyType: HASH
-      ProvisionedThroughput:
-        ReadCapacityUnits: 10
-        WriteCapacityUnits: 10
+      BillingMode: PAY_PER_REQUEST
       TableName: ${self:custom.AUCTION_TABLE}
       TableClass: STANDARD
       Tags:
@@ -30,9 +28,7 @@ Resources:
           KeyType: HASH
         - AttributeName: BidId
           KeyType: RANGE
-      ProvisionedThroughput:
-        ReadCapacityUnits: 4
-        WriteCapacityUnits: 4
+      BillingMode: PAY_PER_REQUEST
       TableName: ${self:custom.BID_HISTORY_TABLE}
       Tags:
         - Key: Description
@@ -52,9 +48,7 @@ Resources:
         -
           AttributeName: ConnectionId
           KeyType: HASH
-      ProvisionedThroughput:
-        ReadCapacityUnits: 3
-        WriteCapacityUnits: 3
+      BillingMode: PAY_PER_REQUEST
       TableName: ${self:custom.CONNECTION_TABLE}
       TableClass: STANDARD
       GlobalSecondaryIndexes:
@@ -90,8 +84,6 @@ Resources:
           KeyType: HASH
         - AttributeName: Timestamp
           KeyType: RANGE
-      ProvisionedThroughput:
-        ReadCapacityUnits: 4
-        WriteCapacityUnits: 4
+      BillingMode: PAY_PER_REQUEST
       TableName: ${self:custom.CHAT_TABLE}
       TableClass: STANDARD
