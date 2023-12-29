@@ -1,21 +1,22 @@
 import { BigInt, Varchar } from '../../../common/utilities/db';
+import { parseLeagueUserTeams } from '../parsers/leagueUserTeams';
 
 const connection = require('../../../common/utilities/db').connection;
 
 export async function getLeagueUserTeams(event, context, callback) {
   context.callbackWaitsForEmptyEventLoop = false;
 
-  let cognitoSub = event.cognitoPoolClaims.sub;
+  const cognitoSub = event.cognitoPoolClaims.sub;
 
   try {
-    let leagueId = event.path.leagueId;
-    let targetUserId = event.path.userId;
+    const leagueId = event.path.leagueId;
+    const targetUserId = event.path.userId;
 
     if (!connection.isConnected) {
       await connection.createConnection();
     }
 
-    let result = await connection.pool.request()
+    const result = await connection.pool.request()
       .input('LeagueId', BigInt, leagueId)
       .input('CognitoSub', Varchar(256), cognitoSub)
       .input('TargetUserId', BigInt, targetUserId)
@@ -23,7 +24,9 @@ export async function getLeagueUserTeams(event, context, callback) {
 
     console.log(result);
 
-    callback(null, result.recordset);
+    const response = parseLeagueUserTeams(result.recordset);
+
+    callback(null, response);
   } catch (error) {
     console.log(error);
     callback(null, { message: 'ERROR!' });

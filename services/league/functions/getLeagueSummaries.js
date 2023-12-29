@@ -1,24 +1,27 @@
 import { Varchar } from '../../../common/utilities/db';
+import { parseLeagueSummaries } from '../parsers/leagueSummaries';
 
 const connection = require('../../../common/utilities/db').connection;
 
 export async function getLeagueSummaries(event, context, callback) {
   context.callbackWaitsForEmptyEventLoop = false;
 
-  let cognitoSub = event.cognitoPoolClaims.sub;
+  const cognitoSub = event.cognitoPoolClaims.sub;
 
   try {
     if (!connection.isConnected) {
       await connection.createConnection();
     }
 
-    let result = await connection.pool.request()
+    const result = await connection.pool.request()
       .input('CognitoSub', Varchar(256), cognitoSub)
       .execute('dbo.up_GetLeagueSummaries');
 
+    const data = parseLeagueSummaries(result.recordset);
+
     const leagues = {
-      active: parseActiveLeagues(result.recordset),
-      inactive: parseInactiveLeagues(result.recordset)
+      active: parseActiveLeagues(data),
+      inactive: parseInactiveLeagues(data)
     };
 
     callback(null, leagues);

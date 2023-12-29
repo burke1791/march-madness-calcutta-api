@@ -1,31 +1,34 @@
 import { BigInt, Varchar } from '../../../common/utilities/db';
+import { parseLeagueMetadata } from '../parsers/leagueMetadata';
 
 const connection = require('../../../common/utilities/db').connection;
 
 export async function getLeagueMetadata(event, context, callback) {
   context.callbackWaitsForEmptyEventLoop = false;
 
-  let cognitoSub = event.cognitoPoolClaims.sub;
-  let leagueId = event.path.leagueId;
+  const cognitoSub = event.cognitoPoolClaims.sub;
+  const leagueId = event.path.leagueId;
 
-  let origin = event.headers.origin;
+  const origin = event.headers.origin;
 
   try {
     if (!connection.isConnected) {
       await connection.createConnection();
     }
 
-    let result = await connection.pool.request()
+    const result = await connection.pool.request()
       .input('LeagueId', BigInt, leagueId)
       .input('CognitoSub', Varchar(256), cognitoSub)
       .execute('dbo.up_GetLeagueMetadata');
 
     if (result.recordset[0]?.Error == undefined) {
-      let leagueGuid = result.recordset[0].InviteCode;
+      const leagueGuid = result.recordset[0].InviteCode;
       result.recordset[0].InviteUrl = `${origin}/joinLeague?inviteCode=${leagueGuid}`;
     }
 
-    callback(null, result.recordset);
+    const response = parseLeagueMetadata(result.recordset);
+
+    callback(null, response);
   } catch (error) {
     console.log(error);
     callback(null, { message: 'ERROR!' });
