@@ -31,14 +31,23 @@ export async function getLeagueSummaries(event, context, callback) {
   }
 }
 
+/**
+ * @typedef {import('../parsers/leagueSummaries').ParsedLeagueSummary} ParsedLeagueSummary
+ */
+
+/**
+ * @function
+ * @param {Array<ParsedLeagueSummary>} leagues 
+ * @returns {Array<ParsedLeagueSummary>}
+ */
 function parseActiveLeagues(leagues) {
   return leagues.filter(league => {
-    return league.StatusId != 4;
+    return league.statusId != 4;
   });
 }
 
 function parseInactiveLeagues(leagues) {
   return leagues.filter(league => {
-    return league.StatusId == 4;
+    return league.statusId == 4;
   })
 }
