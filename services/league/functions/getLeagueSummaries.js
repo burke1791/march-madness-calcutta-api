@@ -46,6 +46,11 @@ function parseActiveLeagues(leagues) {
   });
 }
 
+/**
+ * @function
+ * @param {Array<ParsedLeagueSummary>} leagues 
+ * @returns {Array<ParsedLeagueSummary>}
+ */
 function parseInactiveLeagues(leagues) {
   return leagues.filter(league => {
     return league.statusId == 4;
