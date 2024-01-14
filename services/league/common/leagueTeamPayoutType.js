@@ -28,11 +28,11 @@ export function populateLeagueTeamPayoutTypeTVP(payouts) {
 
   payouts.forEach(payout => {
     tvp.rows.add(
-      payout.LeagueTeamPayoutId,
-      payout.TeamId,
-      payout.PayoutAmount,
-      payout.UpdatedByUserId,
-      payout.PayoutDescription,
+      payout.LeagueTeamPayoutId ? +payout.LeagueTeamPayoutId : null,
+      +payout.TeamId,
+      +payout.PayoutAmount,
+      +payout.UpdatedByUserId,
+      payout.PayoutDescription ? payout.PayoutDescription : null,
       payout.IsDeleted
     );
   });
