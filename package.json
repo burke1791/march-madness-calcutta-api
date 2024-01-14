@@ -7,7 +7,7 @@
     "aws-jwt-verify": "^4.0.0",
     "jsonwebtoken": "^8.5.1",
     "jwk-to-pem": "^2.0.2",
-    "mssql": "^7.3.0",
+    "mssql": "^9.0.1",
     "uuid": "^8.3.2"
   },
   "devDependencies": {
