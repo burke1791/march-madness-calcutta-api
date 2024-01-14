@@ -1,4 +1,4 @@
-import { BigInt, connection, Varchar } from "../../../common/utilities/db";
+import { BigInt, connection, Table, Varchar } from "../../../common/utilities/db";
 import { populateLeagueTeamPayoutTypeTVP } from "../common/leagueTeamPayoutType";
 
 export async function getLeagueTeamPayouts(event, context, callback) {
@@ -44,7 +44,7 @@ export async function setLeagueTeamPayouts(event, context, callback) {
     const result = await connection.pool.request()
       .input('LeagueId', BigInt, leagueId)
       .input('CognitoSub', Varchar(256), cognitoSub)
-      .input('Payouts', mssql.TVP, tvp)
+      .input('Payouts', Table, tvp)
       .execute('dbo.up_SetLeagueTeamPayouts');
 
     callback(null, result.recordset);
