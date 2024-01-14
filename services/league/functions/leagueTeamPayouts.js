@@ -44,7 +44,7 @@ export async function setLeagueTeamPayouts(event, context, callback) {
     const result = await connection.pool.request()
       .input('LeagueId', BigInt, leagueId)
       .input('CognitoSub', Varchar(256), cognitoSub)
-      .input('Payouts', Table, tvp)
+      .input('Payouts', tvp)
       .execute('dbo.up_SetLeagueTeamPayouts');
 
     callback(null, result.recordset);
