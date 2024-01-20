@@ -18,7 +18,11 @@ export async function getLeagueRoster(event, context, callback) {
       .input('CognitoSub', Varchar(256), cognitoSub)
       .execute('dbo.up_GetLeagueRoster');
 
+    console.log(result.recordsets);
+
     const roster = parseRoster(result.recordset, result.recordsets[1]);
+
+    console.log(roster);
 
     callback(null, roster);
   } catch (error) {
@@ -86,6 +90,10 @@ function parseRoster(members, roles) {
  */
 function computeAllowedRoles(currentUserRoleId, leagueUser, roles) {
   const isAuctionClosed = leagueUser.LeagueStatusId >= 3;
+
+  console.log(currentUserRoleId);
+  console.log(leagueUser);
+  console.log(roles);
 
   // if current user is not an admin and leagueUser is not the current user, then allowed roles is empty
   if (currentUserRoleId > 2 && !leagueUser.IsCurrentUser) return [];
