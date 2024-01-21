@@ -1,5 +1,5 @@
 import mssql from 'mssql';
-import { BigInt, Bit, Decimal, Varchar } from '../../../common/utilities/db';
+// import { BigInt, Bit, Decimal, Varchar } from '../../../common/utilities/db';
 
 /**
  * @typedef LeagueTeamPayout
@@ -19,12 +19,12 @@ import { BigInt, Bit, Decimal, Varchar } from '../../../common/utilities/db';
 export function populateLeagueTeamPayoutTypeTVP(payouts) {
   const tvp = new mssql.Table();
 
-  tvp.columns.add('LeagueTeamPayoutId', BigInt, { nullable: true });
-  tvp.columns.add('TeamId', BigInt, { nullable: false });
-  tvp.columns.add('PayoutAmount', Decimal(8, 2), { nullable: false });
-  tvp.columns.add('UpdatedByUserId', BigInt, { nullable: false });
-  tvp.columns.add('PayoutDescription', Varchar(500), { nullable: true });
-  tvp.columns.add('IsDeleted', Bit, { nullable: false });
+  tvp.columns.add('LeagueTeamPayoutId', mssql.BigInt, { nullable: true });
+  tvp.columns.add('TeamId', mssql.BigInt, { nullable: false });
+  tvp.columns.add('PayoutAmount', mssql.Decimal(8, 2), { nullable: false });
+  tvp.columns.add('UpdatedByUserId', mssql.BigInt, { nullable: false });
+  tvp.columns.add('PayoutDescription', mssql.VarChar(500), { nullable: true });
+  tvp.columns.add('IsDeleted', mssql.Bit, { nullable: false });
 
   payouts.forEach(payout => {
     tvp.rows.add(
