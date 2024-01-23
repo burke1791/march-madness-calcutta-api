@@ -67,9 +67,6 @@ export async function setLeagueTeamPayouts(event, context, callback) {
 
     const tvp = populateLeagueTeamPayoutTypeTVP(payouts);
 
-    console.log(payouts);
-    console.log(tvp);
-
     const result = await connection.pool.request()
       .input('LeagueId', sql.BigInt, leagueId)
       .input('CognitoSub', sql.VarChar(256), cognitoSub)
