@@ -529,24 +529,7 @@ functions:
             headers:
               - x-cognito-token
 
-  # setLeagueTeamPayouts:
-  #   handler: functions/leagueTeamPayouts.setLeagueTeamPayouts
-  #   events:
-  #     - http:
-  #         path: setLeagueTeamPayouts/{leagueId}
-  #         method: post
-  #         integration: lambda
-  #         authorizer:
-  #           type: COGNITO_USER_POOLS
-  #           authorizerId:
-  #             Ref: ApiGatewayAuthorizer
-  #         cors:
-  #           origin: '*'
-  #           headers:
-  #             - Content-Type
-  #             - x-cognito-token
-  
-  setLeagueTeamPayouts_v2:
+  setLeagueTeamPayouts:
     handler: functions/leagueTeamPayouts.setLeagueTeamPayouts
     events:
       - http:
