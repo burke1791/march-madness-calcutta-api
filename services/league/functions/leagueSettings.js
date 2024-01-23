@@ -44,7 +44,7 @@ export async function updateLeagueSettings(event, context, callback) {
       await connection.createConnection();
     }
 
-    let tvp = sql.Table();
+    let tvp = new sql.Table();
     tvp.columns.add('SettingParameterId', sql.BigInt, { nullable: false });
     tvp.columns.add('SettingValue', sql.VarChar(255), { nullable: true });
 
@@ -131,7 +131,7 @@ export async function updateLeaguePayoutSettings(event, context, callback) {
       await connection.createConnection();
     }
 
-    let tvp = sql.Table();
+    let tvp = new sql.Table();
     tvp.columns.add('TournamentPayoutId', sql.BigInt, { nullable: false });
     tvp.columns.add('PayoutRate', sql.Decimal(9, 4), { nullable: true });
     tvp.columns.add('PayoutThreshold', sql.Decimal(9, 4), { nullable: true });
