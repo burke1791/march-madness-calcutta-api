@@ -98,7 +98,7 @@ jobs:
           serverless deploy -s $STAGE_NAME --verbose
   
   temp_league_service:
-    name: Deploy auction service API-v2
+    name: Deploy temp league service API
     environment: stage
     needs: base_deploy
     runs-on: ubuntu-latest
