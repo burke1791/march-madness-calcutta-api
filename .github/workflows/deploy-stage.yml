@@ -97,25 +97,6 @@ jobs:
           npm install
           serverless deploy -s $STAGE_NAME --verbose
   
-  temp_league_service:
-    name: Deploy temp league service API
-    environment: stage
-    needs: base_deploy
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v3
-      - name: use nodejs
-        uses: actions/setup-node@v3
-        with:
-          node-version: 18
-      - run: npm install -g serverless
-      - run: npm install
-      - run: |
-          cd services/temp-league
-          npm install
-          serverless deploy -s $STAGE_NAME --verbose
-  
 env:
   STAGE_NAME: stage
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
