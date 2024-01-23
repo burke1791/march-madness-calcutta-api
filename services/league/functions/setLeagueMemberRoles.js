@@ -1,4 +1,4 @@
-import { BigInt, connection, Varchar } from "../../../common/utilities/db";
+import { BigInt, Varchar } from "../../../common/utilities/db";
 import { populateLeagueMemberRoleTypeTVP } from "../common/leagueMemberRoleType";
 
 const connection = require('../../../common/utilities/db').connection;
