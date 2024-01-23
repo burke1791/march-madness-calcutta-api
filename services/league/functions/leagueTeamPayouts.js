@@ -1,4 +1,4 @@
-const sql = require('mssql');
+import sql from 'mssql';
 import { populateLeagueTeamPayoutTypeTVP } from "../common/leagueTeamPayoutType";
 
 const config = {

@@ -1,6 +1,8 @@
 import { BigInt, connection, Varchar } from "../../../common/utilities/db";
 import { populateLeagueMemberRoleTypeTVP } from "../common/leagueMemberRoleType";
 
+const connection = require('../../../common/utilities/db').connection;
+
 export async function setLeagueMemberRole(event, context, callback) {
   context.callbackWaitsForEmptyEventLoop = false;
 
@@ -13,7 +15,7 @@ export async function setLeagueMemberRole(event, context, callback) {
       await connection.createConnection();
     }
 
-    const tvp = populateLeagueMemberRoleTypeTVP(roles)
+    const tvp = populateLeagueMemberRoleTypeTVP(roles);
 
     const result = await connection.pool.request()
       .input('LeagueId', BigInt, leagueId)
