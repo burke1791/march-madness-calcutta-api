@@ -1,5 +1,4 @@
 import mssql from 'mssql';
-import { BigInt, TinyInt } from '../../../common/utilities/db';
 
 /**
  * @typedef LeagueMemberRole
@@ -15,15 +14,15 @@ import { BigInt, TinyInt } from '../../../common/utilities/db';
 export function populateLeagueMemberRoleTypeTVP(roles) {
   const tvp = new mssql.Table();
 
-  tvp.columns.add('LeagueId', BigInt, { nullable: false });
-  tvp.columns.add('UserId', BigInt, { nullable: false });
-  tvp.columns.add('RoleId', TinyInt, { nullable: false });
+  tvp.columns.add('LeagueId', mssql.BigInt, { nullable: false });
+  tvp.columns.add('UserId', mssql.BigInt, { nullable: false });
+  tvp.columns.add('RoleId', mssql.TinyInt, { nullable: false });
 
   roles.forEach(role => {
     tvp.rows.add(
-      role.leagueId,
-      role.userId,
-      role.roleId
+      +role.leagueId,
+      +role.userId,
+      +role.roleId
     );
   });
 
