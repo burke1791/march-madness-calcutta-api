@@ -6,7 +6,7 @@ custom:
         
 provider:
   name: aws
-  runtime: nodejs16.x
+  runtime: nodejs18.x
   timeout: 15
   region: us-east-1
   stage: stage

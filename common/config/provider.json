@@ -1,9 +1,9 @@
 {
-  "runtime": "nodejs16.x",
+  "runtime": "nodejs18.x",
   "timeout": 20,
   "logRetentionInDays": 7,
   "region": "us-east-1",
-  "stage": "dev",
+  "stage": "stage",
   "env": {
     "DB_NAME": "${env:DB_NAME}",
     "DB_USER": "${env:DB_USER}",
