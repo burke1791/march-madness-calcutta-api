@@ -15,7 +15,7 @@ const connection = {
   isConnected: false,
   pool: null,
   createConnection: async function() {
-    console.log(config);
+    // console.log(config);
     if (this.pool == null) {
       try {
         console.log('creating connection');
@@ -44,15 +44,15 @@ export async function updateLeagueSettings(event, context, callback) {
       await connection.createConnection();
     }
 
-    let tvp = new sql.Table();
+    const tvp = new sql.Table();
     tvp.columns.add('SettingParameterId', sql.BigInt, { nullable: false });
     tvp.columns.add('SettingValue', sql.VarChar(255), { nullable: true });
 
     settings.forEach(obj => {
-      tvp.rows.add(obj.settingParameterId, obj.settingValue);
+      tvp.rows.add(+obj.settingParameterId, String(obj.settingValue));
     });
 
-    let result = await connection.pool.request()
+    const result = await connection.pool.request()
       .input('LeagueId', sql.BigInt, leagueId)
       .input('CognitoSub', sql.VarChar(256), cognitoSub)
       .input('SettingInputs', tvp)
@@ -109,7 +109,7 @@ export async function getLeaguePayoutSettings(event, context, callback) {
 
     let result = await connection.pool.request()
       .input('LeagueId', sql.BigInt, leagueId)
-      .input('CognitoSub', sql.Varchar(256), cognitoSub)
+      .input('CognitoSub', sql.VarChar(256), cognitoSub)
       .execute('dbo.up_GetLeaguePayoutSettings');
 
     callback(null, result.recordset);

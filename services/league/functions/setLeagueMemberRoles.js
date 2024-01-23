@@ -16,7 +16,7 @@ const connection = {
   isConnected: false,
   pool: null,
   createConnection: async function() {
-    console.log(config);
+    // console.log(config);
     if (this.pool == null) {
       try {
         console.log('creating connection');
@@ -37,6 +37,8 @@ export async function setLeagueMemberRole(event, context, callback) {
   const cognitoSub = event.cognitoPoolClaims.sub;
   const leagueId = event.path.leagueId;
   const { roles } = event.body;
+
+  console.log(roles);
 
   try {
     if (!connection.isConnected) {
