@@ -141,8 +141,8 @@ export async function updateLeaguePayoutSettings(event, context, callback) {
     });
 
     let result = await connection.pool.request()
-      .input('LeagueId', BigInt, leagueId)
-      .input('CognitoSub', Varchar(256), cognitoSub)
+      .input('LeagueId', sql.BigInt, leagueId)
+      .input('CognitoSub', sql.VarChar(256), cognitoSub)
       .input('PayoutSettings', tvp)
       .execute('dbo.up_UpdateLeaguePayoutSettings');
 
