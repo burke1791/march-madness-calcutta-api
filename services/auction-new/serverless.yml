@@ -34,6 +34,9 @@ provider:
     BID_HISTORY_TABLE: ${self:custom.BID_HISTORY_TABLE}
     CONNECTION_TABLE: ${self:custom.CONNECTION_TABLE}
     CHAT_TABLE: ${self:custom.CHAT_TABLE}
+    AUCTION_SETTINGS_TABLE: ${self:custom.AUCTION_SETTINGS_TABLE}
+    AUCTION_RESULTS_TABLE: ${self:custom.AUCTION_RESULTS_TABLE}
+    LEAGUE_MEMBERSHIP_TABLE: ${self:custom.LEAGUE_MEMBERSHIP_TABLE}
     DB_NAME: ${self:custom.provider.env.DB_NAME}
     DB_USER: ${self:custom.provider.env.DB_USER}
     DB_PASSWORD: ${self:custom.provider.env.DB_PASSWORD}
@@ -287,6 +290,10 @@ functions:
         - Fn::ImportValue: ${self:custom.provider.vpc.subnetIds.SUBNET1}
         - Fn::ImportValue: ${self:custom.provider.vpc.subnetIds.SUBNET2}
         - Fn::ImportValue: ${self:custom.provider.vpc.subnetIds.SUBNET3}
+
+  # Invokable from the VPC - called by other services to keep dynamodb in sync with SQL Server
+  syncLeagueMembership:
+    handler: functions/data-sync/leagueMembership.syncLeagueMembership
 
   # websocket functions
   onConnect:
