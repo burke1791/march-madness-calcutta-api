@@ -17,7 +17,7 @@ jobs:
       - name: use nodejs
         uses: actions/setup-node@v3
         with:
-          node-version: 16
+          node-version: 18
       - run: |
           npm install
           npm run lint
@@ -31,7 +31,7 @@ jobs:
       - name: use nodejs
         uses: actions/setup-node@v3
         with:
-          node-version: 16
+          node-version: 18
       - run: |
           cd services/user
           npm install
@@ -46,7 +46,7 @@ jobs:
       - name: use nodejs
         uses: actions/setup-node@v3
         with:
-          node-version: 16
+          node-version: 18
       - run: |
           cd services/league
           npm install
@@ -61,7 +61,7 @@ jobs:
       - name: use nodejs
         uses: actions/setup-node@v3
         with:
-          node-version: 16
+          node-version: 18
       - run: |
           cd services/tournament
           npm install
@@ -76,7 +76,7 @@ jobs:
       - name: use nodejs
         uses: actions/setup-node@v3
         with:
-          node-version: 16
+          node-version: 18
       - run: |
           cd services/auction-new
           npm install
