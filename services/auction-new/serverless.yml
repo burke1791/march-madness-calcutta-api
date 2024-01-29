@@ -15,6 +15,9 @@ custom:
   BID_HISTORY_TABLE: BidHistory
   CONNECTION_TABLE: AuctionConnections
   CHAT_TABLE: AuctionChat
+  AUCTION_SETTINGS_TABLE: AuctionSettings
+  AUCTION_RESULTS_TABLE: AuctionResults
+  LEAGUE_MEMBERSHIP_TABLE: LeagueMembership
 
 provider:
   name: aws
