@@ -84,3 +84,42 @@ Resources:
       BillingMode: PAY_PER_REQUEST
       TableName: ${self:custom.CHAT_TABLE}
       TableClass: STANDARD
+
+  AuctionSettingsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      AttributeDefinitions:
+        - AttributeName: LeagueId
+          AttributeType: N
+      KeySchema:
+        - AttributeName: LeagueId
+          KeyType: HASH
+      BillingMode: PAY_PER_REQUEST
+      TableName: ${self:custom.AUCTION_SETTINGS_TABLE}
+      TableClass: STANDARD
+
+  AuctionResultsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      AttributeDefinitions:
+        - AttributeName: LeagueId
+          AttributeType: N
+      KeySchema:
+        - AttributeName: LeagueId
+          KeyType: HASH
+      BillingMode: PAY_PER_REQUEST
+      TableName: ${self:custom.AUCTION_RESULTS_TABLE}
+      TableClass: STANDARD
+
+  LeagueMembershipTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      AttributeDefinitions:
+        - AttributeName: LeagueId
+          AttributeType: N
+      KeySchema:
+        - AttributeName: LeagueId
+          KeyType: HASH
+      BillingMode: PAY_PER_REQUEST
+      TableName: ${self:custom.LEAGUE_MEMBERSHIP_TABLE}
+      TableClass: STANDARD
