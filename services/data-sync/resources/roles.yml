@@ -19,37 +19,6 @@ Resources:
             Version: '2012-10-17'
             Statement:
               - Effect: Allow
-                Resource:
-                  - Fn::GetAtt: [AuctionConnectionTable, Arn]
-                  - Fn::GetAtt: [AuctionChatTable, Arn]
-                  - Fn::GetAtt: [AuctionTable, Arn]
-                  - Fn::GetAtt: [BidHistoryTable, Arn]
-                  - Fn::GetAtt: [AuctionSettingsTable, Arn]
-                  - Fn::GetAtt: [AuctionResultsTable, Arn]
-                  - Fn::GetAtt: [LeagueMembershipTable, Arn]
-                Action:
-                  - dynamodb:PutItem
-                  - dynamodb:GetItem
-                  - dynamodb:UpdateItem
-                  - dynamodb:DeleteItem
-                  - dynamodb:BatchWriteItem
-                  - dynamodb:Query
-                  - dynamodb:Scan
-              - Effect: Allow
-                Resource:
-                  - Fn::Sub:
-                      - ${TableArn}/index/*
-                      - TableArn:
-                          Fn::GetAtt: [AuctionConnectionTable, Arn]
-                Action:
-                  - dynamodb:Query
-                  - dynamodb:Scan
-              - Effect: Allow
-                Resource:
-                  - arn:aws:execute-api:*:*:**/@connections/*
-                Action:
-                  - execute-api:ManageConnections
-              - Effect: Allow
                 Resource: '*'
                 Action:
                   - lambda:InvokeFunction

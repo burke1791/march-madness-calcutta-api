@@ -81,3 +81,18 @@ jobs:
           cd services/auction-new
           npm install
           npm run lint
+
+  data-sync_service_lint:
+    name: Run linter on data-sync microservice
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: use nodejs
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+      - run: |
+          cd services/data-sync
+          npm install
+          npm run lint
