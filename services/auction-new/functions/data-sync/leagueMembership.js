@@ -16,9 +16,7 @@ const dynamodb = new AWS.DynamoDB();
 export async function syncLeagueMembership(event, context, callback) {
   context.callbackWaitsForEmptyEventLoop = false;
 
-  console.log(event);
-  console.log(event.body);
-  const { leagueId, leagueMemberships } = JSON.parse(event);
+  const { leagueId, leagueMemberships } = event;
 
   try {
     const dynamodbParams = buildDynamoDbParams(leagueId, leagueMemberships);
