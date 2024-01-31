@@ -20,16 +20,18 @@ export async function joinLeague(event, context, callback) {
     const result = await lambda.invoke(lambdaParams).promise();
     console.log(result);
 
+    const data = JSON.parse(result.Payload);
+
     const response = [];
 
-    if (result[0]?.Error == undefined) {
-      const leagueId = result.recordset[0].LeagueId;
+    if (data[0]?.Error == undefined) {
+      const leagueId = data.recordset[0].LeagueId;
 
       response.push({ LeagueId: leagueId, LeaguePath: `/leagues/${leagueId}` });
 
-      await syncLeagueMembershipData(leagueId, result);
+      await syncLeagueMembershipData(leagueId, data);
     } else {
-      response.push({ Error: result[0].Error });
+      response.push({ Error: data[0].Error });
     }
 
     callback(null, response);
