@@ -96,6 +96,25 @@ jobs:
           cd services/auction-new
           npm install
           serverless deploy -s $STAGE_NAME --verbose
+
+  data_sync_service:
+    name: Deploy data-sync service API
+    environment: stage
+    needs: base_deploy
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: use nodejs
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+      - run: npm install -g serverless
+      - run: npm install
+      - run: |
+          cd services/data-sync
+          npm install
+          serverless deploy -s $STAGE_NAME --verbose
   
 env:
   STAGE_NAME: stage

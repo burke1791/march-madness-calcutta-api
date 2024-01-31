@@ -1,8 +1,8 @@
 Resources:
-  DynamoDBWebsocketRole:
+  DataSyncRole:
     Type: AWS::IAM::Role
     Properties:
-      RoleName: calcutta-${self:custom.stage}-dynamodb-websocket-role
+      RoleName: calcutta-${self:custom.stage}-data-sync-role
       ManagedPolicyArns:
         - arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole
       AssumeRolePolicyDocument:

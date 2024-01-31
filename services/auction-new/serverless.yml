@@ -291,7 +291,7 @@ functions:
         - Fn::ImportValue: ${self:custom.provider.vpc.subnetIds.SUBNET2}
         - Fn::ImportValue: ${self:custom.provider.vpc.subnetIds.SUBNET3}
 
-  # Invokable from the VPC - called by other services to keep dynamodb in sync with SQL Server
+  # Invokable - called by other services to keep dynamodb in sync with SQL Server
   syncLeagueMembership:
     handler: functions/data-sync/leagueMembership.syncLeagueMembership
 
