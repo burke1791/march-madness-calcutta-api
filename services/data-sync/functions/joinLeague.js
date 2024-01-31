@@ -25,7 +25,7 @@ export async function joinLeague(event, context, callback) {
     const response = [];
 
     if (data[0]?.Error == undefined) {
-      const leagueId = data.recordset[0].LeagueId;
+      const leagueId = data[0].LeagueId;
 
       response.push({ LeagueId: leagueId, LeaguePath: `/leagues/${leagueId}` });
 
