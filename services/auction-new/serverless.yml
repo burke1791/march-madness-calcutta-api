@@ -294,6 +294,8 @@ functions:
   # Invokable - called by other services to keep dynamodb in sync with SQL Server
   syncLeagueMembership:
     handler: functions/data-sync/leagueMembership.syncLeagueMembership
+    role:
+      Fn::GetAtt: [DynamoDBWebsocketRole, Arn]
 
   # websocket functions
   onConnect:
