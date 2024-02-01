@@ -19,6 +19,8 @@ provider:
   logRetentionInDays: ${self:custom.provider.logRetentionInDays}
   region: ${self:custom.provider.region}
   stage: ${self:custom.stage}
+  iam:
+    role: DataSyncRole
   environment:
     APP_ENV: ${self:custom.stage}
     USER_POOL_ID: ${self:custom.provider.env.USER_POOL_ID}
@@ -28,11 +30,26 @@ functions:
   # HTTP functions
   joinLeague:
     handler: functions/joinLeague.joinLeague
-    role:
-      Fn::GetAtt: [DataSyncRole, Arn]
     events:
       - http:
           path: joinLeague
+          method: post
+          integration: lambda
+          authorizer:
+            type: COGNITO_USER_POOLS
+            authorizerId:
+              Ref: ApiGatewayAuthorizer
+          cors:
+            origin: '*'
+            headers:
+              - Content-Type
+              - x-cognito-token
+
+  createLeague:
+    handler: functions/createLeague.createLeague
+    events:
+      - http:
+          path: createLeague
           method: post
           integration: lambda
           authorizer:

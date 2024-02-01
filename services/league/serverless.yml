@@ -51,23 +51,6 @@ functions:
             origin: '*'
             headers:
               - x-cognito-token
-
-  createLeague:
-    handler: functions/createLeague.createLeague
-    events:
-      - http:
-          path: createLeague
-          method: post
-          integration: lambda
-          authorizer:
-            type: COGNITO_USER_POOLS
-            authorizerId:
-              Ref: ApiGatewayAuthorizer
-          cors:
-            origin: '*'
-            headers:
-              - Content-Type
-              - x-cognito-token
   
   getLeagueSummaries:
     handler: functions/getLeagueSummaries.getLeagueSummaries
@@ -582,6 +565,9 @@ functions:
   # Invokable by the data-sync process
   joinLeague:
     handler: functions/joinLeague.joinLeague
+
+  createLeague:
+    handler: functions/createLeague.createLeague
 
 resources:
   - ${file(../../common/resources/api-gateway-authorizer.yml)}
