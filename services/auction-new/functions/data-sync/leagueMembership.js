@@ -74,7 +74,7 @@ function buildDynamoDbParams(leagueId, leagueMemberships) {
     },
     ExpressionAttributeValues: {
       ':LM': {
-        L: parsedLeagueMemberships(leagueMemberships)
+        L: parsedLeagueMemberships
       }
     },
     UpdateExpression: 'SET #LM = :LM'
