@@ -34,9 +34,8 @@ export async function updateLeagueSettings(event, context, callback) {
   context.callbackWaitsForEmptyEventLoop = false;
 
   try {
-    let cognitoSub = event.cognitoPoolClaims.sub;
 
-    let { leagueId, settings } = event.body;
+    const { cognitoSub, leagueId, settings } = event.body;
 
     console.log(settings);
 

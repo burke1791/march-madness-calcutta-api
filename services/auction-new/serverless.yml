@@ -297,6 +297,11 @@ functions:
     role:
       Fn::GetAtt: [DynamoDBWebsocketRole, Arn]
 
+  syncAuctionSettings:
+    handler: functions/data-sync/auctionSettings.syncAuctionSettings
+    role:
+      Fn::GetAtt: [DynamoDBWebsocketRole, Arn]
+
   # websocket functions
   onConnect:
     handler: functions/websocketConnection.onConnect
