@@ -5,8 +5,7 @@ const connection = require('../../../common/utilities/db').connection;
 export async function kickLeagueMember(event, context, callback) {
   context.callbackWaitsForEmptyEventLoop = false;
 
-  const cognitoSub = event.cognitoPoolClaims.sub;
-  const { leagueId, userId } = event.body;
+  const { cognitoSub, leagueId, userId } = event;
 
   try {
     if (!connection.isConnected) {
