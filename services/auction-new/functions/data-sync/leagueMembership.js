@@ -1,6 +1,5 @@
 import AWS from 'aws-sdk';
 import { DYNAMODB_TABLES } from '../../utilities/constants';
-import { websocketBroadcast } from '../../utilities';
 import { websocketBroadcastAll } from '../../utilities/websocketBroadcast';
 
 const LEAGUE_MEMBERSHIP_TABLE = DYNAMODB_TABLES.LEAGUE_MEMBERSHIP_TABLE;
