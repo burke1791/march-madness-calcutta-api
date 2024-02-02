@@ -313,40 +313,6 @@ functions:
             headers:
               - x-cognito-token
 
-  kickLeagueMember:
-    handler: functions/leagueRoster.kickLeagueMember
-    events:
-      - http:
-          path: kickLeagueMember
-          method: post
-          integration: lambda
-          authorizer:
-            type: COGNITO_USER_POOLS
-            authorizerId:
-              Ref: ApiGatewayAuthorizer
-          cors:
-            origin: '*'
-            headers:
-              - Content-Type
-              - x-cognito-token
-
-  setLeagueMemberRole:
-    handler: functions/setLeagueMemberRoles.setLeagueMemberRole
-    events:
-      - http:
-          path: setLeagueMemberRoles/{leagueId}
-          method: post
-          integration: lambda
-          authorizer:
-            type: COGNITO_USER_POOLS
-            authorizerId:
-              Ref: ApiGatewayAuthorizer
-          cors:
-            origin: '*'
-            headers:
-              - Content-Type
-              - x-cognito-token
-
   updateLeagueName:
     handler: functions/leagueSettings.updateLeagueName
     events:
@@ -529,23 +495,6 @@ functions:
               - Content-Type
               - x-cognito-token
 
-  leaveLeague:
-    handler: functions/leaveLeague.leaveLeague
-    events:
-      - http:
-          path: leaveLeague/{leagueId}
-          method: post
-          integration: lambda
-          authorizer:
-            type: COGNITO_USER_POOLS
-            authorizerId:
-              Ref: ApiGatewayAuthorizer
-          cors:
-            origin: '*'
-            headers:
-              - Content-Type
-              - x-cognito-token
-
   getLeagueTeams:
     handler: functions/getLeagueTeams.getLeagueTeams
     events:
@@ -568,6 +517,15 @@ functions:
 
   createLeague:
     handler: functions/createLeague.createLeague
+
+  kickLeagueMember:
+    handler: functions/leagueRoster.kickLeagueMember
+
+  leaveLeague:
+    handler: functions/leaveLeague.leaveLeague
+
+  setLeagueMemberRole:
+    handler: functions/setLeagueMemberRoles.setLeagueMemberRole
 
 resources:
   - ${file(../../common/resources/api-gateway-authorizer.yml)}
