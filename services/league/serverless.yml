@@ -164,23 +164,6 @@ functions:
             headers:
               - x-cognito-token
 
-  updateLeagueSettings:
-    handler: functions/leagueSettings.updateLeagueSettings
-    events:
-      - http:
-          path: updateLeagueSettings
-          method: post
-          integration: lambda
-          authorizer:
-            type: COGNITO_USER_POOLS
-            authorizerId:
-              Ref: ApiGatewayAuthorizer
-          cors:
-            origin: '*'
-            headers:
-              - Content-Type
-              - x-cognito-token
-
   getLeagueSettings:
     handler: functions/leagueSettings.getLeagueSettings
     events:
@@ -526,6 +509,9 @@ functions:
 
   setLeagueMemberRole:
     handler: functions/setLeagueMemberRoles.setLeagueMemberRole
+
+  updateLeagueSettings:
+    handler: functions/leagueSettings.updateLeagueSettings
 
 resources:
   - ${file(../../common/resources/api-gateway-authorizer.yml)}

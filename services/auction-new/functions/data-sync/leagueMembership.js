@@ -5,7 +5,6 @@ import { websocketBroadcastAll } from '../../utilities/websocketBroadcast';
 const LEAGUE_MEMBERSHIP_TABLE = DYNAMODB_TABLES.LEAGUE_MEMBERSHIP_TABLE;
 
 const dynamodb = new AWS.DynamoDB();
-// const lambda = new AWS.Lambda();
 
 /**
  * Invoked by lambdas in other parts of the app to ensure dynamodb stays
