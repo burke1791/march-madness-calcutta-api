@@ -1,5 +1,6 @@
 import AWS from 'aws-sdk';
 import { DYNAMODB_TABLES } from '../../utilities/constants';
+import { websocketBroadcastAll } from '../../utilities/websocketBroadcast';
 
 const LEAGUE_MEMBERSHIP_TABLE = DYNAMODB_TABLES.LEAGUE_MEMBERSHIP_TABLE;
 
@@ -27,6 +28,14 @@ export async function syncLeagueMembership(event, context, callback) {
 
     const updateData = updateResponse.Attributes;
     console.log(updateData);
+
+    const payload = {
+      msgObj: leagueMemberships,
+      msgType: 'auction_league_memberships'
+    };
+
+    const endpoint = `https://${process.env.WEBSOCKET_ENDPOINT}`;
+    await websocketBroadcastAll(leagueId, payload, endpoint);
 
     callback(null, {
       statusCode: 200,

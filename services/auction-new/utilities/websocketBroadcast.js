@@ -50,6 +50,45 @@ export async function websocketBroadcast(leagueId, payload, domainName, apiStage
 }
 
 /**
+ * @function websocketBroadcast
+ * @param {Number} leagueId - league's unique identifier
+ * @param {Any} payload - Whatever you want to send to connected websocket users
+ * @param {String} endpoint - league's unique identifier
+ * @param {Array<String>} excludeConnectionIds - list of connectionIds to exclude from the broadcast
+ * @returns {Boolean} - true if all messages are sent, false otherwise
+ */
+export async function websocketBroadcastAll(leagueId, payload, endpoint) {
+  try {
+    const connectionIds = await getConnectionIds(leagueId);
+
+    if (connectionIds === false) {
+      return true;
+    }
+
+    const apig = new AWS.ApiGatewayManagementApi({
+      apiVersion: '2018-11-29',
+      endpoint: endpoint
+    });
+
+    const postCalls = connectionIds.map(async (connectionId) => {
+      const params = {
+        ConnectionId: connectionId,
+        Data: JSON.stringify(payload)
+      };
+
+      return apig.postToConnection(params).promise();
+    });
+
+    await Promise.all(postCalls);
+  } catch (error) {
+    console.log(error);
+    return false;
+  }
+
+  return true;
+}
+
+/**
  * @function websocketBroadcastToConnection
  * @param {String} endpoint - league's unique identifier
  * @param {String} connectionId - the connectionId to send a websocket message
