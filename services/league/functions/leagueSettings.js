@@ -35,7 +35,7 @@ export async function updateLeagueSettings(event, context, callback) {
 
   try {
 
-    const { cognitoSub, leagueId, settings } = event.body;
+    const { cognitoSub, leagueId, settings } = event;
 
     console.log(settings);
 
@@ -59,7 +59,7 @@ export async function updateLeagueSettings(event, context, callback) {
 
     console.log(result);
 
-    callback(null, result.recordset);
+    callback(null, result);
   } catch (error) {
     console.log(error);
     callback(null, { message: 'ERROR!' });

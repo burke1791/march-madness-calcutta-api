@@ -5,5 +5,7 @@ export const LAMBDAS = {
   SQL_KICK_MEMBER: `calcutta-league-service-${process.env.APP_ENV}-kickLeagueMember`,
   SQL_LEAVE_LEAGUE: `calcutta-league-service-${process.env.APP_ENV}-leaveLeague`,
   SQL_SET_LEAGUE_MEMBER_ROLE: `calcutta-league-service-${process.env.APP_ENV}-setLeagueMemberRole`,
-  SQL_UPDATE_LEAGUE_SETTINGS: `calcutta-league-service-${process.env.APP_ENV}-updateLeagueSettings`
+  SQL_UPDATE_LEAGUE_SETTINGS: `calcutta-league-service-${process.env.APP_ENV}-updateLeagueSettings`,
+  SQL_SET_AUCTION_BID_RULES: `calcutta-league-service-${process.env.APP_ENV}-setAuctionBidRules`,
+  SQL_SET_AUCTION_TAX_RULES: `calcutta-league-service-${process.env.APP_ENV}-setAuctionTaxRules`
 };

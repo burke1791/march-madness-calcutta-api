@@ -57,9 +57,7 @@ export async function getAuctionBidRules(event, context, callback) {
 export async function setAuctionBidRules(event, context, callback) {
   context.callbackWaitsForEmptyEventLoop = false;
 
-  const cognitoSub = event.cognitoPoolClaims.sub;
-  const leagueId = event.path.leagueId;
-  const { rules } = event.body;
+  const { cognitoSub, leagueId, rules } = event;
 
   try {
     if (!connection.isConnected) {
@@ -74,10 +72,7 @@ export async function setAuctionBidRules(event, context, callback) {
       .input('AuctionBidRules', tvp)
       .execute('dbo.up_SetAuctionBidRules');
 
-    // broadcast a websocket message to anyone connected to the auction room
-    
-
-    callback(null, result.recordset);
+    callback(null, result);
   } catch (error) {
     console.log(error);
     callback(null, error);
