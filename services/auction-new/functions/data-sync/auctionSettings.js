@@ -10,6 +10,9 @@ export async function syncAuctionSettings(event, context, callback) {
   context.callbackWaitsForEmptyEventLoop = false;
 
   const { leagueId, settingCategory, settings } = event;
+  console.log(leagueId);
+  console.log(settingCategory);
+  console.log(settings);
 
   try {
     const dynamodbParams = buildDynamoDbParams(leagueId, settingCategory, settings);
@@ -137,6 +140,8 @@ function buildTaxRuleDynamoDbParams(leagueId, settings) {
 }
 
 function constructAuctionSettingsList(settings) {
+  console.log(settings);
+  console.log(Array.isArray(settings));
   if (!Array.isArray(settings)) return [];
   
   settings.map(s => {
