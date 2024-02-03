@@ -1,6 +1,6 @@
 import AWS from 'aws-sdk';
 import { LAMBDAS } from '../utilities/constants';
-import { syncAuctionSettings } from '../../auction-new/functions/data-sync/auctionSettings';
+import { syncAuctionSettings } from '../common/syncAuctionSettings';
 
 const lambda = new AWS.Lambda();
 
