@@ -148,7 +148,7 @@ functions:
               - x-cognito-token
 
   setAuctionTaxRules:
-    handler: functions/setAuctionTaxRule.setAuctionTaxRule
+    handler: functions/setAuctionTaxRules.setAuctionTaxRules
     events:
       - http:
           path: auctionTaxRule/{leagueId}
