@@ -79,11 +79,11 @@ function buildAuctionSettingsDynamoDbParams(leagueId, settings) {
       '#AS': 'AuctionSettings'
     },
     ExpressionAttributeValues: {
-      ':LM': {
+      ':AS': {
         L: parsedAuctionSettings
       }
     },
-    UpdateExpression: 'SET #LM = :LM'
+    UpdateExpression: 'SET #AS = :AS'
   };
 
   return dynamoDbParams;
