@@ -144,7 +144,7 @@ function constructAuctionSettingsList(settings) {
   console.log(Array.isArray(settings));
   if (!Array.isArray(settings)) return [];
   
-  settings.map(s => {
+  return settings.map(s => {
     return {
       M: {
         code: {
