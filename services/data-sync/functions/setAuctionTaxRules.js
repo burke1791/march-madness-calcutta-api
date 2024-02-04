@@ -28,7 +28,7 @@ export async function setAuctionTaxRules(event, context, callback) {
     const data = JSON.parse(result.Payload);
     const response = data.recordset;
 
-    if (!response[0]?.Error && response.length > 1) {
+    if (!response[0]?.Error && data.recordsets.length > 1) {
       const taxRules = data.recordsets[1];
       const leagueId = taxRules[0].LeagueId;
 

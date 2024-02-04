@@ -28,7 +28,7 @@ export async function setAuctionBidRules(event, context, callback) {
     const data = JSON.parse(result.Payload);
     const response = data.recordset;
 
-    if (!response[0]?.Error && response.length > 1) {
+    if (!response[0]?.Error && data.recordsets.length > 1) {
       const bidRules = data.recordsets[1];
       const leagueId = bidRules[0].LeagueId;
 
