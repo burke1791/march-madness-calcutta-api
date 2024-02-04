@@ -3,11 +3,15 @@
  * parses the dynamodb Item into a more usable js object
  */
 export function parseAuctionSettings(data) {
+  const auction = data?.AuctionSettings != null ? data.AuctionSettings.L : [];
+  const bid = data?.BidRules != null ? data.BidRules.L : [];
+  const tax = data?.TaxRules != null ? data.TaxRules.L : [];
+
   return {
     leagueId: +data.LeagueId.N,
-    auctionSettings: parseGeneralSettings(data.AuctionSettings.L),
-    bidRules: parseBidRules(data.BidRules.L),
-    taxRules: parseTaxRules(data.TaxRules.L)
+    auctionSettings: parseGeneralSettings(auction),
+    bidRules: parseBidRules(bid),
+    taxRules: parseTaxRules(tax)
   };
 }
 
