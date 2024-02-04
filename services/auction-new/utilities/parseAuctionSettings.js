@@ -5,31 +5,31 @@
 export function parseAuctionSettings(data) {
   return {
     leagueId: +data.LeagueId.N,
-    auctionSettings: parseGeneralSettings(data.AuctionSettings),
-    bidRules: parseBidRules(data.BidRules),
-    taxRules: parseTaxRules(data.TaxRules)
+    auctionSettings: parseGeneralSettings(data.AuctionSettings.L),
+    bidRules: parseBidRules(data.BidRules.L),
+    taxRules: parseTaxRules(data.TaxRules.L)
   };
 }
 
 function parseGeneralSettings(settings) {
   return settings.map(s => {
     return {
-      code: s.code.S,
-      constrained: s.constrained.BOOL,
-      dataType: s.dataType.S,
-      decimalPrecision: s.decimalPrecision?.NULL ? null : +s.decimalPrecision.N,
-      description: s.description.S,
-      displayOrder: +s.displayOrder.N,
-      displayPrefix: s.displayPrefix?.NULL ? null : s.displayPrefix.S,
-      displaySuffix: s.displaySuffix?.NULL ? null : s.displaySuffix.S,
-      leagueId: +s.leagueId.N,
-      maxValue: s.maxValue?.NULL ? null : +s.maxValue.N,
-      minValue: s.minValue?.NULL ? null : +s.minValue.N,
-      name: s.name.S,
-      settingClass: s.settingClass.S,
-      settingParameterId: +s.settingParameterId.N,
-      settingValue: s.settingValue?.NULL ? null : s.settingValue.S,
-      trailingText: s.trailingText?.NULL ? null : s.trailingText.S
+      code: s.M.code.S,
+      constrained: s.M.constrained.BOOL,
+      dataType: s.M.dataType.S,
+      decimalPrecision: s.M.decimalPrecision?.NULL ? null : +s.M.decimalPrecision.N,
+      description: s.M.description.S,
+      displayOrder: +s.M.displayOrder.N,
+      displayPrefix: s.M.displayPrefix?.NULL ? null : s.M.displayPrefix.S,
+      displaySuffix: s.M.displaySuffix?.NULL ? null : s.M.displaySuffix.S,
+      leagueId: +s.M.leagueId.N,
+      maxValue: s.M.maxValue?.NULL ? null : +s.M.maxValue.N,
+      minValue: s.M.minValue?.NULL ? null : +s.M.minValue.N,
+      name: s.M.name.S,
+      settingClass: s.M.settingClass.S,
+      settingParameterId: +s.M.settingParameterId.N,
+      settingValue: s.M.settingValue?.NULL ? null : s.M.settingValue.S,
+      trailingText: s.M.trailingText?.NULL ? null : s.M.trailingText.S
     }
   });
 }
@@ -37,12 +37,12 @@ function parseGeneralSettings(settings) {
 function parseBidRules(rules) {
   return rules.map(r => {
     return {
-      auctionBidRuleId: +r.auctionBidRuleId.N,
-      helpText: r.helpText.S,
-      leagueId: +r.leagueId.N,
-      maxThresholdInclusive: r.maxThresholdInclusive?.NULL ? null : +r.maxThresholdInclusive.N,
-      minIncrement: +r.minIncrement.N,
-      minThresholdExclusive: +r.minThresholdExclusive.N
+      auctionBidRuleId: +r.M.auctionBidRuleId.N,
+      helpText: r.M.helpText.S,
+      leagueId: +r.M.leagueId.N,
+      maxThresholdInclusive: r.M.maxThresholdInclusive?.NULL ? null : +r.M.maxThresholdInclusive.N,
+      minIncrement: +r.M.minIncrement.N,
+      minThresholdExclusive: +r.M.minThresholdExclusive.N
     }
   });
 }
@@ -50,12 +50,12 @@ function parseBidRules(rules) {
 function parseTaxRules(rules) {
   return rules.map(r => {
     return {
-      auctionTaxRuleId: +r.auctionTaxRuleId.N,
-      helpText: r.helpText.S,
-      leagueId: +r.leagueId.N,
-      maxThresholdInclusive: r.maxThresholdInclusive?.NULL ? null : +r.maxThresholdInclusive.N,
-      taxRate: +r.taxRate.N,
-      minThresholdExclusive: +r.minThresholdExclusive.N
+      auctionTaxRuleId: +r.M.auctionTaxRuleId.N,
+      helpText: r.M.helpText.S,
+      leagueId: +r.M.leagueId.N,
+      maxThresholdInclusive: r.M.maxThresholdInclusive?.NULL ? null : +r.M.maxThresholdInclusive.N,
+      taxRate: +r.M.taxRate.N,
+      minThresholdExclusive: +r.M.minThresholdExclusive.N
     }
   });
 }
