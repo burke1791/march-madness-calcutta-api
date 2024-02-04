@@ -150,7 +150,7 @@ function constructAuctionSettingsList(settings) {
         code: {
           S: s.Code
         },
-        Constrained: {
+        constrained: {
           BOOL: s.Constrained
         },
         dataType: {
