@@ -6,6 +6,7 @@ export async function getAuctionSlots(event, context, callback) {
   context.callbackWaitsForEmptyEventLoop = false;
 
   const { leagueId } = event;
+  console.log(leagueId);
 
   try {
     if (!connection.isConnected) {
