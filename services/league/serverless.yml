@@ -484,6 +484,9 @@ functions:
   
   setAuctionTaxRules:
     handler: functions/auctionTaxRule.setAuctionTaxRule
+  
+  getAuctionSlots:
+    handler: functions/getAuctionSlots.getAuctionSlots
 
 resources:
   - ${file(../../common/resources/api-gateway-authorizer.yml)}

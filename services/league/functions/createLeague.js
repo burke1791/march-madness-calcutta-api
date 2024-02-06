@@ -25,6 +25,6 @@ export async function createLeague(event, context, callback) {
     callback(null, result.recordset);
   } catch (error) {
     console.log(error);
-    callback(error);
+    callback(null, error);
   }
 }
