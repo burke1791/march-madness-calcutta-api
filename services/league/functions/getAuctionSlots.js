@@ -1,4 +1,4 @@
-import { BigInt } from 'mssql';
+import { BigInt } from '../../../common/utilities/db';
 
 const connection = require('../../../common/utilities/db').connection;
 
@@ -14,7 +14,7 @@ export async function getAuctionSlots(event, context, callback) {
     }
 
     const result = await connection.pool.request()
-      .input('LeagueId', BigInt, leagueId)
+      .input('LeagueId', BigInt, +leagueId)
       .execute('dbo.up_GetAuctionSlots');
 
     console.log(result);
