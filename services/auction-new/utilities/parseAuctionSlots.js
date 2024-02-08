@@ -26,5 +26,6 @@ function parseSlots(slots) {
 }
 
 function parseResults(results) {
+  console.log(results);
   return [];
 }
