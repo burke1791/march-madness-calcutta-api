@@ -1,5 +1,7 @@
 import AWS from 'aws-sdk';
 import { DYNAMODB_TABLES } from '../../utilities/constants';
+import { websocketBroadcastAll } from '../../utilities/websocketBroadcast';
+import { parseAuctionResults } from '../../utilities/parseAuctionSlots';
 
 const AUCTION_RESULTS_TABLE = DYNAMODB_TABLES.AUCTION_RESULTS_TABLE;
 
@@ -16,6 +18,19 @@ export async function syncAuctionSlots(event, context, callback) {
 
     const updateResponse = await dynamodb.updateItem(dynamodbParams).promise();
     console.log(updateResponse);
+
+    const updateData = updateResponse.Attributes;
+    console.log(updateData);
+
+    const auctionResults = parseAuctionResults(updateData);
+
+    const payload = {
+      msgObj: auctionResults,
+      msgType: `auction_results`
+    };
+
+    const endpoint = `https://${process.env.WEBSOCKET_ENDPOINT}`;
+    await websocketBroadcastAll(leagueId, payload, endpoint);
 
     callback(null, {
       statusCode: 200,
