@@ -1,3 +1,4 @@
+import AWS from 'aws-sdk';
 import { BigInt, Table, TinyInt, Varchar } from '../../../common/utilities/db';
 import { LAMBDAS } from '../utilities/constants';
 
