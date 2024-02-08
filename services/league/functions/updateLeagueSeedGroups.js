@@ -1,6 +1,8 @@
 import { BigInt, Table, TinyInt, Varchar } from '../../../common/utilities/db';
+import { LAMBDAS } from '../utilities/constants';
 
 const connection = require('../../../common/utilities/db').connection;
+const lambda = new AWS.Lambda();
 
 export async function newLeagueSeedGroup(event, context, callback) {
   context.callbackWaitsForEmptyEventLoop = false;
@@ -29,7 +31,25 @@ export async function newLeagueSeedGroup(event, context, callback) {
       .input('GroupTeams', tvp)
       .execute('dbo.up_NewLeagueSeedGroup');
 
-    callback(null, result.recordset);
+    const data = result.recordset;
+
+    if (Array.isArray(data) && !data[0]?.Error) {
+      const leagueId = data[0].LeagueId;
+
+      const lambdaParams = {
+        FunctionName: LAMBDAS.SYNC_AUCTION_SLOTS,
+        LogType: 'Tail',
+        Payload: JSON.stringify({
+          leagueId: leagueId,
+          data: data
+        })
+      };
+  
+      const response = await lambda.invoke(lambdaParams).promise();
+      console.log(response);
+    }
+
+    callback(null, {});
   } catch (error) {
     console.log(error);
     callback(null, { message: 'ERROR!' });
@@ -54,7 +74,25 @@ export async function deleteLeagueSeedGroup(event, context, callback) {
       .input('SeedGroupId', BigInt, groupId)
       .execute('dbo.up_DeleteLeagueSeedGroup');
 
-    callback(null, result.recordset);
+    const data = result.recordset;
+
+    if (Array.isArray(data) && !data[0]?.Error) {
+      const leagueId = data[0].LeagueId;
+
+      const lambdaParams = {
+        FunctionName: LAMBDAS.SYNC_AUCTION_SLOTS,
+        LogType: 'Tail',
+        Payload: JSON.stringify({
+          leagueId: leagueId,
+          data: data
+        })
+      };
+  
+      const response = await lambda.invoke(lambdaParams).promise();
+      console.log(response);
+    }
+
+    callback(null, {});
   } catch (error) {
     console.log(error);
     callback(null, { message: 'ERROR!' });
@@ -90,7 +128,25 @@ export async function updateLeagueSeedGroup(event, context, callback) {
       .input('GroupTeams', tvp)
       .execute('dbo.up_SetLeagueSeedGroup');
 
-    callback(null, result.recordset);
+    const data = result.recordset;
+
+    if (Array.isArray(data) && !data[0]?.Error) {
+      const leagueId = data[0].LeagueId;
+
+      const lambdaParams = {
+        FunctionName: LAMBDAS.SYNC_AUCTION_SLOTS,
+        LogType: 'Tail',
+        Payload: JSON.stringify({
+          leagueId: leagueId,
+          data: data
+        })
+      };
+  
+      const response = await lambda.invoke(lambdaParams).promise();
+      console.log(response);
+    }
+
+    callback(null, {});
   } catch (error) {
     console.log(error);
     callback(null, { message: 'Server Error' });
