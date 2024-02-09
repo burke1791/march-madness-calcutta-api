@@ -164,6 +164,57 @@ functions:
               - Content-Type
               - x-cognito-token
 
+  newLeagueSeedGroup:
+    handler: functions/newLeagueSeedGroup.newLeagueSeedGroup
+    events:
+      - http:
+          path: newLeagueSeedGroup
+          method: post
+          integration: lambda
+          authorizer:
+            type: COGNITO_USER_POOLS
+            authorizerId:
+              Ref: ApiGatewayAuthorizer
+          cors:
+            origin: '*'
+            headers:
+              - Content-Type
+              - x-cognito-token
+
+  deleteLeagueSeedGroup:
+    handler: functions/deleteLeagueSeedGroup.deleteLeagueSeedGroup
+    events:
+      - http:
+          path: deleteLeagueSeedGroup
+          method: post
+          integration: lambda
+          authorizer:
+            type: COGNITO_USER_POOLS
+            authorizerId:
+              Ref: ApiGatewayAuthorizer
+          cors:
+            origin: '*'
+            headers:
+              - Content-Type
+              - x-cognito-token
+
+  updateLeagueSeedGroup:
+    handler: functions/updateLeagueSeedGroup.updateLeagueSeedGroup
+    events:
+      - http:
+          path: updateLeagueSeedGroup/{leagueId}
+          method: post
+          integration: lambda
+          authorizer:
+            type: COGNITO_USER_POOLS
+            authorizerId:
+              Ref: ApiGatewayAuthorizer
+          cors:
+            origin: '*'
+            headers:
+              - Content-Type
+              - x-cognito-token
+
 resources:
   - ${file(../../common/resources/api-gateway-authorizer.yml)}
   - ${file(resources/roles.yml)}

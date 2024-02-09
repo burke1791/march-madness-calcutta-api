@@ -8,9 +8,7 @@ const lambda = new AWS.Lambda();
 export async function newLeagueSeedGroup(event, context, callback) {
   context.callbackWaitsForEmptyEventLoop = false;
 
-  const cognitoSub = event.cognitoPoolClaims.sub;
-
-  const { leagueId, groupName, groupTeams } = event.body;
+  const { cognitoSub, leagueId, groupName, groupTeams } = event;
 
   try {
     if (!connection.isConnected) {
@@ -33,24 +31,9 @@ export async function newLeagueSeedGroup(event, context, callback) {
       .execute('dbo.up_NewLeagueSeedGroup');
 
     const data = result.recordset;
+    console.log(data);
 
-    if (Array.isArray(data) && !data[0]?.Error) {
-      const leagueId = data[0].LeagueId;
-
-      const lambdaParams = {
-        FunctionName: LAMBDAS.SYNC_AUCTION_SLOTS,
-        LogType: 'Tail',
-        Payload: JSON.stringify({
-          leagueId: leagueId,
-          data: data
-        })
-      };
-  
-      const response = await lambda.invoke(lambdaParams).promise();
-      console.log(response);
-    }
-
-    callback(null, {});
+    callback(null, data);
   } catch (error) {
     console.log(error);
     callback(null, { message: 'ERROR!' });
@@ -60,9 +43,7 @@ export async function newLeagueSeedGroup(event, context, callback) {
 export async function deleteLeagueSeedGroup(event, context, callback) {
   context.callbackWaitsForEmptyEventLoop = false;
 
-  const cognitoSub = event.cognitoPoolClaims.sub;
-
-  const { leagueId, groupId } = event.body;
+  const { cognitoSub, leagueId, groupId } = event;
 
   try {
     if (!connection.isConnected) {
@@ -76,24 +57,9 @@ export async function deleteLeagueSeedGroup(event, context, callback) {
       .execute('dbo.up_DeleteLeagueSeedGroup');
 
     const data = result.recordset;
+    console.log(data);
 
-    if (Array.isArray(data) && !data[0]?.Error) {
-      const leagueId = data[0].LeagueId;
-
-      const lambdaParams = {
-        FunctionName: LAMBDAS.SYNC_AUCTION_SLOTS,
-        LogType: 'Tail',
-        Payload: JSON.stringify({
-          leagueId: leagueId,
-          data: data
-        })
-      };
-  
-      const response = await lambda.invoke(lambdaParams).promise();
-      console.log(response);
-    }
-
-    callback(null, {});
+    callback(null, data);
   } catch (error) {
     console.log(error);
     callback(null, { message: 'ERROR!' });
@@ -103,10 +69,7 @@ export async function deleteLeagueSeedGroup(event, context, callback) {
 export async function updateLeagueSeedGroup(event, context, callback) {
   context.callbackWaitsForEmptyEventLoop = false;
 
-  const cognitoSub = event.cognitoPoolClaims.sub;
-  const leagueId = event.path.leagueId;
-
-  const { groupId, groupName, groupTeams } = event.body;
+  const { cognitoSub, leagueId, groupId, groupName, groupTeams } = event;
 
   try {
     if (!connection.isConnected) {
@@ -130,24 +93,9 @@ export async function updateLeagueSeedGroup(event, context, callback) {
       .execute('dbo.up_SetLeagueSeedGroup');
 
     const data = result.recordset;
+    console.log(data);
 
-    if (Array.isArray(data) && !data[0]?.Error) {
-      const leagueId = data[0].LeagueId;
-
-      const lambdaParams = {
-        FunctionName: LAMBDAS.SYNC_AUCTION_SLOTS,
-        LogType: 'Tail',
-        Payload: JSON.stringify({
-          leagueId: leagueId,
-          data: data
-        })
-      };
-  
-      const response = await lambda.invoke(lambdaParams).promise();
-      console.log(response);
-    }
-
-    callback(null, {});
+    callback(null, data);
   } catch (error) {
     console.log(error);
     callback(null, { message: 'Server Error' });
