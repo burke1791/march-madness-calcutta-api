@@ -229,63 +229,6 @@ functions:
             headers:
               - x-cognito-token
 
-  newLeagueSeedGroup:
-    handler: functions/updateLeagueSeedGroups.newLeagueSeedGroup
-    role:
-      Fn::GetAtt: [InvokeRole, Arn]
-    events:
-      - http:
-          path: newLeagueSeedGroup
-          method: post
-          integration: lambda
-          authorizer:
-            type: COGNITO_USER_POOLS
-            authorizerId:
-              Ref: ApiGatewayAuthorizer
-          cors:
-            origin: '*'
-            headers:
-              - Content-Type
-              - x-cognito-token
-
-  deleteLeagueSeedGroup:
-    handler: functions/updateLeagueSeedGroups.deleteLeagueSeedGroup
-    role:
-      Fn::GetAtt: [InvokeRole, Arn]
-    events:
-      - http:
-          path: deleteLeagueSeedGroup
-          method: post
-          integration: lambda
-          authorizer:
-            type: COGNITO_USER_POOLS
-            authorizerId:
-              Ref: ApiGatewayAuthorizer
-          cors:
-            origin: '*'
-            headers:
-              - Content-Type
-              - x-cognito-token
-
-  updateLeagueSeedGroup:
-    handler: functions/updateLeagueSeedGroups.updateLeagueSeedGroup
-    role:
-      Fn::GetAtt: [InvokeRole, Arn]
-    events:
-      - http:
-          path: updateLeagueSeedGroup/{leagueId}
-          method: post
-          integration: lambda
-          authorizer:
-            type: COGNITO_USER_POOLS
-            authorizerId:
-              Ref: ApiGatewayAuthorizer
-          cors:
-            origin: '*'
-            headers:
-              - Content-Type
-              - x-cognito-token
-
   getLeagueRoster:
     handler: functions/getLeagueRoster.getLeagueRoster
     events:
@@ -493,7 +436,15 @@ functions:
   
   getAuctionSlots:
     handler: functions/getAuctionSlots.getAuctionSlots
+  
+  newLeagueSeedGroup:
+    handler: functions/updateLeagueSeedGroups.newLeagueSeedGroup
+
+  deleteLeagueSeedGroup:
+    handler: functions/updateLeagueSeedGroups.deleteLeagueSeedGroup
+
+  updateLeagueSeedGroup:
+    handler: functions/updateLeagueSeedGroups.updateLeagueSeedGroup
 
 resources:
   - ${file(../../common/resources/api-gateway-authorizer.yml)}
-  - ${file(resources/roles.yml)}

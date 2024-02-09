@@ -10,5 +10,8 @@ export const LAMBDAS = {
   SQL_UPDATE_LEAGUE_SETTINGS: `calcutta-league-service-${process.env.APP_ENV}-updateLeagueSettings`,
   SQL_SET_AUCTION_BID_RULES: `calcutta-league-service-${process.env.APP_ENV}-setAuctionBidRules`,
   SQL_SET_AUCTION_TAX_RULES: `calcutta-league-service-${process.env.APP_ENV}-setAuctionTaxRules`,
-  SQL_GET_AUCTION_SLOTS: `calcutta-league-service-${process.env.APP_ENV}-getAuctionSlots`
+  SQL_GET_AUCTION_SLOTS: `calcutta-league-service-${process.env.APP_ENV}-getAuctionSlots`,
+  SQL_NEW_SEED_GROUP: `calcutta-league-service-${process.env.APP_ENV}-newLeagueSeedGroup`,
+  SQL_UPDATE_SEED_GROUP: `calcutta-league-service-${process.env.APP_ENV}-updateLeagueSeedGroup`,
+  SQL_DELETE_SEED_GROUP: `calcutta-league-service-${process.env.APP_ENV}-deleteLeagueSeedGroup`
 };
