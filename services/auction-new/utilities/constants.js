@@ -8,7 +8,8 @@ export const LAMBDAS = {
   RDS_RESET_AUCTION: `calcutta-auction-service-v2-${process.env.APP_ENV}-rdsResetAuction`,
   DYNAMODB_RESET_AUCTION: `calcutta-auction-service-v2-${process.env.APP_ENV}-dynamodbResetAuction`,
   RDS_RESET_ITEM: `calcutta-auction-service-v2-${process.env.APP_ENV}-rdsResetAuctionItem`,
-  RDS_GET_UPDATED_AUCTION_DATA: `calcutta-auction-service-v2-${process.env.APP_ENV}-rdsGetUpdatedAuctionData`
+  RDS_GET_UPDATED_AUCTION_DATA: `calcutta-auction-service-v2-${process.env.APP_ENV}-rdsGetUpdatedAuctionData`,
+  SYNC_AUCTION_SLOTS: `calcutta-auction-service-v2-${process.env.APP_ENV}-syncAuctionSlots`
 };
 
 export const DYNAMODB_TABLES = {

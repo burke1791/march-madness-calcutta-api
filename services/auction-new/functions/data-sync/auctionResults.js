@@ -7,7 +7,7 @@ const AUCTION_RESULTS_TABLE = DYNAMODB_TABLES.AUCTION_RESULTS_TABLE;
 
 const dynamodb = new AWS.DynamoDB();
 
-export async function syncAuctionSlots(event, context, callback) {
+export async function syncAuctionResults(event, context, callback) {
   context.callbackWaitsForEmptyEventLoop = false;
 
   const { leagueId, data } = event;
@@ -34,19 +34,19 @@ export async function syncAuctionSlots(event, context, callback) {
 
     callback(null, {
       statusCode: 200,
-      body: JSON.stringify({ message: 'auction slots synced' })
+      body: JSON.stringify({ message: 'auction results synced' })
     });
   } catch (error) {
     console.log(error);
     callback(null, {
       statusCode: 500,
-      body: JSON.stringify({ message: 'error syncing auction slots' })
+      body: JSON.stringify({ message: 'error syncing auction results' })
     });
   }
 }
 
 function buildDynamoDbParams(leagueId, data) {
-  const parsedAuctionSlots = constructAuctionSlotList(data);
+  const parsedAuctionResults = constructAuctionResultsList(data);
 
   const dynamoDbParams = {
     TableName: AUCTION_RESULTS_TABLE,
@@ -57,20 +57,20 @@ function buildDynamoDbParams(leagueId, data) {
       }
     },
     ExpressionAttributeNames: {
-      '#AS': 'AuctionSlots'
+      '#AR': 'AuctionResults'
     },
     ExpressionAttributeValues: {
-      ':AS': {
-        L: parsedAuctionSlots
+      ':AR': {
+        L: parsedAuctionResults
       }
     },
-    UpdateExpression: 'SET #AS = :AS'
+    UpdateExpression: 'SET #AR = :AR'
   };
 
   return dynamoDbParams;
 }
 
-function constructAuctionSlotList(data) {
+function constructAuctionResultsList(data) {
   if (!Array.isArray(data)) return [];
 
   return data.map(d => {
@@ -82,25 +82,17 @@ function constructAuctionSlotList(data) {
         itemTypeId: {
           N: String(d.ItemTypeId)
         },
-        teamLogoUrl: d.TeamLogoUrl != null ?
-          { S: d.TeamLogoUrl } :
-          { NULL: true },
-        itemTypeName: {
-          S: d.ItemTypeName
+        userId: {
+          N: String(d.UserId)
         },
-        seed: d.Seed != null ?
-          { N: String(d.Seed) } :
-          { NULL: true },
-        itemName: {
-          S: d.ItemName
+        alias: {
+          S: d.Alias
         },
-        displayName: {
-          S: d.DisplayName
-        },
-        isComplete: {
-          BOOL: d.IsComplete
+        price: {
+          N: String(d.Price)
         }
       }
     };
   });
 }
+

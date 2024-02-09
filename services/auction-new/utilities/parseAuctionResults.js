@@ -5,13 +5,14 @@ export function parseAuctionResults(data) {
 
   return {
     leagueId: +data.LeagueId.N,
-    slots: parseSlots(slots),
-    results: parseResults(results)
+    slots: parseSlots(slots, results)
   };
 }
 
-function parseSlots(slots) {
+function parseSlots(slots, results) {
   return slots.map(s => {
+    const res = results.find(r => +r.M.itemId.N == +s.M.itemId.N && +r.M.itemTypeId.N && +s.M.itemTypeId.N);
+
     return {
       itemId: +s.M.itemId.N,
       itemName: s.M.itemName.S,
@@ -20,12 +21,10 @@ function parseSlots(slots) {
       itemTypeName: s.M.itemTypeName.S,
       itemTypeId: +s.M.itemTypeId.N,
       teamLogoUrl: s.M.teamLogoUrl?.NULL ? null : s.M.teamLogoUrl.S,
-      isComplete: s.M.isComplete.BOOL
+      isComplete: s.M.isComplete.BOOL,
+      userId: res != null ? +res.M.userId.N : null,
+      alias: res != null ? res.M.alias.S : null,
+      price: res != null ? +res.M.price.N : null
     }
   });
-}
-
-function parseResults(results) {
-  console.log(results);
-  return [];
 }

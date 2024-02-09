@@ -37,6 +37,15 @@ export async function resetAuction(event, context, callback) {
     const dynamodbLambdaResponse = await lambda.invoke(dynamodbLambdaParams).promise();
     console.log(dynamodbLambdaResponse);
 
+    const syncSlotsLambda = {
+      FunctionName: LAMBDAS.SYNC_AUCTION_SLOTS,
+      LogType: 'Tail',
+      Payload: JSON.stringify({ leagueId: leagueId, data: [] })
+    };
+
+    const syncResponse = await lambda.invoke(syncSlotsLambda).promise();
+    console.log(syncResponse);
+
     callback(null, { message: 'Auction reset successful' });
   } catch (error) {
     console.log(error);
