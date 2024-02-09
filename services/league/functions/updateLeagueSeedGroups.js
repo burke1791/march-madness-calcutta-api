@@ -1,9 +1,6 @@
-import AWS from 'aws-sdk';
 import { BigInt, Table, TinyInt, Varchar } from '../../../common/utilities/db';
-import { LAMBDAS } from '../utilities/constants';
 
 const connection = require('../../../common/utilities/db').connection;
-const lambda = new AWS.Lambda();
 
 export async function newLeagueSeedGroup(event, context, callback) {
   context.callbackWaitsForEmptyEventLoop = false;
