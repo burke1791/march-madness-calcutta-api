@@ -2,6 +2,7 @@ import AWS from 'aws-sdk';
 import { LAMBDAS } from '../utilities/constants';
 import { syncLeagueMembershipData } from '../common/syncLeagueMembershipData';
 import { syncAuctionSlots } from '../common/syncAuctionSlots';
+import { syncAuctionSettings } from '../common/syncAuctionSettings';
 
 const lambda = new AWS.Lambda();
 
@@ -38,12 +39,19 @@ export async function createLeague(event, context, callback) {
 
     const data = JSON.parse(result.Payload);
 
-    if (data[0]?.Error) {
+    if (data.recordset[0]?.Error) {
       throw new Error(data[0].Error);
     } else {
-      const leagueId = data[0].LeagueId;
+      const memberships = data.recordset;
+      const leagueId = memberships[0].LeagueId;
 
-      await syncLeagueMembershipData(leagueId, data);
+      await syncLeagueMembershipData(leagueId, memberships);
+
+      const settings = data.recordsets.length > 1 ? data.recordsets[1] : [];
+
+      if (settings.length > 0) {
+        await syncAuctionSettings(leagueId, 'AUCTION', settings);
+      }
 
       const lambdaSlotParams = {
         FunctionName: LAMBDAS.SQL_GET_AUCTION_SLOTS,

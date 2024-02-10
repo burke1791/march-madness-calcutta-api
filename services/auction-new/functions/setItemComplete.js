@@ -1,11 +1,12 @@
 import AWS from 'aws-sdk';
 import { verifyLeagueConnection, websocketBroadcast, websocketBroadcastToConnection } from '../utilities';
-import { DYNAMODB_TABLES, LAMBDAS } from '../utilities/constants';
+import { DYNAMODB_TABLES } from '../utilities/constants';
+import { getAuctionStatus } from './common/getAuctionStatus';
 
 const AUCTION_TABLE = DYNAMODB_TABLES.AUCTION_TABLE;
+const AUCTION_RESULTS_TABLE = DYNAMODB_TABLES.AUCTION_RESULTS_TABLE;
 
 const dynamodb = new AWS.DynamoDB();
-const lambda = new AWS.Lambda();
 
 export async function setItemComplete(event, context, callback) {
   context.callbackWaitsForEmptyEventLoop = false;
@@ -22,140 +23,104 @@ export async function setItemComplete(event, context, callback) {
       throw new Error('User is not allowed to perform this action');
     }
 
+    const auctionState = await getAuctionStatus(leagueId);
+
     const timestamp = new Date().valueOf();
+    const tsCond = (timestamp - 3000).toString();
 
     const itemCompleteParams = {
-      TableName: AUCTION_TABLE,
-      ReturnValues: 'ALL_NEW',
-      Key: {
-        LeagueId: {
-          N: String(leagueId)
-        }
-      },
-      ExpressionAttributeNames: {
-        '#TS': 'LastBidTimestamp',
-        '#S': 'Status'
-      },
-      ExpressionAttributeValues: {
-        ':S': {
-          S: 'sold'
+      ReturnItemCollectionMetrics: 'SIZE',
+      TransactItems: [
+        {
+          ConditionCheck: {
+            TableName: AUCTION_TABLE,
+            Key: {
+              LeagueId: {
+                N: String(leagueId)
+              }
+            },
+            ExpressionAttributeNames: {
+              '#TS': 'LastBidTimestamp',
+              '#S': 'Status'
+            },
+            ExpressionAttributeValues: {
+              ':S_cond': {
+                S: 'bidding'
+              },
+              ':TS_cond': {
+                N: (timestamp - 3000).toString() // hacky way to make sure we're not selling an item due to an unfortunate race condition
+              }
+            },
+            ConditionExpression: '#S = :S_cond and #TS < :TS_cond'
+          }
         },
-        ':S_cond': {
-          S: 'bidding'
+        {
+          Update: {
+            TableName: AUCTION_TABLE,
+            // ReturnValues: 'ALL_NEW',
+            Key: {
+              LeagueId: {
+                N: String(leagueId)
+              }
+            },
+            ExpressionAttributeNames: {
+              '#TS': 'LastBidTimestamp',
+              '#S': 'Status'
+            },
+            ExpressionAttributeValues: {
+              ':S': {
+                S: 'confirmed-sold'
+              },
+              ':S_cond': {
+                S: 'bidding'
+              },
+              ':TS_cond': {
+                N: tsCond // hacky way to make sure we're not selling an item due to an unfortunate race condition
+              }
+            },
+            UpdateExpression: 'SET #S = :S',
+            ConditionExpression: '#S = :S_cond and #TS < :TS_cond'
+          }
         },
-        ':TS_cond': {
-          N: (timestamp - 7000).toString() // hacky way to make sure we're not selling an item due to an unfortunate race condition
+        {
+          Update: {
+            TableName: AUCTION_RESULTS_TABLE,
+            Key: {
+              LeagueId: {
+                N: String(leagueId)
+              }
+            },
+            ExpressionAttributeNames: {
+              '#AR': 'AuctionResults'
+            },
+            ExpressionAttributeValues: {
+              ':AR': {
+                M: constructDynamodbAuctionResultItem(
+                  auctionState.CurrentItemId,
+                  auctionState.ItemTypeId,
+                  auctionState.CurrentItemWinner,
+                  auctionState.Alias,
+                  auctionState.CurrentItemPrice
+                )
+              }
+            },
+            UpdateExpression: 'SET #AR = list_append(#AR, :AR)'
+          }
         }
-      },
-      UpdateExpression: 'SET #S = :S',
-      ConditionExpression: '#S = :S_cond and #TS < :TS_cond'
+      ]
     }
 
-    const itemCompleteResponse = await dynamodb.updateItem(itemCompleteParams).promise();
+    const itemCompleteResponse = await dynamodb.transactWriteItems(itemCompleteParams).promise();
+    console.log(itemCompleteResponse);
 
-    const updateData = itemCompleteResponse.Attributes;
-    console.log(updateData);
-
-    const auctionObj = {
-      Status: updateData.Status.S,
-      CurrentItemId: updateData.CurrentItemId.N,
-      TeamLogoUrl: updateData.TeamLogoUrl.S,
-      ItemTypeId: updateData.ItemTypeId.N,
-      ItemName: updateData.ItemName.S,
-      Seed: updateData.Seed.N,
-      DisplayName: updateData.DisplayName.S,
-      CurrentItemPrice: updateData.CurrentItemPrice.N,
-      CurrentItemWinner: updateData.CurrentItemWinner.N,
-      Alias: updateData.Alias.S,
-      LastBidTimestamp: updateData.LastBidTimestamp.N
-    };
+    const newAuctionState = await getAuctionStatus(leagueId);
 
     const payload = {
-      msgObj: auctionObj,
+      msgObj: newAuctionState,
       msgType: 'auction_sale'
     }
 
     await websocketBroadcast(leagueId, payload, event.requestContext.domainName, event.requestContext.stage);
-
-    const lambdaPayload = {
-      leagueId: leagueId,
-      itemTypeId: updateData.ItemTypeId.N,
-      itemId: updateData.CurrentItemId.N,
-      userId: updateData.CurrentItemWinner.N,
-      price: updateData.CurrentItemPrice.N
-    }
-
-    const lambdaParams = {
-      FunctionName: LAMBDAS.RDS_SET_ITEM_COMPLETE,
-      LogType: 'Tail',
-      Payload: JSON.stringify(lambdaPayload)
-    }
-
-    const lambdaResponse = await lambda.invoke(lambdaParams).promise();
-    console.log(lambdaResponse);
-
-    const itemConfirmedCompleteParams = {
-      TableName: AUCTION_TABLE,
-      ReturnValues: 'ALL_NEW',
-      Key: {
-        LeagueId: {
-          N: String(leagueId)
-        }
-      },
-      ExpressionAttributeNames: {
-        '#S': 'Status'
-      },
-      ExpressionAttributeValues: {
-        ':S': {
-          S: 'confirmed-sold'
-        }
-      },
-      UpdateExpression: 'SET #S = :S'
-    }
-
-    const itemConfirmedCompleteResponse = await dynamodb.updateItem(itemConfirmedCompleteParams).promise();
-
-    const confirmedUpdateData = itemConfirmedCompleteResponse.Attributes;
-    console.log(confirmedUpdateData);
-
-    const confirmedAuctionObj = {
-      Status: confirmedUpdateData.Status.S,
-      CurrentItemId: confirmedUpdateData.CurrentItemId.N,
-      TeamLogoUrl: confirmedUpdateData.TeamLogoUrl.S,
-      ItemTypeId: confirmedUpdateData.ItemTypeId.N,
-      ItemName: confirmedUpdateData.ItemName.S,
-      Seed: confirmedUpdateData.Seed.N,
-      DisplayName: confirmedUpdateData.DisplayName.S,
-      CurrentItemPrice: confirmedUpdateData.CurrentItemPrice.N,
-      CurrentItemWinner: confirmedUpdateData.CurrentItemWinner.N,
-      Alias: confirmedUpdateData.Alias.S,
-      LastBidTimestamp: confirmedUpdateData.LastBidTimestamp.N
-    };
-
-    const confirmedPayload = {
-      msgObj: confirmedAuctionObj,
-      msgType: 'auction_sale'
-    }
-
-    await websocketBroadcast(leagueId, confirmedPayload, event.requestContext.domainName, event.requestContext.stage);
-
-    
-    // get a full data update
-    lambdaParams.FunctionName = LAMBDAS.RDS_GET_UPDATED_AUCTION_DATA;
-    lambdaParams.Payload = JSON.stringify({ leagueId: leagueId });
-
-    const updatedData = await lambda.invoke(lambdaParams).promise();
-    console.log(updatedData);
-
-    const syncData = JSON.parse(updatedData.Payload);
-    console.log(syncData);
-
-    const dataSyncPayload = {
-      msgObj: syncData,
-      msgType: 'auction_sync'
-    };
-
-    await websocketBroadcast(leagueId, dataSyncPayload, event.requestContext.domainName, event.requestContext.stage);
 
     callback(null, {
       statusCode: 200,
@@ -176,4 +141,24 @@ export async function setItemComplete(event, context, callback) {
       body: JSON.stringify({ message: 'error selling item '})
     });
   }
+}
+
+function constructDynamodbAuctionResultItem(itemId, itemTypeId, userId, alias, price) {
+  return {
+    itemId: {
+      N: String(itemId)
+    },
+    itemTypeId: {
+      N: String(itemTypeId)
+    },
+    userId: {
+      N: String(userId)
+    },
+    alias: {
+      S: alias
+    },
+    price: {
+      N: String(price)
+    }
+  };
 }
