@@ -1,13 +1,12 @@
 import AWS from 'aws-sdk';
 import { verifyLeagueConnection, websocketBroadcast, websocketBroadcastToConnection } from '../utilities';
-import { DYNAMODB_TABLES, LAMBDAS } from '../utilities/constants';
+import { DYNAMODB_TABLES } from '../utilities/constants';
 import { getAuctionStatus } from './common/getAuctionStatus';
 
 const AUCTION_TABLE = DYNAMODB_TABLES.AUCTION_TABLE;
 const AUCTION_RESULTS_TABLE = DYNAMODB_TABLES.AUCTION_RESULTS_TABLE;
 
 const dynamodb = new AWS.DynamoDB();
-const lambda = new AWS.Lambda();
 
 export async function setItemComplete(event, context, callback) {
   context.callbackWaitsForEmptyEventLoop = false;

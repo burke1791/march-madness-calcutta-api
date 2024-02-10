@@ -17,7 +17,7 @@ export async function getAuctionStatus(leagueId) {
 
   let auctionObj;
 
-  if (!auctionResponse.Item) {
+  if (!data.Item) {
     // auction record does not exist, send default "initial" auction values
     auctionObj = {
       Status: 'initial',
@@ -34,17 +34,17 @@ export async function getAuctionStatus(leagueId) {
     }
   } else {
     auctionObj = {
-      Status: auctionResponse.Item.Status.S,
-      CurrentItemId: auctionResponse.Item.CurrentItemId.N,
-      TeamLogoUrl: auctionResponse.Item.TeamLogoUrl.S,
-      ItemTypeId: auctionResponse.Item.ItemTypeId.N,
-      ItemName: auctionResponse.Item.ItemName.S,
-      Seed: auctionResponse.Item.Seed.N,
-      DisplayName: auctionResponse.Item.DisplayName.S,
-      CurrentItemPrice: auctionResponse.Item.CurrentItemPrice.N,
-      CurrentItemWinner: auctionResponse.Item.CurrentItemWinner.N,
-      Alias: auctionResponse.Item.Alias.S,
-      LastBidTimestamp: auctionResponse.Item.LastBidTimestamp.N
+      Status: data.Item.Status.S,
+      CurrentItemId: data.Item.CurrentItemId.N,
+      TeamLogoUrl: data.Item.TeamLogoUrl.S,
+      ItemTypeId: data.Item.ItemTypeId.N,
+      ItemName: data.Item.ItemName.S,
+      Seed: data.Item.Seed.N,
+      DisplayName: data.Item.DisplayName.S,
+      CurrentItemPrice: data.Item.CurrentItemPrice.N,
+      CurrentItemWinner: data.Item.CurrentItemWinner.N,
+      Alias: data.Item.Alias.S,
+      LastBidTimestamp: data.Item.LastBidTimestamp.N
     }
   }
 
