@@ -38,16 +38,16 @@ export async function createLeague(event, context, callback) {
     console.log(result);
 
     const data = JSON.parse(result.Payload);
+    const memberships = data[0];
 
-    if (data.recordset[0]?.Error) {
-      throw new Error(data[0].Error);
+    if (memberships[0]?.Error) {
+      throw new Error(memberships[0].Error);
     } else {
-      const memberships = data.recordset;
       const leagueId = memberships[0].LeagueId;
 
       await syncLeagueMembershipData(leagueId, memberships);
 
-      const settings = data.recordsets.length > 1 ? data.recordsets[1] : [];
+      const settings = data.length > 1 ? data[1] : [];
 
       if (settings.length > 0) {
         await syncAuctionSettings(leagueId, 'AUCTION', settings);
