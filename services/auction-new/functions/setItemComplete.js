@@ -102,9 +102,10 @@ export async function setItemComplete(event, context, callback) {
                   auctionState.Alias,
                   auctionState.CurrentItemPrice
                 )
-              }
+              },
+              ':EL': { L: [] }
             },
-            UpdateExpression: 'SET #AR = list_append(#AR, :AR)'
+            UpdateExpression: 'SET #AR = list_append(if_not_exists(#AR, :EL), :AR)'
           }
         }
       ]
