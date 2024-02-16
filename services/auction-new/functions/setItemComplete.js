@@ -145,23 +145,25 @@ export async function setItemComplete(event, context, callback) {
 }
 
 function constructDynamodbAuctionResultItem(itemId, itemTypeId, userId, alias, price) {
-  return {
-    M: {
-      itemId: {
-        N: String(itemId)
-      },
-      itemTypeId: {
-        N: String(itemTypeId)
-      },
-      userId: {
-        N: String(userId)
-      },
-      alias: {
-        S: alias
-      },
-      price: {
-        N: String(price)
+  return [
+    {
+      M: {
+        itemId: {
+          N: String(itemId)
+        },
+        itemTypeId: {
+          N: String(itemTypeId)
+        },
+        userId: {
+          N: String(userId)
+        },
+        alias: {
+          S: alias
+        },
+        price: {
+          N: String(price)
+        }
       }
     }
-  };
+  ];
 }
