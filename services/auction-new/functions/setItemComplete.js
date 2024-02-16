@@ -12,6 +12,7 @@ export async function setItemComplete(event, context, callback) {
   context.callbackWaitsForEmptyEventLoop = false;
 
   const data = JSON.parse(event.body);
+  console.log(data);
 
   const leagueId = data.leagueId;
   const connectionId = event.requestContext.connectionId;
