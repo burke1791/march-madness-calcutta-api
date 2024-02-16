@@ -95,7 +95,7 @@ export async function setItemComplete(event, context, callback) {
             },
             ExpressionAttributeValues: {
               ':AR': {
-                M: constructDynamodbAuctionResultItem(
+                L: constructDynamodbAuctionResultItem(
                   auctionState.CurrentItemId,
                   auctionState.ItemTypeId,
                   auctionState.CurrentItemWinner,
@@ -145,21 +145,25 @@ export async function setItemComplete(event, context, callback) {
 }
 
 function constructDynamodbAuctionResultItem(itemId, itemTypeId, userId, alias, price) {
-  return {
-    itemId: {
-      N: String(itemId)
-    },
-    itemTypeId: {
-      N: String(itemTypeId)
-    },
-    userId: {
-      N: String(userId)
-    },
-    alias: {
-      S: alias
-    },
-    price: {
-      N: String(price)
+  return [
+    {
+      M: {
+        itemId: {
+          N: String(itemId)
+        },
+        itemTypeId: {
+          N: String(itemTypeId)
+        },
+        userId: {
+          N: String(userId)
+        },
+        alias: {
+          S: alias
+        },
+        price: {
+          N: String(price)
+        }
+      }
     }
-  };
+  ];
 }
