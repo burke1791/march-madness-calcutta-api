@@ -24,6 +24,7 @@ export async function setItemComplete(event, context, callback) {
     }
 
     const auctionState = await getAuctionStatus(leagueId);
+    console.log(auctionState);
 
     const timestamp = new Date().valueOf();
     const tsCond = (timestamp - 3000).toString();
@@ -110,6 +111,7 @@ export async function setItemComplete(event, context, callback) {
         }
       ]
     }
+    console.log(itemCompleteParams);
 
     const itemCompleteResponse = await dynamodb.transactWriteItems(itemCompleteParams).promise();
     console.log(itemCompleteResponse);
