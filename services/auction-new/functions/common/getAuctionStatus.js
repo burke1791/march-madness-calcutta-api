@@ -13,7 +13,7 @@ export async function getAuctionStatus(leagueId) {
     }
   };
 
-  const data = await dynamodb.getItem(params);
+  const data = await dynamodb.getItem(params).promise();
 
   let auctionObj;
 
