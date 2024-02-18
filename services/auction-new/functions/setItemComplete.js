@@ -34,29 +34,6 @@ export async function setItemComplete(event, context, callback) {
       ReturnItemCollectionMetrics: 'SIZE',
       TransactItems: [
         {
-          ConditionCheck: {
-            TableName: AUCTION_TABLE,
-            Key: {
-              LeagueId: {
-                N: String(leagueId)
-              }
-            },
-            ExpressionAttributeNames: {
-              '#TS': 'LastBidTimestamp',
-              '#S': 'Status'
-            },
-            ExpressionAttributeValues: {
-              ':S_cond': {
-                S: 'bidding'
-              },
-              ':TS_cond': {
-                N: (timestamp - 3000).toString() // hacky way to make sure we're not selling an item due to an unfortunate race condition
-              }
-            },
-            ConditionExpression: '#S = :S_cond and #TS < :TS_cond'
-          }
-        },
-        {
           Update: {
             TableName: AUCTION_TABLE,
             // ReturnValues: 'ALL_NEW',
