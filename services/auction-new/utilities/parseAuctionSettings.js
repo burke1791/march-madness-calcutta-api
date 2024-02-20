@@ -6,12 +6,14 @@ export function parseAuctionSettings(data) {
   const auction = data?.AuctionSettings != null ? data.AuctionSettings.L : [];
   const bid = data?.BidRules != null ? data.BidRules.L : [];
   const tax = data?.TaxRules != null ? data.TaxRules.L : [];
+  const slots = data?.AuctionSlots != null ? data.AuctionSlots.L : [];
 
   return {
     leagueId: +data.LeagueId.N,
     auctionSettings: parseGeneralSettings(auction),
     bidRules: parseBidRules(bid),
-    taxRules: parseTaxRules(tax)
+    taxRules: parseTaxRules(tax),
+    slots: parseAuctionSlots(slots)
   };
 }
 
@@ -60,6 +62,20 @@ function parseTaxRules(rules) {
       maxThresholdInclusive: r.M.maxThresholdInclusive?.NULL ? null : +r.M.maxThresholdInclusive.N,
       taxRate: +r.M.taxRate.N,
       minThresholdExclusive: +r.M.minThresholdExclusive.N
+    }
+  });
+}
+
+function parseAuctionSlots(slots) {
+  return slots.map(s => {
+    return {
+      itemId: +s.M.itemId.N,
+      itemTypeId: +s.M.itemTypeId.N,
+      teamLogoUrl: s.M.teamLogoUrl?.NULL ? null : s.M.teamLogoUrl.S,
+      itemTypeName: s.M.itemTypeName.S,
+      seed: s.M.seed?.NULL ? null : +s.M.seed.N,
+      itemName: s.M.itemName.S,
+      displayName: s.M.displayName.S
     }
   });
 }

@@ -1,6 +1,6 @@
 import AWS from 'aws-sdk';
 import { LAMBDAS } from '../utilities/constants';
-import { syncAuctionSlots } from '../common/syncAuctionSlots';
+import { syncAuctionSettings } from '../common/syncAuctionSettings';
 
 const lambda = new AWS.Lambda();
 
@@ -29,7 +29,7 @@ export async function newLeagueSeedGroup(event, context, callback) {
     const data = JSON.parse(result.Payload);
 
     if (!data[0]?.Error && data.length > 0) {
-      await syncAuctionSlots(leagueId, data);
+      await syncAuctionSettings(leagueId, 'SLOT', data);
     }
 
     callback(null, data);

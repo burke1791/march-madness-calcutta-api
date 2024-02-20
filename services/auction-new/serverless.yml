@@ -16,8 +16,8 @@ custom:
   CONNECTION_TABLE: AuctionConnections
   CHAT_TABLE: AuctionChat
   AUCTION_SETTINGS_TABLE: AuctionSettings
-  AUCTION_RESULTS_TABLE: AuctionResults
   LEAGUE_MEMBERSHIP_TABLE: LeagueMembership
+  AUCTION_LEDGER_TABLE: AuctionLedger
 
 provider:
   name: aws
@@ -35,8 +35,8 @@ provider:
     CONNECTION_TABLE: ${self:custom.CONNECTION_TABLE}
     CHAT_TABLE: ${self:custom.CHAT_TABLE}
     AUCTION_SETTINGS_TABLE: ${self:custom.AUCTION_SETTINGS_TABLE}
-    AUCTION_RESULTS_TABLE: ${self:custom.AUCTION_RESULTS_TABLE}
     LEAGUE_MEMBERSHIP_TABLE: ${self:custom.LEAGUE_MEMBERSHIP_TABLE}
+    AUCTION_LEDGER_TABLE: ${self:custom.AUCTION_LEDGER_TABLE}
     DB_NAME: ${self:custom.provider.env.DB_NAME}
     DB_USER: ${self:custom.provider.env.DB_USER}
     DB_PASSWORD: ${self:custom.provider.env.DB_PASSWORD}
@@ -302,10 +302,10 @@ functions:
     role:
       Fn::GetAtt: [DynamoDBWebsocketRole, Arn]
 
-  syncAuctionSlots:
-    handler: functions/data-sync/auctionSlots.syncAuctionSlots
-    role:
-      Fn::GetAtt: [DynamoDBWebsocketRole, Arn]
+  # syncAuctionSlots:
+  #   handler: functions/data-sync/auctionSlots.syncAuctionSlots
+  #   role:
+  #     Fn::GetAtt: [DynamoDBWebsocketRole, Arn]
 
   syncAuctionResults:
     handler: functions/data-sync/auctionResults.syncAuctionResults

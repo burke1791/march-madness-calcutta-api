@@ -98,18 +98,24 @@ Resources:
       TableName: ${self:custom.AUCTION_SETTINGS_TABLE}
       TableClass: STANDARD
 
-  AuctionResultsTable:
+  AuctionLedgerTable:
     Type: AWS::DynamoDB::Table
     Properties:
       AttributeDefinitions:
         - AttributeName: LeagueId
           AttributeType: N
+        - AttributeName: LedgerId
+          AttributeType: N
       KeySchema:
         - AttributeName: LeagueId
           KeyType: HASH
+        - AttributeName: LedgerId
+          KeyType: RANGE
       BillingMode: PAY_PER_REQUEST
-      TableName: ${self:custom.AUCTION_RESULTS_TABLE}
-      TableClass: STANDARD
+      TableName: ${self:custom.AUCTION_LEDGER_TABLE}
+      Tags:
+        - Key: Description
+          Value: 'Contains the sale history for all auctions'
 
   LeagueMembershipTable:
     Type: AWS::DynamoDB::Table
