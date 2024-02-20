@@ -3,7 +3,7 @@ import { DYNAMODB_TABLES } from '../../utilities/constants';
 import { websocketBroadcastAll } from '../../utilities/websocketBroadcast';
 import { parseAuctionResults } from '../../utilities/parseAuctionResults';
 
-const AUCTION_RESULTS_TABLE = DYNAMODB_TABLES.AUCTION_RESULTS_TABLE;
+const AUCTION_SETTINGS_TABLE = DYNAMODB_TABLES.AUCTION_SETTINGS_TABLE;
 
 const dynamodb = new AWS.DynamoDB();
 
@@ -49,7 +49,7 @@ function buildDynamoDbParams(leagueId, data) {
   const parsedAuctionSlots = constructAuctionSlotList(data);
 
   const dynamoDbParams = {
-    TableName: AUCTION_RESULTS_TABLE,
+    TableName: AUCTION_SETTINGS_TABLE,
     ReturnValues: 'ALL_NEW',
     Key: {
       LeagueId: {

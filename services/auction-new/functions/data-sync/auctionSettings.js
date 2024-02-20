@@ -56,6 +56,8 @@ function buildDynamoDbParams(leagueId, settingCategory, settings) {
       return buildBidRuleDynamoDbParams(leagueId, settings);
     case 'TAX':
       return buildTaxRuleDynamoDbParams(leagueId, settings);
+    case 'SLOT':
+      return buildAuctionSlotsDynamoDbParams(leagueId, settings);
     default:
       console.log('unknown settingCategory', settingCategory);
       return {};
@@ -134,6 +136,31 @@ function buildTaxRuleDynamoDbParams(leagueId, settings) {
       }
     },
     UpdateExpression: 'SET #TR = :TR'
+  };
+
+  return dynamoDbParams;
+}
+
+function buildAuctionSlotsDynamoDbParams(leagueId, settings) {
+  const parsedAuctionSlots = constructAuctionSlotsList(settings);
+
+  const dynamoDbParams = {
+    TableName: AUCTION_SETTINGS_TABLE,
+    ReturnValues: 'ALL_NEW',
+    Key: {
+      LeagueId: {
+        N: String(leagueId)
+      }
+    },
+    ExpressionAttributeNames: {
+      '#AS': 'AuctionSlots'
+    },
+    ExpressionAttributeValues: {
+      ':AS': {
+        L: parsedAuctionSlots
+      }
+    },
+    UpdateExpression: 'SET #AS = :AS'
   };
 
   return dynamoDbParams;
@@ -258,6 +285,38 @@ function constructTaxRulesList(settings) {
   });
 }
 
+function constructAuctionSlotsList(data) {
+  if (!Array.isArray(data)) return [];
+
+  return data.map(d => {
+    return {
+      M: {
+        itemId: {
+          N: String(d.ItemId)
+        },
+        itemTypeId: {
+          N: String(d.ItemTypeId)
+        },
+        teamLogoUrl: d.TeamLogoUrl != null ?
+          { S: d.TeamLogoUrl } :
+          { NULL: true },
+        itemTypeName: {
+          S: d.ItemTypeName
+        },
+        seed: d.Seed != null ?
+          { N: String(d.Seed) } :
+          { NULL: true },
+        itemName: {
+          S: d.ItemName
+        },
+        displayName: {
+          S: d.DisplayName
+        }
+      }
+    };
+  });
+}
+
 /*
 AuctionSettings dynamodb fields
 
@@ -300,6 +359,17 @@ TaxRules: [
     MaxThresholdInclusive
     MinThresholdExclusive
     TaxRate
+  }
+]
+AuctionSlots: [
+  {
+    itemId
+    itemTypeId
+    teamLogoUrl
+    itemTypeName
+    seed
+    itemName
+    displayName
   }
 ]
 */

@@ -1,7 +1,6 @@
 import AWS from 'aws-sdk';
 import { LAMBDAS } from '../utilities/constants';
 import { syncLeagueMembershipData } from '../common/syncLeagueMembershipData';
-import { syncAuctionSlots } from '../common/syncAuctionSlots';
 import { syncAuctionSettings } from '../common/syncAuctionSettings';
 
 const lambda = new AWS.Lambda();
@@ -65,7 +64,9 @@ export async function createLeague(event, context, callback) {
 
       const slotData = JSON.parse(slots.Payload);
 
-      await syncAuctionSlots(leagueId, slotData);
+      if (slotData.length > 0) {
+        await syncAuctionSettings(leagueId, 'SLOT', slotData);
+      }
     }
 
     callback(null, { message: 'league created' });
