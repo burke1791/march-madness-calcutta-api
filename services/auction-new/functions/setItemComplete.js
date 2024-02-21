@@ -1,12 +1,14 @@
 import AWS from 'aws-sdk';
 import { verifyLeagueConnection, websocketBroadcast, websocketBroadcastToConnection } from '../utilities';
-import { DYNAMODB_TABLES } from '../utilities/constants';
-import { getAuctionStatus } from './common/getAuctionStatus';
+import { DYNAMODB_TABLES, LEDGER_ACTION } from '../utilities/constants';
+import { getAuctionStatus } from './common/auctionStatus';
+import { constructAuctionLedgerItem } from './common/auctionLedger';
 
 const AUCTION_TABLE = DYNAMODB_TABLES.AUCTION_TABLE;
-const AUCTION_RESULTS_TABLE = DYNAMODB_TABLES.AUCTION_RESULTS_TABLE;
+const AUCTION_LEDGER_TABLE = DYNAMODB_TABLES.AUCTION_LEDGER_TABLE;
 
 const dynamodb = new AWS.DynamoDB();
+
 
 export async function setItemComplete(event, context, callback) {
   context.callbackWaitsForEmptyEventLoop = false;
@@ -24,11 +26,23 @@ export async function setItemComplete(event, context, callback) {
       throw new Error('User is not allowed to perform this action');
     }
 
+    const timestamp = new Date().valueOf();
+    // hacky way to make sure we're not selling an item due to an unfortunate race condition
+    const tsCond = (timestamp - 3000).toString();
+
     const auctionState = await getAuctionStatus(leagueId);
     console.log(auctionState);
 
-    const timestamp = new Date().valueOf();
-    const tsCond = (timestamp - 3000).toString();
+    const ledgerSale = constructAuctionLedgerItem({
+      leagueId: leagueId,
+      ledgerId: timestamp,
+      ledgerAction: LEDGER_ACTION.SALE,
+      itemId: auctionState.CurrentItemId,
+      itemTypeId: auctionState.ItemTypeId,
+      userId: auctionState.CurrentItemWinner,
+      alias: auctionState.Alias,
+      price: auctionState.CurrentItemPrice
+    });
 
     const itemCompleteParams = {
       ReturnItemCollectionMetrics: 'SIZE',
@@ -54,7 +68,7 @@ export async function setItemComplete(event, context, callback) {
                 S: 'bidding'
               },
               ':TS_cond': {
-                N: tsCond // hacky way to make sure we're not selling an item due to an unfortunate race condition
+                N: tsCond
               }
             },
             UpdateExpression: 'SET #S = :S',
@@ -62,29 +76,9 @@ export async function setItemComplete(event, context, callback) {
           }
         },
         {
-          Update: {
-            TableName: AUCTION_RESULTS_TABLE,
-            Key: {
-              LeagueId: {
-                N: String(leagueId)
-              }
-            },
-            ExpressionAttributeNames: {
-              '#AR': 'AuctionResults'
-            },
-            ExpressionAttributeValues: {
-              ':AR': {
-                L: constructDynamodbAuctionResultItem(
-                  auctionState.CurrentItemId,
-                  auctionState.ItemTypeId,
-                  auctionState.CurrentItemWinner,
-                  auctionState.Alias,
-                  auctionState.CurrentItemPrice
-                )
-              },
-              ':EL': { L: [] }
-            },
-            UpdateExpression: 'SET #AR = list_append(if_not_exists(#AR, :EL), :AR)'
+          Put: {
+            TableName: AUCTION_LEDGER_TABLE,
+            Item: ledgerSale
           }
         }
       ]
@@ -95,6 +89,10 @@ export async function setItemComplete(event, context, callback) {
     console.log(itemCompleteResponse);
 
     const newAuctionState = await getAuctionStatus(leagueId);
+
+    if (newAuctionState.Status !== 'confirmed-sold') {
+      throw new Error('Unable to mark item sold');
+    }
 
     const payload = {
       msgObj: newAuctionState,
@@ -122,28 +120,4 @@ export async function setItemComplete(event, context, callback) {
       body: JSON.stringify({ message: 'error selling item '})
     });
   }
-}
-
-function constructDynamodbAuctionResultItem(itemId, itemTypeId, userId, alias, price) {
-  return [
-    {
-      M: {
-        itemId: {
-          N: String(itemId)
-        },
-        itemTypeId: {
-          N: String(itemTypeId)
-        },
-        userId: {
-          N: String(userId)
-        },
-        alias: {
-          S: alias
-        },
-        price: {
-          N: String(price)
-        }
-      }
-    }
-  ];
 }
