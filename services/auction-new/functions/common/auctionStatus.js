@@ -15,11 +15,13 @@ export async function getAuctionStatus(leagueId) {
 
   const data = await dynamodb.getItem(params).promise();
 
-  let auctionObj;
+  return parseAuctionStatus(data.Item);
+}
 
-  if (!data.Item) {
+export function parseAuctionStatus(data) {
+  if (!data) {
     // auction record does not exist, send default "initial" auction values
-    auctionObj = {
+    return {
       Status: 'initial',
       CurrentItemId: null,
       TeamLogoUrl: null,
@@ -31,22 +33,20 @@ export async function getAuctionStatus(leagueId) {
       CurrentItemWinner: null,
       Alias: null,
       LastBidTimestamp: null
-    }
+    };
   } else {
-    auctionObj = {
-      Status: data.Item.Status.S,
-      CurrentItemId: data.Item.CurrentItemId.N,
-      TeamLogoUrl: data.Item.TeamLogoUrl.S,
-      ItemTypeId: data.Item.ItemTypeId.N,
-      ItemName: data.Item.ItemName.S,
-      Seed: data.Item.Seed.N,
-      DisplayName: data.Item.DisplayName.S,
-      CurrentItemPrice: data.Item.CurrentItemPrice.N,
-      CurrentItemWinner: data.Item.CurrentItemWinner.N,
-      Alias: data.Item.Alias.S,
-      LastBidTimestamp: data.Item.LastBidTimestamp.N
+    return {
+      Status: data.Status.S,
+      CurrentItemId: data.CurrentItemId.N,
+      TeamLogoUrl: data.TeamLogoUrl.S,
+      ItemTypeId: data.ItemTypeId.N,
+      ItemName: data.ItemName.S,
+      Seed: data.Seed.N,
+      DisplayName: data.DisplayName.S,
+      CurrentItemPrice: data.CurrentItemPrice.N,
+      CurrentItemWinner: data.CurrentItemWinner.N,
+      Alias: data.Alias.S,
+      LastBidTimestamp: data.LastBidTimestamp.N
     }
-  }
-
-  return auctionObj;
+  };
 }
