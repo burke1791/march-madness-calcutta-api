@@ -19,7 +19,7 @@ export async function validateUser(leagueId, cognitoSub) {
 
   const data = await dynamodb.getItem(dynamodbParams).promise();
 
-  const leagueMemberships = parseLeagueMemberships(data.Item);
+  const leagueMemberships = parseLeagueMemberships(data.Item.LeagueMemberships.L);
 
   const member = leagueMemberships.find(lm => lm.M.cognitoSub.S == cognitoSub);
 
