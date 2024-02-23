@@ -55,6 +55,7 @@ export async function syncLeagueMembership(event, context, callback) {
  * @property {Number} LeagueMembershipId
  * @property {Number} UserId
  * @property {String} Alias
+ * @property {String} CognitoSub
  * @property {Number} RoleId
  * @property {String} RoleName
  */
@@ -107,6 +108,9 @@ function constructLeagueMembershipList(leagueMemberships) {
         },
         alias: {
           S: m.Alias
+        },
+        cognitoSub: {
+          S: m.CognitoSub
         },
         roleId: {
           N: String(m.RoleId)
