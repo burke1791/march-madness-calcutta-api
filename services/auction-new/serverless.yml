@@ -195,6 +195,60 @@ functions:
             headers:
               - x-cognito-token
 
+  getFullPayload:
+    handler: functions/auctionData.getFullPayload
+    role:
+      Fn::GetAtt: [DynamoDBWebsocketRole, Arn]
+    events:
+      - http:
+          path: getAuctionPayload/{leagueId}
+          method: get
+          integration: lambda
+          authorizer:
+            type: COGNITO_USER_POOLS
+            authorizerId:
+              Ref: ApiGatewayAuthorizer
+          cors:
+            origin: '*'
+            headers:
+              - x-cognito-token
+
+  getSettingsPayload:
+    handler: functions/auctionData.getSettingsPayload
+    role:
+      Fn::GetAtt: [DynamoDBWebsocketRole, Arn]
+    events:
+      - http:
+          path: getAuctionSettingsPayload/{leagueId}
+          method: get
+          integration: lambda
+          authorizer:
+            type: COGNITO_USER_POOLS
+            authorizerId:
+              Ref: ApiGatewayAuthorizer
+          cors:
+            origin: '*'
+            headers:
+              - x-cognito-token
+
+  getSalePayload:
+    handler: functions/auctionData.getAuctionSalePayload
+    role:
+      Fn::GetAtt: [DynamoDBWebsocketRole, Arn]
+    events:
+      - http:
+          path: getAuctionSalePayload/{leagueId}
+          method: get
+          integration: lambda
+          authorizer:
+            type: COGNITO_USER_POOLS
+            authorizerId:
+              Ref: ApiGatewayAuthorizer
+          cors:
+            origin: '*'
+            headers:
+              - x-cognito-token
+
   # Invokable functions
   rdsVerifyUserLeague:
     handler: functions/rds/verifyUserLeague.verifyUserLeague

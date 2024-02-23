@@ -1,5 +1,5 @@
 import AWS from 'aws-sdk';
-import { DYNAMODB_TABLES } from "../../utilities/constants";
+import { DYNAMODB_TABLES } from '../../utilities/constants';
 
 const dynamodb = new AWS.DynamoDB();
 
