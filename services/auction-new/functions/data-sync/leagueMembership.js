@@ -100,7 +100,7 @@ function constructLeagueMembershipList(leagueMemberships) {
   return leagueMemberships.map(m => {
     return {
       M: {
-        leaguemembershipId: {
+        leagueMembershipId: {
           N: String(m.LeagueMembershipId)
         },
         userId: {
