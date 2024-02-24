@@ -20,15 +20,15 @@ export async function getFullPayload(event, context, callback) {
     payload.status = await getAuctionStatus(leagueId);
 
     const allSettings = await getAuctionSettings(leagueId);
+    console.log(allSettings);
 
-    payload.settings = allSettings.settings;
+    payload.settings = allSettings.auctionSettings;
     payload.taxRules = allSettings.taxRules;
     payload.bidRules = allSettings.bidRules;
 
     const sales = await getAuctionSales(leagueId);
 
     const slots = populateSlotsWithSales(allSettings.slots, sales);
-    sortSlots(slots);
     payload.slots = slots;
     console.log(payload.slots);
 
@@ -56,8 +56,9 @@ export async function getSettingsPayload(event, context, callback) {
     const payload = {};
 
     const settings = await getAuctionSettings(leagueId, 'AuctionSettings, BidRules, TaxRules');
+    console.log(settings);
 
-    payload.settings = settings.settings;
+    payload.settings = settings.auctionSettings;
     payload.taxRules = settings.taxRules;
     payload.bidRules = settings.bidRules;
 
@@ -85,15 +86,15 @@ export async function getAuctionSalePayload(event, context, callback) {
     payload.status = await getAuctionStatus(leagueId);
 
     const allSettings = await getAuctionSettings(leagueId);
+    console.log(allSettings);
 
-    payload.settings = allSettings.settings;
+    payload.settings = allSettings.auctionSettings;
     payload.taxRules = allSettings.taxRules;
     payload.bidRules = allSettings.bidRules;
     
     const sales = await getAuctionSales(leagueId);
 
     const slots = populateSlotsWithSales(allSettings.slots, sales);
-    sortSlots(slots);
     payload.slots = slots;
     console.log(payload.slots);
 
@@ -130,36 +131,4 @@ function populateSlotsWithSales(slots, sales) {
       }
     }
   });
-}
-
-
-/**
- * @function
- * Sorts the slots array according to the following criteria:
- *  1. Unsold slots first
- *  2. Groups last
- *  3. Ascending seeds
- *  4. Alphabetical
- * 
- * Then it loops through the array and adds a "displayOrder" property
- * @param {Array<} slots
- */
-function sortSlots(slots) {
-  slots.sort((a, b) => {
-    return soldSortHelper(a.userId, b.userId) ||
-      b.itemTypeId - a.itemTypeId ||
-      a.seed - b.seed ||
-      a.itemName.localeCompare(b.itemName);
-  });
-
-  slots.forEach((s, i) => {
-    s.displayOrder = i + 1;
-  });
-}
-
-function soldSortHelper(userId1, userId2) {
-  if (userId1 == null && userId2 != null) return -1;
-  if (userId1 != null && userId2 == null) return 1;
-  
-  return 0;
 }
