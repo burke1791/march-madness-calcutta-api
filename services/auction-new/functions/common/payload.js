@@ -51,7 +51,7 @@ export async function computeUserData(leagueId, slots, taxRules) {
   const users = activeMembers.map(m => {
     const teams = findUserTeams(m.userId, slots);
     console.log(teams);
-    const naturalBuyIn = teams.reduce((val, t) => val + t.price);
+    const naturalBuyIn = teams.reduce((val, t) => val + t.price, 0);
     console.log(naturalBuyIn);
 
     return {
