@@ -75,14 +75,14 @@ function parseAuctionLedger(ledger) {
 
   return ledger.map(l => {
     return {
-      leagueId: +l.N.LeagueId,
-      ledgerId: +l.N.LedgerId,
-      alias: l.S.Alias,
-      itemId: +l.N.ItemId,
-      itemTypeId: +l.N.itemTypeId,
-      ledgerAction: l.S.LedgerAction,
-      price: +l.N.Price,
-      userId: +l.N.UserId
+      leagueId: +l.LeagueId.N,
+      ledgerId: +l.LedgerId.N,
+      alias: l.Alias.S,
+      itemId: +l.ItemId.N,
+      itemTypeId: +l.itemTypeId.N,
+      ledgerAction: l.LedgerAction.S,
+      price: +l.Price.N,
+      userId: +l.UserId.N
     }
   });
 }

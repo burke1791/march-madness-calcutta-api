@@ -2,6 +2,7 @@ import { getAuctionStatus } from './common/auctionStatus';
 import { validateUser } from './common/validateUser';
 import { getAuctionSettings } from './common/auctionSettings';
 import { getAuctionSales } from './common/auctionResults';
+import { computeUserData } from './common/payload';
 
 export async function getFullPayload(event, context, callback) {
   context.callbackWaitsForEmptyEventLoop = false;
@@ -28,6 +29,8 @@ export async function getFullPayload(event, context, callback) {
 
     payload.slots = populateSlotsWithSales(allSettings.slots, sales);
     console.log(payload.slots);
+
+    payload.users = await computeUserData(leagueId, payload.slots, payload.taxRules);
 
     callback(null, payload);
   } catch (error) {
@@ -89,6 +92,8 @@ export async function getAuctionSalePayload(event, context, callback) {
 
     payload.slots = populateSlotsWithSales(allSettings.slots, sales);
     console.log(payload.slots);
+
+    payload.users = await computeUserData(leagueId, payload.slots, payload.taxRules);
 
     callback(null, payload);
   } catch (error) {
