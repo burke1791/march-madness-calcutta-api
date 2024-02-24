@@ -1,5 +1,6 @@
 import AWS from 'aws-sdk';
 import { DYNAMODB_TABLES } from '../../utilities/constants';
+import { parseLeagueMemberships } from './leagueMembership';
 
 const dynamodb = new AWS.DynamoDB();
 
