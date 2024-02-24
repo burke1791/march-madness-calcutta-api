@@ -10,6 +10,8 @@ const dynamodb = new AWS.DynamoDB();
  * @returns {Array}
  */
 export async function getAuctionSales(leagueId) {
+  console.log('leagueId:', leagueId);
+
   const params = {
     TableName: DYNAMODB_TABLES.AUCTION_LEDGER_TABLE,
     ExpressionAttributeValues: {
@@ -71,15 +73,16 @@ function findAuctionSales(ledger) {
 }
 
 function parseAuctionLedger(ledger) {
-  if (!Array.isArray(ledger)) return [];
+  if (!Array.isArray(ledger) || ledger.length == 0) return [];
 
   return ledger.map(l => {
+    console.log(l);
     return {
       leagueId: +l.LeagueId.N,
       ledgerId: +l.LedgerId.N,
       alias: l.Alias.S,
       itemId: +l.ItemId.N,
-      itemTypeId: +l.itemTypeId.N,
+      itemTypeId: +l.ItemTypeId.N,
       ledgerAction: l.LedgerAction.S,
       price: +l.Price.N,
       userId: +l.UserId.N
