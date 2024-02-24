@@ -24,7 +24,7 @@ export async function getFullPayload(event, context, callback) {
     payload.taxRules = allSettings.taxRules;
     payload.bidRules = allSettings.bidRules;
 
-    const sales = getAuctionSales(leagueId);
+    const sales = await getAuctionSales(leagueId);
 
     payload.slots = populateSlotsWithSales(allSettings.slots, sales);
     console.log(payload.slots);
@@ -85,7 +85,7 @@ export async function getAuctionSalePayload(event, context, callback) {
     payload.taxRules = allSettings.taxRules;
     payload.bidRules = allSettings.bidRules;
     
-    const sales = getAuctionSales(leagueId);
+    const sales = await getAuctionSales(leagueId);
 
     payload.slots = populateSlotsWithSales(allSettings.slots, sales);
     console.log(payload.slots);
