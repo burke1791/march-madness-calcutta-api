@@ -21,7 +21,7 @@ export async function validateUser(leagueId, cognitoSub) {
 
   const leagueMemberships = parseLeagueMemberships(data.Item.LeagueMemberships.L);
 
-  const member = leagueMemberships.find(lm => lm.M.cognitoSub.S == cognitoSub);
+  const member = leagueMemberships.find(lm => lm.cognitoSub == cognitoSub);
 
   if (member == undefined) return false;
 
