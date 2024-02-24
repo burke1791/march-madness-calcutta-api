@@ -10,7 +10,7 @@ export async function getFullPayload(event, context, callback) {
   const leagueId = event.path.leagueId;
 
   try {
-    if (!validateUser(leagueId, cognitoSub)) {
+    if (!await validateUser(leagueId, cognitoSub)) {
       throw new Error('User is not a member of this league');
     }
 
@@ -24,7 +24,7 @@ export async function getFullPayload(event, context, callback) {
     payload.taxRules = allSettings.taxRules;
     payload.bidRules = allSettings.bidRules;
 
-    const sales = getAuctionSales(leagueId);
+    const sales = await getAuctionSales(leagueId);
 
     payload.slots = populateSlotsWithSales(allSettings.slots, sales);
     console.log(payload.slots);
@@ -44,7 +44,7 @@ export async function getSettingsPayload(event, context, callback) {
   const leagueId = event.path.leagueId;
 
   try {
-    if (!validateUser(leagueId, cognitoSub)) {
+    if (!await validateUser(leagueId, cognitoSub)) {
       throw new Error('User is not a member of this league');
     }
 
@@ -71,7 +71,7 @@ export async function getAuctionSalePayload(event, context, callback) {
   const leagueId = event.path.leagueId;
 
   try {
-    if (!validateUser(leagueId, cognitoSub)) {
+    if (!await validateUser(leagueId, cognitoSub)) {
       throw new Error('User is not a member of this league');
     }
 
@@ -85,7 +85,7 @@ export async function getAuctionSalePayload(event, context, callback) {
     payload.taxRules = allSettings.taxRules;
     payload.bidRules = allSettings.bidRules;
     
-    const sales = getAuctionSales(leagueId);
+    const sales = await getAuctionSales(leagueId);
 
     payload.slots = populateSlotsWithSales(allSettings.slots, sales);
     console.log(payload.slots);
