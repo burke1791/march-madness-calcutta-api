@@ -1,7 +1,7 @@
 import AWS from 'aws-sdk';
 import { verifyLeagueConnection, websocketBroadcast, websocketBroadcastToConnection } from '../utilities';
 import { DYNAMODB_TABLES, LAMBDAS } from '../utilities/constants';
-// import { getAuctionSettings } from './common/auctionSettings';
+import { getAuctionSettings } from './common/auctionSettings';
 
 const dynamodb = new AWS.DynamoDB();
 const lambda = new AWS.Lambda();
@@ -34,7 +34,8 @@ export async function placeBid(event, context, callback) {
     const userId = verifyResponse.UserId;
     const alias = verifyResponse.Alias;
 
-    const bidValidation = await verifyBid(leagueId, userId, amount);
+    // const bidValidation = await verifyBid(leagueId, userId, amount);
+    const bidValidation = await validateBid(leagueId, amount);
 
     if (!bidValidation.isValid) {
       throw new Error(bidValidation.errorMessage);
@@ -203,31 +204,31 @@ export async function placeBid(event, context, callback) {
  * @returns {verifyBidReturn}
  * @description verifies whether or not the proposed bid by the user is valid
  */
-async function verifyBid(leagueId, userId, bidAmount) {
-  const payload = {
-    leagueId: leagueId,
-    userId: userId,
-    bidAmount: bidAmount
-  };
+// async function verifyBid(leagueId, userId, bidAmount) {
+//   const payload = {
+//     leagueId: leagueId,
+//     userId: userId,
+//     bidAmount: bidAmount
+//   };
 
-  const lambdaParams = {
-    FunctionName: LAMBDAS.RDS_VERIFY_BID,
-    LogType: 'Tail',
-    Payload: JSON.stringify(payload)
-  }
+//   const lambdaParams = {
+//     FunctionName: LAMBDAS.RDS_VERIFY_BID,
+//     LogType: 'Tail',
+//     Payload: JSON.stringify(payload)
+//   }
 
-  const lambdaResponse = await lambda.invoke(lambdaParams).promise();
+//   const lambdaResponse = await lambda.invoke(lambdaParams).promise();
 
-  console.log(lambdaResponse);
+//   console.log(lambdaResponse);
 
-  const responsePayload = JSON.parse(lambdaResponse.Payload);
-  console.log(responsePayload);
+//   const responsePayload = JSON.parse(lambdaResponse.Payload);
+//   console.log(responsePayload);
 
-  return {
-    isValid: responsePayload.IsValid,
-    errorMessage: responsePayload.ValidationMessage
-  };
-}
+//   return {
+//     isValid: responsePayload.IsValid,
+//     errorMessage: responsePayload.ValidationMessage
+//   };
+// }
 
 /**
  * @function
@@ -235,8 +236,40 @@ async function verifyBid(leagueId, userId, bidAmount) {
  * @param {Number} bidAmount 
  * @returns {verifyBidReturn}
  */
-// async function validateBid(leagueId, bidAmount) {
-//   const bidRules = await getAuctionSettings(leagueId, 'BidRules');
+async function validateBid(leagueId, bidAmount) {
+  const { bidRules } = await getAuctionSettings(leagueId, 'BidRules');
 
+  const validation = {
+    isValid: true,
+    errorMessage: null
+  };
 
-// }
+  if (!Array.isArray(bidRules) || bidRules.length == 0) {
+    return validation;
+  }
+
+  // filter for all rules where the bidAmount is larger than the lower bound
+  // sort descending on the lower bound value
+  // the applicable rule is the first entry in the array
+  const filteredRules = bidRules.filter(r => r.minThresholdExclusive <= bidAmount);
+  filteredRules.sort((a, b) => b.minThresholdExclusive - a.minThresholdExclusive);
+
+  const rule = filteredRules.length > 0 ? bidRules[0] : null;
+
+  if (rule == null) {
+    console.log(filteredRules);
+    console.log(bidAmount);
+    // somehow no rules were applicable
+    return validation;
+  }
+
+  // Now check if the proposed bid increases as a multiple of the required increment from the rule's lower bound
+  if ((bidAmount - rule.minThresholdExclusive) % rule.minIncrement > 0) {
+    validation.isValid = false;
+    const root = rule.minThresholdExclusive.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
+    const increment = rule.minIncrement.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
+    validation.errorMessage = `Bid must increase from ${root} in multiples of ${increment}`;
+  }
+
+  return validation;
+}
