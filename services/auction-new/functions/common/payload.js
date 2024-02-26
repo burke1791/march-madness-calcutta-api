@@ -81,7 +81,7 @@ async function fullPayload(leagueId) {
 async function settingsPayload(leagueId) {
   const payload = {};
 
-  const settings = await getAuctionSettings(leagueId, 'AuctionSettings, BidRules, TaxRules');
+  const settings = await getAuctionSettings(leagueId, 'LeagueId, AuctionSettings, BidRules, TaxRules');
 
   payload.settings = settings.auctionSettings;
   payload.taxRules = settings.taxRules;
