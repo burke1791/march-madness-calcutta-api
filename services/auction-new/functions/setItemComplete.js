@@ -89,7 +89,6 @@ export async function setItemComplete(event, context, callback) {
     const itemCompleteResponse = await dynamodb.transactWriteItems(itemCompleteParams).promise();
     console.log(itemCompleteResponse);
 
-    const newAuctionState = await getAuctionStatus(leagueId);
     const payloadData = await auctionPayload(leagueId, 'FULL');
 
     if (payloadData.status.Status !== 'confirmed-sold') {
@@ -97,7 +96,7 @@ export async function setItemComplete(event, context, callback) {
     }
 
     const payload = {
-      msgObj: newAuctionState,
+      msgObj: payloadData,
       msgType: 'auction_sale'
     }
 
