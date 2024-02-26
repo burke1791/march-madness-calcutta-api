@@ -90,6 +90,14 @@ async function settingsPayload(leagueId) {
   return payload;
 }
 
+async function statusPayload(leagueId) {
+  const payload = {};
+
+  payload.status = await getAuctionStatus(leagueId);
+
+  return payload;
+}
+
 /**
  * @function
  * @param {Number} leagueId 
