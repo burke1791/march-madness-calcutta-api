@@ -4,7 +4,6 @@ import { parseLeagueMemberships } from './leagueMembership';
 import { getAuctionStatus } from './auctionStatus';
 import { getAuctionSettings } from './auctionSettings';
 import { getAuctionSales } from './auctionResults';
-import { computeUserData } from './payload';
 
 const dynamodb = new AWS.DynamoDB();
 
