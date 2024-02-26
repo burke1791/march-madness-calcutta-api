@@ -1,6 +1,7 @@
 import AWS from 'aws-sdk';
 import { verifyLeagueConnection, websocketBroadcast, websocketBroadcastToConnection } from '../utilities';
 import { DYNAMODB_TABLES, LAMBDAS } from '../utilities/constants';
+// import { getAuctionSettings } from './common/auctionSettings';
 
 const dynamodb = new AWS.DynamoDB();
 const lambda = new AWS.Lambda();
@@ -227,3 +228,15 @@ async function verifyBid(leagueId, userId, bidAmount) {
     errorMessage: responsePayload.ValidationMessage
   };
 }
+
+/**
+ * @function
+ * @param {Number} leagueId 
+ * @param {Number} bidAmount 
+ * @returns {verifyBidReturn}
+ */
+// async function validateBid(leagueId, bidAmount) {
+//   const bidRules = await getAuctionSettings(leagueId, 'BidRules');
+
+
+// }

@@ -1,6 +1,7 @@
 import AWS from 'aws-sdk';
 import { websocketBroadcast, verifyLeagueConnection, setNewAuctionTeam } from '../utilities';
 import { LAMBDAS } from '../utilities/constants';
+import { getNextItemRandom } from './common/getNextItem';
 
 const lambda = new AWS.Lambda();
 
@@ -35,8 +36,12 @@ export async function startAuction(event, context, callback) {
       throw new Error('Could not set league status');
     }
 
-    const teamObj = responsePayload[0];
+    const teamObj = getNextItemRandom(leagueId);
 
+    if (teamObj == undefined) {
+      throw new Error('No available slots');
+    }
+ 
     // set the next item in dynamodb
     const auctionObj = await setNewAuctionTeam(leagueId, teamObj);
 
@@ -44,8 +49,12 @@ export async function startAuction(event, context, callback) {
       throw new Error('Error updating auction record');
     }
 
+    const auctionPayload = {
+      status: auctionObj
+    };
+
     const payload = {
-      msgObj: auctionObj,
+      msgObj: auctionPayload,
       msgType: 'auction_open'
     };
 
