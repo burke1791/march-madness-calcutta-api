@@ -42,7 +42,6 @@ function parseGeneralSettings(settings) {
 
 function parseBidRules(rules) {
   return rules.map(r => {
-    console.log(r);
     return {
       auctionBidRuleId: +r.M.auctionBidRuleId.N,
       helpText: r.M.helpText.S,
