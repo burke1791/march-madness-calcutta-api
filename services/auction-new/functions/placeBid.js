@@ -1,10 +1,9 @@
 import AWS from 'aws-sdk';
 import { verifyLeagueConnection, websocketBroadcast, websocketBroadcastToConnection } from '../utilities';
-import { DYNAMODB_TABLES, LAMBDAS } from '../utilities/constants';
+import { DYNAMODB_TABLES } from '../utilities/constants';
 import { getAuctionSettings } from './common/auctionSettings';
 
 const dynamodb = new AWS.DynamoDB();
-const lambda = new AWS.Lambda();
 
 export async function placeBid(event, context, callback) {
   context.callbackWaitsForEmptyEventLoop = false;
@@ -34,7 +33,6 @@ export async function placeBid(event, context, callback) {
     const userId = verifyResponse.UserId;
     const alias = verifyResponse.Alias;
 
-    // const bidValidation = await verifyBid(leagueId, userId, amount);
     const bidValidation = await validateBid(leagueId, amount);
 
     if (!bidValidation.isValid) {
@@ -195,40 +193,6 @@ export async function placeBid(event, context, callback) {
  * @property {Boolean} isValid - whether or not the bid passes validation
  * @property {String} errorMessage - error text explaining why the bid did not pass validation
  */
-
-/**
- * @function verifyBid
- * @param {Number} leagueId - leagueId (league primary key in SQL Server)
- * @param {Number} userId - userId (user primary key in SQL Server)
- * @param {Number} bidAmount - the proposed bid amount
- * @returns {verifyBidReturn}
- * @description verifies whether or not the proposed bid by the user is valid
- */
-// async function verifyBid(leagueId, userId, bidAmount) {
-//   const payload = {
-//     leagueId: leagueId,
-//     userId: userId,
-//     bidAmount: bidAmount
-//   };
-
-//   const lambdaParams = {
-//     FunctionName: LAMBDAS.RDS_VERIFY_BID,
-//     LogType: 'Tail',
-//     Payload: JSON.stringify(payload)
-//   }
-
-//   const lambdaResponse = await lambda.invoke(lambdaParams).promise();
-
-//   console.log(lambdaResponse);
-
-//   const responsePayload = JSON.parse(lambdaResponse.Payload);
-//   console.log(responsePayload);
-
-//   return {
-//     isValid: responsePayload.IsValid,
-//     errorMessage: responsePayload.ValidationMessage
-//   };
-// }
 
 /**
  * @function
