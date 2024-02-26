@@ -48,11 +48,7 @@ async function findUnsoldSlots(leagueId) {
   const unsold = slots.filter(s => {
     const sale = sales.find(sl => sl.itemId === s.itemId && sl.itemTypeId === s.itemTypeId);
 
-    if (sale == undefined) {
-      return true;
-    }
-
-    return false;
+    return sale == undefined;
   });
 
   console.log(unsold);

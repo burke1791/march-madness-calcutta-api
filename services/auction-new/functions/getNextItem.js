@@ -43,9 +43,9 @@ export async function getNextItem(event, context, callback) {
     let teamObj;
 
     if (itemId && itemTypeId) {
-      teamObj = getNextItemSpecific(leagueId, itemId, itemTypeId);
+      teamObj = await getNextItemSpecific(leagueId, itemId, itemTypeId);
     } else {
-      teamObj = getNextItemRandom(leagueId);
+      teamObj = await getNextItemRandom(leagueId);
     }
 
     if (teamObj == undefined) {
