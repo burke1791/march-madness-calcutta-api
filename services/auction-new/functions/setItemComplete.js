@@ -3,6 +3,7 @@ import { verifyLeagueConnection, websocketBroadcast, websocketBroadcastToConnect
 import { DYNAMODB_TABLES, LEDGER_ACTION } from '../utilities/constants';
 import { getAuctionStatus } from './common/auctionStatus';
 import { constructAuctionLedgerItem } from './common/auctionLedger';
+import { auctionPayload } from './common/payload';
 
 const AUCTION_TABLE = DYNAMODB_TABLES.AUCTION_TABLE;
 const AUCTION_LEDGER_TABLE = DYNAMODB_TABLES.AUCTION_LEDGER_TABLE;
@@ -89,8 +90,9 @@ export async function setItemComplete(event, context, callback) {
     console.log(itemCompleteResponse);
 
     const newAuctionState = await getAuctionStatus(leagueId);
+    const payloadData = await auctionPayload(leagueId, 'FULL');
 
-    if (newAuctionState.Status !== 'confirmed-sold') {
+    if (payloadData.status.Status !== 'confirmed-sold') {
       throw new Error('Unable to mark item sold');
     }
 

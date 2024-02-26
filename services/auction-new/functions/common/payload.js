@@ -1,6 +1,10 @@
 import AWS from 'aws-sdk';
 import { DYNAMODB_TABLES } from '../../utilities/constants';
 import { parseLeagueMemberships } from './leagueMembership';
+import { getAuctionStatus } from './auctionStatus';
+import { getAuctionSettings } from './auctionSettings';
+import { getAuctionSales } from './auctionResults';
+import { computeUserData } from './payload';
 
 const dynamodb = new AWS.DynamoDB();
 
@@ -28,12 +32,72 @@ const dynamodb = new AWS.DynamoDB();
  */
 
 /**
+ * @typedef AuctionPayload
+ * @property {Array} [bidRules]
+ * @property {Array} [settings]
+ * @property {Array} [slots]
+ * @property {Array} [status]
+ * @property {Array} [taxRules]
+ * @property {Array} [users]
+ */
+
+/**
+ * @function
+ * @param {Number} leagueId 
+ * @param {('STATUS'|'FULL'|'SETTINGS')} payloadType 
+ * @returns {AuctionPayload}
+ */
+export async function auctionPayload(leagueId, payloadType) {
+  switch (payloadType) {
+    case 'FULL':
+      return await fullPayload(leagueId);
+    case 'SETTINGS':
+      return await settingsPayload(leagueId);
+    case 'STATUS':
+      return await statusPayload(leagueId);
+  }
+}
+
+async function fullPayload(leagueId) {
+  const payload = {};
+
+  payload.status = await getAuctionStatus(leagueId);
+
+  const allSettings = await getAuctionSettings(leagueId);
+
+  payload.settings = allSettings.auctionSettings;
+  payload.taxRules = allSettings.taxRules;
+  payload.bidRules = allSettings.bidRules;
+
+  const sales = await getAuctionSales(leagueId);
+
+  const slots = populateSlotsWithSales(allSettings.slots, sales);
+  payload.slots = slots;
+
+  payload.users = await computeUserData(leagueId, payload.slots, payload.taxRules);
+
+  return payload;
+}
+
+async function settingsPayload(leagueId) {
+  const payload = {};
+
+  const settings = await getAuctionSettings(leagueId, 'AuctionSettings, BidRules, TaxRules');
+
+  payload.settings = settings.auctionSettings;
+  payload.taxRules = settings.taxRules;
+  payload.bidRules = settings.bidRules;
+
+  return payload;
+}
+
+/**
  * @function
  * @param {Number} leagueId 
  * @param {Array} slots
  * @returns {Array<AuctionUser>}
  */
-export async function computeUserData(leagueId, slots, taxRules) {
+async function computeUserData(leagueId, slots, taxRules) {
   const dynamodbParams = {
     TableName: DYNAMODB_TABLES.LEAGUE_MEMBERSHIP_TABLE,
     Key: {
@@ -76,4 +140,28 @@ function calculateTax(buyIn, taxRules) {
 
   // @todo
   return 0;
+}
+
+function populateSlotsWithSales(slots, sales) {
+  if (!Array.isArray(slots)) return [];
+  
+  return slots.map(s => {
+    const sale = sales.find(sl => sl.itemId === s.itemId && sl.itemTypeId === s.itemTypeId);
+
+    if (sale == undefined) {
+      return {
+        ...s,
+        alias: null,
+        userId: null,
+        price: null
+      };
+    } else {
+      return {
+        ...s,
+        alias: sale.alias,
+        userId: sale.userId,
+        price: sale.price
+      }
+    }
+  });
 }
