@@ -152,13 +152,17 @@ export async function placeBid(event, context, callback) {
     console.log(bidResponse);
     console.log(bidResponse.ItemCollectionMetrics);
 
-    const auctionObj = {
+    const auctionStatus = {
       Status: 'bidding',
       CurrentItemPrice: amount,
       CurrentItemWinner: userId,
       Alias: alias,
       LastBidTimestamp: timestamp
     }
+
+    const auctionObj = {
+      status: auctionStatus
+    };
 
     const payload = {
       msgObj: auctionObj,
