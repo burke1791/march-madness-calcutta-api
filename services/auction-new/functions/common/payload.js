@@ -121,9 +121,7 @@ async function computeUserData(leagueId, slots, taxRules) {
 
   const users = activeMembers.map(m => {
     const teams = findUserTeams(m.userId, slots);
-    console.log(teams);
     const naturalBuyIn = teams.reduce((val, t) => val + t.price, 0);
-    console.log(naturalBuyIn);
 
     return {
       userId: m.userId,
@@ -145,8 +143,18 @@ function calculateTax(buyIn, taxRules) {
   if (!Array.isArray(taxRules)) return 0;
   if (taxRules.length == 0) return 0;
 
-  // @todo
-  return 0;
+  const filteredRules = taxRules.filter(r => r.minThresholdExclusive <= buyIn);
+
+  let tax = 0;
+  filteredRules.forEach(r => {
+    if (r.maxThresholdInclusive && buyIn >= r.maxThresholdInclusive) {
+      tax += (r.maxThresholdInclusive - r.minThresholdExclusive) * r.taxRate;
+    } else {
+      tax += (buyIn - r.minThresholdExclusive) * taxRate;
+    }
+  });
+  
+  return tax;
 }
 
 function populateSlotsWithSales(slots, sales) {
