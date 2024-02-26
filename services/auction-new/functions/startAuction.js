@@ -36,7 +36,7 @@ export async function startAuction(event, context, callback) {
       throw new Error('Could not set league status');
     }
 
-    const teamObj = getNextItemRandom(leagueId);
+    const teamObj = await getNextItemRandom(leagueId);
 
     if (teamObj == undefined) {
       throw new Error('No available slots');
