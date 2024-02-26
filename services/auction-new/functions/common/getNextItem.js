@@ -42,7 +42,7 @@ export async function getNextItemSpecific(leagueId, itemId, itemTypeId) {
 }
 
 async function findUnsoldSlots(leagueId) {
-  const { slots } = await getAuctionSettings(leagueId, 'AuctionSlots');
+  const { slots } = await getAuctionSettings(leagueId, 'LeagueId, AuctionSlots');
   const sales = await getAuctionSales(leagueId);
 
   const unsold = slots.filter(s => {

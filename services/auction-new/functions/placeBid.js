@@ -201,7 +201,7 @@ export async function placeBid(event, context, callback) {
  * @returns {verifyBidReturn}
  */
 async function validateBid(leagueId, bidAmount) {
-  const { bidRules } = await getAuctionSettings(leagueId, 'BidRules');
+  const { bidRules } = await getAuctionSettings(leagueId, 'LeagueId, BidRules');
 
   const validation = {
     isValid: true,
