@@ -1,8 +1,5 @@
-import { getAuctionStatus } from './common/auctionStatus';
 import { validateUser } from './common/validateUser';
-import { getAuctionSettings } from './common/auctionSettings';
-import { getAuctionSales } from './common/auctionResults';
-import { computeUserData } from './common/payload';
+import { auctionPayload } from './common/payload';
 
 export async function getFullPayload(event, context, callback) {
   context.callbackWaitsForEmptyEventLoop = false;
@@ -15,24 +12,7 @@ export async function getFullPayload(event, context, callback) {
       throw new Error('User is not a member of this league');
     }
 
-    const payload = {};
-
-    payload.status = await getAuctionStatus(leagueId);
-
-    const allSettings = await getAuctionSettings(leagueId);
-    console.log(allSettings);
-
-    payload.settings = allSettings.auctionSettings;
-    payload.taxRules = allSettings.taxRules;
-    payload.bidRules = allSettings.bidRules;
-
-    const sales = await getAuctionSales(leagueId);
-
-    const slots = populateSlotsWithSales(allSettings.slots, sales);
-    payload.slots = slots;
-    console.log(payload.slots);
-
-    payload.users = await computeUserData(leagueId, payload.slots, payload.taxRules);
+    const payload = await auctionPayload(leagueId, 'FULL');
 
     callback(null, payload);
   } catch (error) {
@@ -53,14 +33,7 @@ export async function getSettingsPayload(event, context, callback) {
       throw new Error('User is not a member of this league');
     }
 
-    const payload = {};
-
-    const settings = await getAuctionSettings(leagueId, 'AuctionSettings, BidRules, TaxRules');
-    console.log(settings);
-
-    payload.settings = settings.auctionSettings;
-    payload.taxRules = settings.taxRules;
-    payload.bidRules = settings.bidRules;
+    const payload = auctionPayload(leagueId, 'SETTINGS');
 
     callback(null, payload);
   } catch (error) {
@@ -81,24 +54,7 @@ export async function getAuctionSalePayload(event, context, callback) {
       throw new Error('User is not a member of this league');
     }
 
-    const payload = {};
-
-    payload.status = await getAuctionStatus(leagueId);
-
-    const allSettings = await getAuctionSettings(leagueId);
-    console.log(allSettings);
-
-    payload.settings = allSettings.auctionSettings;
-    payload.taxRules = allSettings.taxRules;
-    payload.bidRules = allSettings.bidRules;
-    
-    const sales = await getAuctionSales(leagueId);
-
-    const slots = populateSlotsWithSales(allSettings.slots, sales);
-    payload.slots = slots;
-    console.log(payload.slots);
-
-    payload.users = await computeUserData(leagueId, payload.slots, payload.taxRules);
+    const payload = auctionPayload(leagueId, 'FULL');
 
     callback(null, payload);
   } catch (error) {
@@ -106,29 +62,4 @@ export async function getAuctionSalePayload(event, context, callback) {
 
     callback(null, { message: 'ERROR!' });
   }
-}
-
-
-function populateSlotsWithSales(slots, sales) {
-  if (!Array.isArray(slots)) return [];
-  
-  return slots.map(s => {
-    const sale = sales.find(sl => sl.itemId === s.itemId && sl.itemTypeId === s.itemTypeId);
-
-    if (sale == undefined) {
-      return {
-        ...s,
-        alias: null,
-        userId: null,
-        price: null
-      };
-    } else {
-      return {
-        ...s,
-        alias: sale.alias,
-        userId: sale.userId,
-        price: sale.price
-      }
-    }
-  });
 }
