@@ -1,8 +1,5 @@
-import { getAuctionStatus } from './common/auctionStatus';
 import { validateUser } from './common/validateUser';
-import { getAuctionSettings } from './common/auctionSettings';
-import { getAuctionSales } from './common/auctionResults';
-import { auctionPayload, computeUserData } from './common/payload';
+import { auctionPayload } from './common/payload';
 
 export async function getFullPayload(event, context, callback) {
   context.callbackWaitsForEmptyEventLoop = false;
