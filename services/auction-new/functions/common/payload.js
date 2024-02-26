@@ -150,7 +150,7 @@ function calculateTax(buyIn, taxRules) {
     if (r.maxThresholdInclusive && buyIn >= r.maxThresholdInclusive) {
       tax += (r.maxThresholdInclusive - r.minThresholdExclusive) * r.taxRate;
     } else {
-      tax += (buyIn - r.minThresholdExclusive) * taxRate;
+      tax += (buyIn - r.minThresholdExclusive) * r.taxRate;
     }
   });
   
