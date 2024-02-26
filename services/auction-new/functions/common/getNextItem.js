@@ -1,8 +1,5 @@
-import AWS from 'aws-sdk';
 import { getAuctionSettings } from './auctionSettings';
 import { getAuctionSales } from './auctionResults';
-
-const dynamodb = new AWS.DynamoDB();
 
 /**
  * @typedef AuctionSlot
