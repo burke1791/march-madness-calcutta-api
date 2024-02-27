@@ -4,7 +4,6 @@ import { DYNAMODB_TABLES } from "../utilities/constants";
 import { constructAuctionLedgerItem } from './common/auctionLedger';
 import { auctionPayload } from './common/payload';
 
-const lambda = new AWS.Lambda();
 const dynamodb = new AWS.DynamoDB();
 
 export async function resetAuctionItem(event, context, callback) {

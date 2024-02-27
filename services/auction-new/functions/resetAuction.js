@@ -52,12 +52,6 @@ export async function dynamodbResetAuction(event, context, callback) {
   const { leagueId } = event;
 
   try {
-    const verifyResponse = await verifyLeagueConnection(leagueId, connectionId);
-
-    if (verifyResponse === false || +verifyResponse.RoleId > 2) {
-      throw new Error('User is not allowed to perform this action');
-    }
-
     // delete the auction record in dynamodb
     const deleteAuctionParams = {
       TableName: DYNAMODB_TABLES.AUCTION_TABLE,
@@ -77,7 +71,7 @@ export async function dynamodbResetAuction(event, context, callback) {
     // broadcast updated data to all users in the auction room (if any)
     if (await checkConnectedUsers(leagueId)) {
       const payload = await auctionPayload(leagueId, 'FULL');
-      payload.message = `${verifyResponse.Alias} reset all auction data`;
+      payload.message = 'Auction has been reset';
 
       const websocketPayload = {
         msgObj: payload,
@@ -112,7 +106,7 @@ async function deleteBidHistory(leagueId) {
 
   const itemsToDelete = [...bidHistoryResults.Items];
 
-  const deleteRequests = [];
+  let deleteRequests = [];
   let deleteItemCount = 0;
 
   while (itemsToDelete.length > 0) {
@@ -167,7 +161,7 @@ async function deleteAuctionLedger(leagueId) {
   const ledgerItems = await dynamodb.query(ledgerQuery).promise();
   const itemsToDelete = [...ledgerItems.Items];
 
-  const deleteRequests = [];
+  let deleteRequests = [];
   let deleteItemCount = 0;
 
   while (itemsToDelete.length > 0) {
