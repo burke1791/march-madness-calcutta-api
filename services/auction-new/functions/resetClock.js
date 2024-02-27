@@ -21,8 +21,12 @@ export async function resetClock(event, context, callback) {
       throw new Error('Error updating auction record');
     }
 
+    const auctionPayload = {
+      status: resetObj
+    }
+
     const payload = {
-      msgObj: resetObj,
+      msgObj: auctionPayload,
       msgType: 'auction_bid'
     }
 
