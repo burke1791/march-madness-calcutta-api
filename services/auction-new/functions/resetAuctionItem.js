@@ -3,6 +3,7 @@ import { verifyLeagueConnection, websocketBroadcastToConnection, websocketBroadc
 import { DYNAMODB_TABLES } from "../utilities/constants";
 import { constructAuctionLedgerItem } from './common/auctionLedger';
 import { auctionPayload } from './common/payload';
+import { getAuctionStatus } from './common/auctionStatus';
 
 const dynamodb = new AWS.DynamoDB();
 
@@ -58,66 +59,87 @@ export async function resetAuctionItem(event, context, callback) {
 }
 
 async function resetItemInDynamoDb(leagueId, itemId, itemTypeId, userId, alias) {
-  const params = {
-    ReturnItemCollectionMetrics: 'SIZE',
-    TransactItems: [
-      {
-        Put: {
-          TableName: DYNAMODB_TABLES.AUCTION_LEDGER_TABLE,
-          Item: constructAuctionLedgerItem({
-            leagueId: leagueId,
-            ledgerId: new Date().valueOf(),
-            ledgerAction: 'REFUND',
-            itemId: itemId,
-            itemTypeId: itemTypeId,
-            userId: userId,
-            alias: alias,
-            price: 0
-          })
-        }
-      },
-      {
-        Update: {
-          TableName: DYNAMODB_TABLES.AUCTION_TABLE,
-          Key: {
-            LeagueId: {
-              N: String(leagueId)
-            }
-          },
-          ExpressionAttributeNames: {
-            '#S': 'Status',
-            '#CId': 'CurrentItemId',
-            '#P': 'CurrentItemPrice',
-            '#W': 'CurrentItemWinner',
-            '#A': 'Alias',
-            '#IT': 'ItemTypeId',
-            '#PB': 'PrevBidId'
-          },
-          ExpressionAttributeValues: {
-            ':P': {
-              N: String(0)
-            },
-            ':W': { NULL: true },
-            ':A': { NULL: true },
-            ':PB': { NULL: true },
-            ':S': {
-              S: 'confirmed-sold'
-            },
-            ':CId': {
-              N: String(itemId)
-            },
-            ':IT': {
-              N: String(itemTypeId)
-            }
-          },
-          UpdateExpression: 'SET #P = :P, #W = :W, #A = :A, #PB = :PB',
-          ConditionExpression: '#S = :S and #CId = :CId and #IT = :IT'
-        }
-      }
-    ]
-  };
+  const auctionStatus = await getAuctionStatus(leagueId);
 
-  const resetResponse = await dynamodb.transactWriteItems(params).promise();
-  console.log(resetResponse);
-  console.log(resetResponse.ItemCollectionMetrics);
+  if (auctionStatus.CurrentItemId == itemId && auctionStatus.ItemTypeId == itemTypeId) {
+    const params = {
+      ReturnItemCollectionMetrics: 'SIZE',
+      TransactItems: [
+        {
+          Put: {
+            TableName: DYNAMODB_TABLES.AUCTION_LEDGER_TABLE,
+            Item: constructAuctionLedgerItem({
+              leagueId: leagueId,
+              ledgerId: new Date().valueOf(),
+              ledgerAction: 'REFUND',
+              itemId: itemId,
+              itemTypeId: itemTypeId,
+              userId: userId,
+              alias: alias,
+              price: 0
+            })
+          }
+        },
+        {
+          Update: {
+            TableName: DYNAMODB_TABLES.AUCTION_TABLE,
+            Key: {
+              LeagueId: {
+                N: String(leagueId)
+              }
+            },
+            ExpressionAttributeNames: {
+              '#S': 'Status',
+              '#CId': 'CurrentItemId',
+              '#P': 'CurrentItemPrice',
+              '#W': 'CurrentItemWinner',
+              '#A': 'Alias',
+              '#IT': 'ItemTypeId',
+              '#PB': 'PrevBidId'
+            },
+            ExpressionAttributeValues: {
+              ':P': {
+                N: String(0)
+              },
+              ':W': { NULL: true },
+              ':A': { NULL: true },
+              ':PB': { NULL: true },
+              ':S': {
+                S: 'confirmed-sold'
+              },
+              ':CId': {
+                N: String(itemId)
+              },
+              ':IT': {
+                N: String(itemTypeId)
+              }
+            },
+            UpdateExpression: 'SET #P = :P, #W = :W, #A = :A, #PB = :PB',
+            ConditionExpression: '#S = :S and #CId = :CId and #IT = :IT'
+          }
+        }
+      ]
+    };
+
+    const resetResponse = await dynamodb.transactWriteItems(params).promise();
+    console.log(resetResponse);
+    console.log(resetResponse.ItemCollectionMetrics);
+  } else {
+    const params = {
+      TableName: DYNAMODB_TABLES.AUCTION_LEDGER_TABLE,
+      Item: constructAuctionLedgerItem({
+        leagueId: leagueId,
+        ledgerId: new Date().valueOf(),
+        ledgerAction: 'REFUND',
+        itemId: itemId,
+        itemTypeId: itemTypeId,
+        userId: userId,
+        alias: alias,
+        price: 0
+      })
+    };
+
+    const resetResponse = await dynamodb.putItem(params).promise();
+    console.log(resetResponse);
+  }
 }

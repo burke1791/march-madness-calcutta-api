@@ -1,9 +1,5 @@
-// import AWS from 'aws-sdk';
 import { websocketBroadcast, verifyLeagueConnection, setNewAuctionTeam, websocketBroadcastToConnection } from '../utilities';
-// import { LAMBDAS } from '../utilities/constants';
 import { getNextItemRandom, getNextItemSpecific } from './common/getNextItem';
-
-// const lambda = new AWS.Lambda();
 
 export async function getNextItem(event, context, callback) {
   context.callbackWaitsForEmptyEventLoop = false;
@@ -20,25 +16,6 @@ export async function getNextItem(event, context, callback) {
     if (verifyResponse === false || +verifyResponse.RoleId > 2) {
       throw new Error('User is not allowed to perform this action');
     }
-
-    // get the next item information from RDS
-    // const lambdaParams = {
-    //   FunctionName: LAMBDAS.RDS_GET_NEXT_ITEM,
-    //   LogType: 'Tail',
-    //   Payload: JSON.stringify({
-    //     leagueId: leagueId,
-    //     itemId: itemId,
-    //     itemTypeId: itemTypeId
-    //   })
-    // };
-
-    // const lambdaResponse = await lambda.invoke(lambdaParams).promise();
-    // const responsePayload = JSON.parse(lambdaResponse.Payload);
-    // console.log(responsePayload);
-
-    // if (!responsePayload.length || !!responsePayload[0]?.Error) {
-    //   throw new Error('No available teams');
-    // }
 
     let teamObj;
 
