@@ -145,7 +145,7 @@ export async function undoBid(event, context, callback) {
     };
 
     const payload = {
-      msgObj: auctionObj,
+      msgObj: { status: auctionObj },
       msgType: 'auction_bid'
     };
 

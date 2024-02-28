@@ -85,14 +85,12 @@ async function resetItemInDynamoDb(leagueId, itemId, itemTypeId, userId, alias) 
             }
           },
           ExpressionAttributeNames: {
-            '#TS': 'LastBidTimestamp',
             '#S': 'Status',
             '#CId': 'CurrentItemId',
             '#P': 'CurrentItemPrice',
             '#W': 'CurrentItemWinner',
             '#A': 'Alias',
             '#IT': 'ItemTypeId',
-            '#B': 'BidId',
             '#PB': 'PrevBidId'
           },
           ExpressionAttributeValues: {
