@@ -25,7 +25,7 @@ export async function resetAuction(event, context, callback) {
 
     console.log(responsePayload);
 
-    if (!responsePayload || !!responsePayload[0]?.Error) {
+    if (Array.isArray(responsePayload) && !!responsePayload[0]?.Error) {
       throw new Error(responsePayload[0].Error);
     }
 
