@@ -1,6 +1,9 @@
 import AWS from 'aws-sdk';
 import { verifyLeagueConnection, websocketBroadcastToConnection, closeDynamoDbAuction } from '../utilities';
 import { LAMBDAS } from '../utilities/constants';
+import { getAuctionSettings } from './common/auctionSettings';
+import { getAuctionSales } from './common/auctionResults';
+import { populateSlotsWithSales } from './common/payload';
 
 const lambda = new AWS.Lambda();
 
@@ -20,11 +23,16 @@ export async function closeAuction(event, context, callback) {
       throw new Error('User is not allowed to perform this action');
     }
 
+    const { slots } = await getAuctionSettings(leagueId, 'AuctionSlots');
+    const sales = await getAuctionSales(leagueId);
+    const results =  populateSlotsWithSales(slots, sales);
+    console.log(results);
+
     // update the auction status in SQL Server
     const lambdaParams = {
       FunctionName: LAMBDAS.RDS_CLOSE_AUCTION,
       LogType: 'Tail',
-      Payload: JSON.stringify({ leagueId: leagueId })
+      Payload: JSON.stringify({ leagueId: leagueId, results: results })
     }
 
     const lambdaResponse = await lambda.invoke(lambdaParams).promise();
