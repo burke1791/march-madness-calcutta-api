@@ -1,5 +1,6 @@
 import AWS from 'aws-sdk';
 import { DYNAMODB_TABLES } from './constants';
+import { parseAuctionStatus } from '../functions/common/auctionStatus';
 
 const dynamodb = new AWS.DynamoDB();
 
@@ -224,7 +225,9 @@ export async function closeDynamoDbAuction(leagueId) {
   }
 
   try {
-    await dynamodb.updateItem(auctionParams).promise();
+    const status = await dynamodb.updateItem(auctionParams).promise();
+
+    return parseAuctionStatus(status.Attributes);
 
     return true;
   } catch (error) {
