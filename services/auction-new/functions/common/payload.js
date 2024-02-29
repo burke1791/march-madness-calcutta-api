@@ -157,7 +157,7 @@ function calculateTax(buyIn, taxRules) {
   return tax;
 }
 
-function populateSlotsWithSales(slots, sales) {
+export function populateSlotsWithSales(slots, sales) {
   if (!Array.isArray(slots)) return [];
   
   return slots.map(s => {
