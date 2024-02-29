@@ -23,7 +23,7 @@ export async function closeAuction(event, context, callback) {
       throw new Error('User is not allowed to perform this action');
     }
 
-    const { slots } = await getAuctionSettings(leagueId, 'AuctionSlots');
+    const { slots } = await getAuctionSettings(leagueId, 'LeagueId, AuctionSlots');
     const sales = await getAuctionSales(leagueId);
     const results =  populateSlotsWithSales(slots, sales);
     console.log(results);
@@ -39,15 +39,15 @@ export async function closeAuction(event, context, callback) {
     const responsePayload = JSON.parse(lambdaResponse.Payload);
     console.log(responsePayload);
 
-    const isAuctionClosed = await closeDynamoDbAuction(leagueId);
+    const status = await closeDynamoDbAuction(leagueId);
 
-    if (!isAuctionClosed) {
+    if (status === false) {
       throw new Error('Unable to close auction in DynamoDb');
     }
 
     const payload = {
       msgType: 'auction_close',
-      message: 'Auction closed'
+      msgObj: { status: status, message: 'Auction closed' }
     };
 
     // send the info to all active websocket connections
