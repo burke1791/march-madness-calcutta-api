@@ -37,7 +37,7 @@ export async function getNextItem(event, context, callback) {
       const responsePayload = JSON.parse(lambdaResponse.Payload);
       console.log(responsePayload);
       
-      if (!responsePayload.length || !!responsePayload[0]?.Error) {
+      if (!responsePayload?.length || !!responsePayload[0]?.Error) {
         throw new Error('Could not set league status');
       }
     }
