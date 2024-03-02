@@ -1,5 +1,5 @@
 import AWS from 'aws-sdk';
-import { websocketBroadcast, verifyLeagueConnection, setNewAuctionTeam } from '../utilities';
+import { websocketBroadcast, verifyLeagueConnection, setNewAuctionTeam, websocketBroadcastToConnection } from '../utilities';
 import { LAMBDAS } from '../utilities/constants';
 import { getNextItemRandom } from './common/getNextItem';
 import { reopenDynamoDbAuction } from '../utilities/updateAuctionRecord';
