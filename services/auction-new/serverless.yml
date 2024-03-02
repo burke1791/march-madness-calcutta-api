@@ -249,6 +249,25 @@ functions:
             headers:
               - x-cognito-token
 
+  httpCloseAuction:
+    handler: functions/closeAuction.closeAuctionHttp
+    role:
+      Fn::GetAtt: [DynamoDBWebsocketRole, Arn]
+    events:
+      - http:
+          path: closeAuction/{leagueId}
+          method: post
+          integration: lambda
+          authorizer:
+            type: COGNITO_USER_POOLS
+            authorizerId:
+              Ref: ApiGatewayAuthorizer
+          cors:
+            origin: '*'
+            headers:
+              - x-cognito-token
+              - Content-Type
+
   # Invokable functions
   rdsVerifyUserLeague:
     handler: functions/rds/verifyUserLeague.verifyUserLeague

@@ -1,5 +1,5 @@
 import AWS from 'aws-sdk';
-import { DYNAMODB_TABLES } from './constants';
+import { AUCTION_STATUS, DYNAMODB_TABLES } from './constants';
 import { parseAuctionStatus } from '../functions/common/auctionStatus';
 
 const dynamodb = new AWS.DynamoDB();
@@ -53,7 +53,16 @@ export async function setNewAuctionTeam(leagueId, teamObj) {
               N: timestamp
             },
             ':S': {
-              S: 'bidding'
+              S: AUCTION_STATUS.BIDDING
+            },
+            ':S_I': {
+              S: AUCTION_STATUS.INITIAL
+            },
+            ':S_CS': {
+              S: AUCTION_STATUS.CONFIRMED_SOLD
+            },
+            ':S_E': {
+              S: AUCTION_STATUS.END
             },
             ':CId': {
               N: String(teamObj.itemId)
@@ -85,7 +94,8 @@ export async function setNewAuctionTeam(leagueId, teamObj) {
               NULL: true
             }
           },
-          UpdateExpression: 'SET #TS = :TS, #S = :S, #CId = :CId, #P = :P, #W = :W, #A = :A, #L = :L, #IT = :IT, #N = :N, #Sd = :Sd, #DN = :DN, #B = :B, #PB = :PB'
+          UpdateExpression: 'SET #TS = :TS, #S = :S, #CId = :CId, #P = :P, #W = :W, #A = :A, #L = :L, #IT = :IT, #N = :N, #Sd = :Sd, #DN = :DN, #B = :B, #PB = :PB',
+          ConditionExpression: '#S = :S_I or #S = :S_CS or #S = :S_E'
         }
       },
       {
@@ -218,7 +228,7 @@ export async function closeDynamoDbAuction(leagueId) {
     },
     ExpressionAttributeValues: {
       ':S': {
-        S: 'end'
+        S: AUCTION_STATUS.END
       }
     },
     UpdateExpression: 'SET #S = :S'
@@ -228,8 +238,36 @@ export async function closeDynamoDbAuction(leagueId) {
     const status = await dynamodb.updateItem(auctionParams).promise();
 
     return parseAuctionStatus(status.Attributes);
+  } catch (error) {
+    console.log(error);
+    return false;
+  }
+}
 
-    return true;
+export async function reopenDynamoDbAuction(leagueId) {
+  const auctionParams = {
+    TableName: AUCTION_TABLE,
+    ReturnValues: 'ALL_NEW',
+    Key: {
+      LeagueId: {
+        N: String(leagueId)
+      }
+    },
+    ExpressionAttributeNames: {
+      '#S': 'Status'
+    },
+    ExpressionAttributeValues: {
+      ':S': {
+        S: AUCTION_STATUS.CONFIRMED_SOLD
+      }
+    },
+    UpdateExpression: 'SET #S = :S'
+  }
+
+  try {
+    const status = await dynamodb.updateItem(auctionParams).promise();
+
+    return parseAuctionStatus(status.Attributes);
   } catch (error) {
     console.log(error);
     return false;

@@ -7,7 +7,7 @@ const dynamodb = new AWS.DynamoDB();
 const LEAGUE_MEMBERSHIP_TABLE = DYNAMODB_TABLES.LEAGUE_MEMBERSHIP_TABLE;
 
 // verify cognitoSub from the LeagueMembership table in dynamoDb
-export async function validateUser(leagueId, cognitoSub) {
+export async function validateUser(leagueId, cognitoSub, desiredRoleId = null) {
   const dynamodbParams = {
     TableName: LEAGUE_MEMBERSHIP_TABLE,
     Key: {
@@ -23,7 +23,10 @@ export async function validateUser(leagueId, cognitoSub) {
 
   const member = leagueMemberships.find(lm => lm.cognitoSub == cognitoSub);
 
-  if (member == undefined) return false;
+  let isValid = true;
 
-  return true;
+  if (member == undefined) isValid = false;
+  if (desiredRoleId != null && member?.roleId > desiredRoleId) isValid = false;
+
+  return isValid;
 }
