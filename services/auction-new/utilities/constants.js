@@ -35,5 +35,6 @@ export const AUCTION_STATUS = {
 
 export const LEDGER_ACTION = {
   SALE: 'SALE',
-  REFUND: 'REFUND'
+  REFUND: 'REFUND',
+  UNSOLD: 'UNSOLD'
 };
