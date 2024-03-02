@@ -20,14 +20,14 @@ export function constructAuctionLedgerItem({ leagueId, ledgerId, ledgerAction, i
     ItemTypeId: {
       N: String(itemTypeId)
     },
-    UserId: {
-      N: String(userId)
-    },
-    Alias: {
-      S: alias
-    },
-    Price: {
-      N: String(price)
-    }
+    UserId: userId == null ?
+      { NULL: true } :
+      { N: String(userId) },
+    Alias: alias == null ?
+      { NULL: true } :
+      { S: alias },
+    Price: price == null ?
+      { NULL: true } :
+      { N: String(price) }
   };
 }

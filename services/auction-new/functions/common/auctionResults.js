@@ -1,5 +1,5 @@
 import AWS from 'aws-sdk';
-import { DYNAMODB_TABLES } from '../../utilities/constants';
+import { DYNAMODB_TABLES, LEDGER_ACTION } from '../../utilities/constants';
 
 const dynamodb = new AWS.DynamoDB();
 
@@ -34,7 +34,7 @@ export async function getAuctionSales(leagueId) {
 function findAuctionSales(ledger) {
   if (!Array.isArray(ledger)) return [];
 
-  const sales = ledger.filter(l => l.ledgerAction == 'SALE' || l.ledgerAction == 'REFUND');
+  const sales = ledger.filter(l => l.ledgerAction === LEDGER_ACTION.SALE || l.ledgerAction === LEDGER_ACTION.REFUND || l.ledgerAction === LEDGER_ACTION.UNSOLD);
 
   const lots = [];
 
@@ -64,7 +64,7 @@ function findAuctionSales(ledger) {
   const finalSales = [];
 
   lots.forEach(l => {
-    if (l.sales[0].ledgerAction === 'SALE') {
+    if (l.sales[0].ledgerAction === LEDGER_ACTION.SALE || l.sales[0].ledgerAction === LEDGER_ACTION.UNSOLD) {
       finalSales.push(l.sales[0]);
     }
   });
@@ -80,12 +80,12 @@ function parseAuctionLedger(ledger) {
     return {
       leagueId: +l.LeagueId.N,
       ledgerId: +l.LedgerId.N,
-      alias: l.Alias.S,
+      alias: l.Alias?.NULL ? null : l.Alias.S,
       itemId: +l.ItemId.N,
       itemTypeId: +l.ItemTypeId.N,
       ledgerAction: l.LedgerAction.S,
-      price: +l.Price.N,
-      userId: +l.UserId.N
+      price: l.Price?.NULL ? null : +l.Price.N,
+      userId: l.UserId?.NULL ? null : +l.UserId.N
     }
   });
 }
