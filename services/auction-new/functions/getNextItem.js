@@ -1,5 +1,11 @@
+import AWS from 'aws-sdk';
 import { websocketBroadcast, verifyLeagueConnection, setNewAuctionTeam, websocketBroadcastToConnection } from '../utilities';
+import { AUCTION_STATUS } from '../utilities/constants';
+import { getAuctionStatus } from './common/auctionStatus';
 import { getNextItemRandom, getNextItemSpecific } from './common/getNextItem';
+import { LAMBDAS } from '../utilities/constants';
+
+const lambda = new AWS.Lambda();
 
 export async function getNextItem(event, context, callback) {
   context.callbackWaitsForEmptyEventLoop = false;
@@ -15,6 +21,25 @@ export async function getNextItem(event, context, callback) {
 
     if (verifyResponse === false || +verifyResponse.RoleId > 2) {
       throw new Error('User is not allowed to perform this action');
+    }
+
+    const status = await getAuctionStatus(leagueId);
+
+    if (status.Status == AUCTION_STATUS.INITIAL || status.Status == AUCTION_STATUS.END) {
+      // mark the auction as in-progress in SQL Server
+      const lambdaParams = {
+        FunctionName: LAMBDAS.RDS_START_AUCTION,
+        LogType: 'Tail',
+        Payload: JSON.stringify({ leagueId: leagueId })
+      }
+  
+      const lambdaResponse = await lambda.invoke(lambdaParams).promise();
+      const responsePayload = JSON.parse(lambdaResponse.Payload);
+      console.log(responsePayload);
+      
+      if (!responsePayload.length || !!responsePayload[0]?.Error) {
+        throw new Error('Could not set league status');
+      }
     }
 
     let teamObj;
