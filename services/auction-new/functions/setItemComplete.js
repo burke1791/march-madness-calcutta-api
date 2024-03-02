@@ -94,7 +94,7 @@ export async function setItemComplete(event, context, callback) {
         price: auctionState.CurrentItemPrice
       };
 
-      await updateLedger(leagueId, ledgerProps);
+      await updateLedger(leagueId, ledgerProps, tsCond);
     }
 
     const payloadData = await auctionPayload(leagueId, 'FULL');
@@ -131,7 +131,7 @@ export async function setItemComplete(event, context, callback) {
   }
 }
 
-async function updateLedger(leagueId, ledgerProps) {
+async function updateLedger(leagueId, ledgerProps, tsCond) {
   const ledgerSale = constructAuctionLedgerItem(ledgerProps);
 
   const itemCompleteParams = {
