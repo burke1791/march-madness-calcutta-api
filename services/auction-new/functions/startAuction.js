@@ -75,6 +75,14 @@ export async function startAuction(event, context, callback) {
     });
   } catch (error) {
     console.log(error);
+
+    const endpoint = `https://${event.requestContext.domainName}/${event.requestContext.stage}`;
+    const payload = {
+      msgType: 'auction_error',
+      message: 'No available items'
+    };
+    await websocketBroadcastToConnection(endpoint, connectionId, payload);
+    
     callback(null, {
       statusCode: 500,
       body: JSON.stringify({ message: 'error starting auction' })
