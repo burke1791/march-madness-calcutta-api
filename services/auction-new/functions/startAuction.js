@@ -32,7 +32,7 @@ export async function startAuction(event, context, callback) {
     const responsePayload = JSON.parse(lambdaResponse.Payload);
     console.log(responsePayload);
     
-    if (!responsePayload?.length || !!responsePayload[0]?.Error) {
+    if (responsePayload != null) {
       throw new Error('Could not set league status');
     }
 
