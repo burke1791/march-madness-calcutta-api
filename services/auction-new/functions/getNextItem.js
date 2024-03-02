@@ -1,7 +1,11 @@
+import AWS from 'aws-sdk';
 import { websocketBroadcast, verifyLeagueConnection, setNewAuctionTeam, websocketBroadcastToConnection } from '../utilities';
 import { AUCTION_STATUS } from '../utilities/constants';
 import { getAuctionStatus } from './common/auctionStatus';
 import { getNextItemRandom, getNextItemSpecific } from './common/getNextItem';
+import { LAMBDAS } from '../utilities/constants';
+
+const lambda = new AWS.Lambda();
 
 export async function getNextItem(event, context, callback) {
   context.callbackWaitsForEmptyEventLoop = false;
