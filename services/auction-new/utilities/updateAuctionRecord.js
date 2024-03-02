@@ -95,7 +95,7 @@ export async function setNewAuctionTeam(leagueId, teamObj) {
             }
           },
           UpdateExpression: 'SET #TS = :TS, #S = :S, #CId = :CId, #P = :P, #W = :W, #A = :A, #L = :L, #IT = :IT, #N = :N, #Sd = :Sd, #DN = :DN, #B = :B, #PB = :PB',
-          ConditionExpression: '#S = :S_I or #S = :S_CS or #S = :S_E'
+          ConditionExpression: 'attribute_not_exists(#S) or #S = :S_I or #S = :S_CS or #S = :S_E'
         }
       },
       {
