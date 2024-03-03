@@ -21,6 +21,25 @@ export async function resetAuctionItem(event, context, callback) {
       throw new Error('User is not allowed to perform this action');
     }
 
+    const status = await getAuctionStatus(leagueId);
+
+    if (status.Status == AUCTION_STATUS.INITIAL || status.Status == AUCTION_STATUS.END) {
+      // reopen the auction in SQL Server
+      const lambdaParams = {
+        FunctionName: LAMBDAS.RDS_START_AUCTION,
+        LogType: 'Tail',
+        Payload: JSON.stringify({ leagueId: leagueId })
+      }
+  
+      const lambdaResponse = await lambda.invoke(lambdaParams).promise();
+      const responsePayload = JSON.parse(lambdaResponse.Payload);
+      console.log(responsePayload);
+      
+      if (responsePayload != null) {
+        throw new Error('Could not set league status');
+      }
+    }
+
     await resetItemInDynamoDb(leagueId, itemId, itemTypeId, verifyResponse.UserId, verifyResponse.Alias);
 
     const payload = await auctionPayload(leagueId, 'FULL');
@@ -104,8 +123,11 @@ async function resetItemInDynamoDb(leagueId, itemId, itemTypeId, userId, alias) 
               ':W': { NULL: true },
               ':A': { NULL: true },
               ':PB': { NULL: true },
-              ':S': {
+              ':S_CS': {
                 S: 'confirmed-sold'
+              },
+              ':S_E': {
+                S: 'end'
               },
               ':CId': {
                 N: String(itemId)
@@ -114,8 +136,8 @@ async function resetItemInDynamoDb(leagueId, itemId, itemTypeId, userId, alias) 
                 N: String(itemTypeId)
               }
             },
-            UpdateExpression: 'SET #P = :P, #W = :W, #A = :A, #PB = :PB',
-            ConditionExpression: '#S = :S and #CId = :CId and #IT = :IT'
+            UpdateExpression: 'SET #P = :P, #W = :W, #A = :A, #PB = :PB, #S = :S_CS',
+            ConditionExpression: '(#S = :S_CS or #S = :S_E) and #CId = :CId and #IT = :IT'
           }
         }
       ]
