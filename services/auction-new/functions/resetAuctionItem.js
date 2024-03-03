@@ -1,11 +1,12 @@
 import AWS from 'aws-sdk';
 import { verifyLeagueConnection, websocketBroadcastToConnection, websocketBroadcastAll } from '../utilities';
-import { DYNAMODB_TABLES } from "../utilities/constants";
+import { DYNAMODB_TABLES, AUCTION_STATUS, LAMBDAS } from "../utilities/constants";
 import { constructAuctionLedgerItem } from './common/auctionLedger';
 import { auctionPayload } from './common/payload';
 import { getAuctionStatus } from './common/auctionStatus';
 
 const dynamodb = new AWS.DynamoDB();
+const lambda = new AWS.Lambda();
 
 export async function resetAuctionItem(event, context, callback) {
   context.callbackWaitsForEmptyEventLoop = false;
