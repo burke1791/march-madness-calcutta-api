@@ -148,6 +148,9 @@ async function resetItemInDynamoDb(leagueId, itemId, itemTypeId, userId, alias) 
     console.log(resetResponse);
     console.log(resetResponse.ItemCollectionMetrics);
   } else {
+    // do two separate actions:
+    //  put to the ledger
+    //  conditional update to the auction table to change status from 'end' to 'confirmed-sold' (if necessary)
     const params = {
       TableName: DYNAMODB_TABLES.AUCTION_LEDGER_TABLE,
       Item: constructAuctionLedgerItem({
@@ -164,5 +167,31 @@ async function resetItemInDynamoDb(leagueId, itemId, itemTypeId, userId, alias) 
 
     const resetResponse = await dynamodb.putItem(params).promise();
     console.log(resetResponse);
+
+    const auctionParams = {
+      TableName: DYNAMODB_TABLES.AUCTION_TABLE,
+      ReturnValues: 'ALL_NEW',
+      Key: {
+        LeagueId: {
+          N: String(leagueId)
+        }
+      },
+      ExpressionAttributeNames: {
+        '#S': 'Status'
+      },
+      ExpressionAttributeValues: {
+        ':S_E': {
+          S: 'end'
+        },
+        ':S_CS': {
+          S: 'confirmed-sold'
+        }
+      },
+      UpdateExpression: 'SET #S = :S_CS',
+      ConditionExpression: '#S = :S_E'
+    };
+
+    const reopenResponse = await dynamodb.updateItem(auctionParams).promise();
+    console.log(reopenResponse);
   }
 }
