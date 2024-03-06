@@ -169,7 +169,7 @@ async function resetItemInDynamoDb(leagueId, itemId, itemTypeId, userId, alias) 
     console.log(resetResponse);
 
     const auctionParams = {
-      TableName: AUCTION_TABLE,
+      TableName: DYNAMODB_TABLES.AUCTION_TABLE,
       ReturnValues: 'ALL_NEW',
       Key: {
         LeagueId: {
