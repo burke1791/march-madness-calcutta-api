@@ -98,7 +98,7 @@ Resources:
       TableName: ${self:custom.AUCTION_SETTINGS_TABLE}
       TableClass: STANDARD
 
-  AuctionLedgerTable:
+  AuctionLedger:
     Type: AWS::DynamoDB::Table
     Properties:
       AttributeDefinitions:

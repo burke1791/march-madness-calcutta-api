@@ -26,7 +26,7 @@ Resources:
                   - Fn::GetAtt: [BidHistoryTable, Arn]
                   - Fn::GetAtt: [AuctionSettingsTable, Arn]
                   - Fn::GetAtt: [LeagueMembershipTable, Arn]
-                  - Fn::GetAtt: [AuctionLedgerTable, Arn]
+                  - Fn::GetAtt: [AuctionLedger, Arn]
                 Action:
                   - dynamodb:PutItem
                   - dynamodb:GetItem
