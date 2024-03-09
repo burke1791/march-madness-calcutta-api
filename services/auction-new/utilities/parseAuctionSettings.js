@@ -10,7 +10,7 @@ export function parseAuctionSettings(data) {
 
   return {
     leagueId: +data.LeagueId.N,
-    auctionSettings: parseGeneralSettings(auction),
+    settings: parseGeneralSettings(auction),
     bidRules: parseBidRules(bid),
     taxRules: parseTaxRules(tax),
     slots: parseAuctionSlots(slots)

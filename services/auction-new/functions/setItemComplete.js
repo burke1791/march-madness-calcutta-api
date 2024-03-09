@@ -42,8 +42,8 @@ export async function setItemComplete(event, context, callback) {
     if (auctionState.Alias == null || auctionState.CurrentItemWinner == null || auctionState.CurrentItemPrice == 0) {
       unsold = true;
 
-      const { auctionSettings } = await getAuctionSettings(leagueId, 'LeagueId, AuctionSettings');
-      const allowUnsoldSetting = auctionSettings.find(s => s.code == 'UNCLAIMED_ALLOWED');
+      const { settings } = await getAuctionSettings(leagueId, 'LeagueId, AuctionSettings');
+      const allowUnsoldSetting = settings.find(s => s.code == 'UNCLAIMED_ALLOWED');
       console.log(allowUnsoldSetting);
 
       if (allowUnsoldSetting?.settingValue.toLowerCase() === 'true') {
