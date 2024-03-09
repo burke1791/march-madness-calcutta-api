@@ -5,14 +5,8 @@ const connection = require('../../../common/utilities/db').connection;
 export async function createLeague(event, context, callback) {
   context.callbackWaitsForEmptyEventLoop = false;
 
-  const cognitoSub = event.cognitoPoolClaims.sub;
-
   try {
-    const body = event.body;
-    const name = body.name;
-    const password = body.password;
-    const tournamentId = Number(body.tournamentId);
-    const tournamentRegimeId = Number(body.tournamentScopeId);
+    const { cognitoSub, name, password, tournamentId, tournamentRegimeId } = event;
 
     if (!connection.isConnected) {
       await connection.createConnection();
@@ -28,13 +22,9 @@ export async function createLeague(event, context, callback) {
 
     console.log(result);
 
-    if (Array.isArray(result.recordset) && result.recordset[0]?.Error) {
-      throw new Error(result.recordset[0].Error);
-    }
-
-    callback(null, { message: 'league created' });
+    callback(null, result.recordsets);
   } catch (error) {
     console.log(error);
-    callback(error);
+    callback(null, error);
   }
 }

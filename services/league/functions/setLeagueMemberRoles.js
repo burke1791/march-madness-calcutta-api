@@ -34,9 +34,7 @@ const connection = {
 export async function setLeagueMemberRole(event, context, callback) {
   context.callbackWaitsForEmptyEventLoop = false;
 
-  const cognitoSub = event.cognitoPoolClaims.sub;
-  const leagueId = event.path.leagueId;
-  const { roles } = event.body;
+  const { cognitoSub, leagueId, roles } = event;
 
   console.log(roles);
 

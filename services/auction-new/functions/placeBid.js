@@ -1,9 +1,9 @@
 import AWS from 'aws-sdk';
 import { verifyLeagueConnection, websocketBroadcast, websocketBroadcastToConnection } from '../utilities';
-import { DYNAMODB_TABLES, LAMBDAS } from '../utilities/constants';
+import { DYNAMODB_TABLES } from '../utilities/constants';
+import { getAuctionSettings } from './common/auctionSettings';
 
 const dynamodb = new AWS.DynamoDB();
-const lambda = new AWS.Lambda();
 
 export async function placeBid(event, context, callback) {
   context.callbackWaitsForEmptyEventLoop = false;
@@ -33,7 +33,7 @@ export async function placeBid(event, context, callback) {
     const userId = verifyResponse.UserId;
     const alias = verifyResponse.Alias;
 
-    const bidValidation = await verifyBid(leagueId, userId, amount);
+    const bidValidation = await validateBid(leagueId, amount);
 
     if (!bidValidation.isValid) {
       throw new Error(bidValidation.errorMessage);
@@ -152,13 +152,17 @@ export async function placeBid(event, context, callback) {
     console.log(bidResponse);
     console.log(bidResponse.ItemCollectionMetrics);
 
-    const auctionObj = {
+    const auctionStatus = {
       Status: 'bidding',
       CurrentItemPrice: amount,
       CurrentItemWinner: userId,
       Alias: alias,
       LastBidTimestamp: timestamp
     }
+
+    const auctionObj = {
+      status: auctionStatus
+    };
 
     const payload = {
       msgObj: auctionObj,
@@ -195,35 +199,45 @@ export async function placeBid(event, context, callback) {
  */
 
 /**
- * @function verifyBid
- * @param {Number} leagueId - leagueId (league primary key in SQL Server)
- * @param {Number} userId - userId (user primary key in SQL Server)
- * @param {Number} bidAmount - the proposed bid amount
+ * @function
+ * @param {Number} leagueId 
+ * @param {Number} bidAmount 
  * @returns {verifyBidReturn}
- * @description verifies whether or not the proposed bid by the user is valid
  */
-async function verifyBid(leagueId, userId, bidAmount) {
-  const payload = {
-    leagueId: leagueId,
-    userId: userId,
-    bidAmount: bidAmount
+async function validateBid(leagueId, bidAmount) {
+  const { bidRules } = await getAuctionSettings(leagueId, 'LeagueId, BidRules');
+
+  const validation = {
+    isValid: true,
+    errorMessage: null
   };
 
-  const lambdaParams = {
-    FunctionName: LAMBDAS.RDS_VERIFY_BID,
-    LogType: 'Tail',
-    Payload: JSON.stringify(payload)
+  if (!Array.isArray(bidRules) || bidRules.length == 0) {
+    return validation;
   }
 
-  const lambdaResponse = await lambda.invoke(lambdaParams).promise();
+  // filter for all rules where the bidAmount is larger than the lower bound
+  // sort descending on the lower bound value
+  // the applicable rule is the first entry in the array
+  const filteredRules = bidRules.filter(r => r.minThresholdExclusive <= bidAmount);
+  filteredRules.sort((a, b) => b.minThresholdExclusive - a.minThresholdExclusive);
 
-  console.log(lambdaResponse);
+  const rule = filteredRules.length > 0 ? bidRules[0] : null;
 
-  const responsePayload = JSON.parse(lambdaResponse.Payload);
-  console.log(responsePayload);
+  if (rule == null) {
+    console.log(filteredRules);
+    console.log(bidAmount);
+    // somehow no rules were applicable
+    return validation;
+  }
 
-  return {
-    isValid: responsePayload.IsValid,
-    errorMessage: responsePayload.ValidationMessage
-  };
+  // Now check if the proposed bid increases as a multiple of the required increment from the rule's lower bound
+  if ((bidAmount - rule.minThresholdExclusive) % rule.minIncrement > 0) {
+    validation.isValid = false;
+    const root = rule.minThresholdExclusive.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
+    const increment = rule.minIncrement.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
+    validation.errorMessage = `Bid must increase from ${root} in multiples of ${increment}`;
+  }
+
+  return validation;
 }

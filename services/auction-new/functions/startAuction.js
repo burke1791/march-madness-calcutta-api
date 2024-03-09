@@ -1,6 +1,8 @@
 import AWS from 'aws-sdk';
-import { websocketBroadcast, verifyLeagueConnection, setNewAuctionTeam } from '../utilities';
+import { websocketBroadcast, verifyLeagueConnection, setNewAuctionTeam, websocketBroadcastToConnection } from '../utilities';
 import { LAMBDAS } from '../utilities/constants';
+import { getNextItemRandom } from './common/getNextItem';
+import { reopenDynamoDbAuction } from '../utilities/updateAuctionRecord';
 
 const lambda = new AWS.Lambda();
 
@@ -10,6 +12,7 @@ export async function startAuction(event, context, callback) {
   const data = JSON.parse(event.body);
   console.log(data);
   const leagueId = data.leagueId;
+  const isReopen = !!data?.isReopen;
   const connectionId = event.requestContext.connectionId;
 
   try {
@@ -31,21 +34,35 @@ export async function startAuction(event, context, callback) {
     const responsePayload = JSON.parse(lambdaResponse.Payload);
     console.log(responsePayload);
     
-    if (!responsePayload.length || !!responsePayload[0]?.Error) {
+    if (responsePayload != null) {
       throw new Error('Could not set league status');
     }
 
-    const teamObj = responsePayload[0];
+    let auctionObj;
 
-    // set the next item in dynamodb
-    const auctionObj = await setNewAuctionTeam(leagueId, teamObj);
+    if (!isReopen) {
+      const teamObj = await getNextItemRandom(leagueId);
+
+      if (teamObj == undefined) {
+        throw new Error('No available slots');
+      }
+  
+      // set the next item in dynamodb
+      auctionObj = await setNewAuctionTeam(leagueId, teamObj);
+    } else {
+      auctionObj = await reopenDynamoDbAuction(leagueId);
+    }
 
     if (!auctionObj) {
       throw new Error('Error updating auction record');
     }
 
+    const auctionPayload = {
+      status: auctionObj
+    };
+
     const payload = {
-      msgObj: auctionObj,
+      msgObj: auctionPayload,
       msgType: 'auction_open'
     };
 
@@ -58,6 +75,14 @@ export async function startAuction(event, context, callback) {
     });
   } catch (error) {
     console.log(error);
+
+    const endpoint = `https://${event.requestContext.domainName}/${event.requestContext.stage}`;
+    const payload = {
+      msgType: 'auction_error',
+      message: 'No available items'
+    };
+    await websocketBroadcastToConnection(endpoint, connectionId, payload);
+    
     callback(null, {
       statusCode: 500,
       body: JSON.stringify({ message: 'error starting auction' })

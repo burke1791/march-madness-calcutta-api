@@ -57,9 +57,7 @@ export async function getAuctionTaxRule(event, context, callback) {
 export async function setAuctionTaxRule(event, context, callback) {
   context.callbackWaitsForEmptyEventLoop = false;
 
-  const cognitoSub = event.cognitoPoolClaims.sub;
-  const leagueId = event.path.leagueId;
-  const { rules } = event.body;
+  const { cognitoSub, leagueId, rules } = event;
 
   try {
     if (!connection.isConnected) {
@@ -74,7 +72,7 @@ export async function setAuctionTaxRule(event, context, callback) {
       .input('AuctionTaxRules', tvp)
       .execute('dbo.up_SetLeagueTaxRules');
 
-    callback(null, result.recordset);
+    callback(null, result);
   } catch (error) {
     console.log(error);
     callback(null, error);

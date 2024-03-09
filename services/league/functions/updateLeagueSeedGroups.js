@@ -5,9 +5,7 @@ const connection = require('../../../common/utilities/db').connection;
 export async function newLeagueSeedGroup(event, context, callback) {
   context.callbackWaitsForEmptyEventLoop = false;
 
-  const cognitoSub = event.cognitoPoolClaims.sub;
-
-  const { leagueId, groupName, groupTeams } = event.body;
+  const { cognitoSub, leagueId, groupName, groupTeams } = event;
 
   try {
     if (!connection.isConnected) {
@@ -29,7 +27,10 @@ export async function newLeagueSeedGroup(event, context, callback) {
       .input('GroupTeams', tvp)
       .execute('dbo.up_NewLeagueSeedGroup');
 
-    callback(null, result.recordset);
+    const data = result.recordset;
+    console.log(data);
+
+    callback(null, data);
   } catch (error) {
     console.log(error);
     callback(null, { message: 'ERROR!' });
@@ -39,9 +40,7 @@ export async function newLeagueSeedGroup(event, context, callback) {
 export async function deleteLeagueSeedGroup(event, context, callback) {
   context.callbackWaitsForEmptyEventLoop = false;
 
-  const cognitoSub = event.cognitoPoolClaims.sub;
-
-  const { leagueId, groupId } = event.body;
+  const { cognitoSub, leagueId, groupId } = event;
 
   try {
     if (!connection.isConnected) {
@@ -54,7 +53,10 @@ export async function deleteLeagueSeedGroup(event, context, callback) {
       .input('SeedGroupId', BigInt, groupId)
       .execute('dbo.up_DeleteLeagueSeedGroup');
 
-    callback(null, result.recordset);
+    const data = result.recordset;
+    console.log(data);
+
+    callback(null, data);
   } catch (error) {
     console.log(error);
     callback(null, { message: 'ERROR!' });
@@ -64,10 +66,7 @@ export async function deleteLeagueSeedGroup(event, context, callback) {
 export async function updateLeagueSeedGroup(event, context, callback) {
   context.callbackWaitsForEmptyEventLoop = false;
 
-  const cognitoSub = event.cognitoPoolClaims.sub;
-  const leagueId = event.path.leagueId;
-
-  const { groupId, groupName, groupTeams } = event.body;
+  const { cognitoSub, leagueId, groupId, groupName, groupTeams } = event;
 
   try {
     if (!connection.isConnected) {
@@ -90,7 +89,10 @@ export async function updateLeagueSeedGroup(event, context, callback) {
       .input('GroupTeams', tvp)
       .execute('dbo.up_SetLeagueSeedGroup');
 
-    callback(null, result.recordset);
+    const data = result.recordset;
+    console.log(data);
+
+    callback(null, data);
   } catch (error) {
     console.log(error);
     callback(null, { message: 'Server Error' });

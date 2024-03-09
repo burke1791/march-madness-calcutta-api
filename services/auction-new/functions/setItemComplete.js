@@ -1,16 +1,22 @@
 import AWS from 'aws-sdk';
 import { verifyLeagueConnection, websocketBroadcast, websocketBroadcastToConnection } from '../utilities';
-import { DYNAMODB_TABLES, LAMBDAS } from '../utilities/constants';
+import { DYNAMODB_TABLES, LEDGER_ACTION } from '../utilities/constants';
+import { getAuctionStatus } from './common/auctionStatus';
+import { constructAuctionLedgerItem } from './common/auctionLedger';
+import { auctionPayload } from './common/payload';
+import { getAuctionSettings } from './common/auctionSettings';
 
 const AUCTION_TABLE = DYNAMODB_TABLES.AUCTION_TABLE;
+const AUCTION_LEDGER_TABLE = DYNAMODB_TABLES.AUCTION_LEDGER_TABLE;
 
 const dynamodb = new AWS.DynamoDB();
-const lambda = new AWS.Lambda();
+
 
 export async function setItemComplete(event, context, callback) {
   context.callbackWaitsForEmptyEventLoop = false;
 
   const data = JSON.parse(event.body);
+  console.log(data);
 
   const leagueId = data.leagueId;
   const connectionId = event.requestContext.connectionId;
@@ -23,139 +29,86 @@ export async function setItemComplete(event, context, callback) {
     }
 
     const timestamp = new Date().valueOf();
+    // hacky way to make sure we're not selling an item due to an unfortunate race condition
+    const tsCond = (timestamp - 3000).toString();
 
-    const itemCompleteParams = {
-      TableName: AUCTION_TABLE,
-      ReturnValues: 'ALL_NEW',
-      Key: {
-        LeagueId: {
-          N: String(leagueId)
-        }
-      },
-      ExpressionAttributeNames: {
-        '#TS': 'LastBidTimestamp',
-        '#S': 'Status'
-      },
-      ExpressionAttributeValues: {
-        ':S': {
-          S: 'sold'
-        },
-        ':S_cond': {
-          S: 'bidding'
-        },
-        ':TS_cond': {
-          N: (timestamp - 7000).toString() // hacky way to make sure we're not selling an item due to an unfortunate race condition
-        }
-      },
-      UpdateExpression: 'SET #S = :S',
-      ConditionExpression: '#S = :S_cond and #TS < :TS_cond'
+    const auctionState = await getAuctionStatus(leagueId);
+    console.log(auctionState);
+
+    let unsold = false;
+    let allowUnsold = false;
+
+    // if nobody bought the team, check if we're allowing unsold teams
+    if (auctionState.Alias == null || auctionState.CurrentItemWinner == null || auctionState.CurrentItemPrice == 0) {
+      unsold = true;
+
+      const { auctionSettings } = await getAuctionSettings(leagueId, 'LeagueId, AuctionSettings');
+      const allowUnsoldSetting = auctionSettings.find(s => s.code == 'UNCLAIMED_ALLOWED');
+      console.log(allowUnsoldSetting);
+
+      if (allowUnsoldSetting?.settingValue.toLowerCase() === 'true') {
+        allowUnsold = true;
+      }
     }
 
-    const itemCompleteResponse = await dynamodb.updateItem(itemCompleteParams).promise();
+    if (unsold && !allowUnsold) {
+      // keep the unsold team in circulation
+      const params = {
+        TableName: AUCTION_TABLE,
+        ReturnValues: 'ALL_NEW',
+        Key: {
+          LeagueId: {
+            N: String(leagueId)
+          }
+        },
+        ExpressionAttributeNames: {
+          '#TS': 'LastBidTimestamp',
+          '#S': 'Status'
+        },
+        ExpressionAttributeValues: {
+          ':S': {
+            S: 'confirmed-sold'
+          },
+          ':S_cond': {
+            S: 'bidding'
+          },
+          ':TS_cond': {
+            N: tsCond
+          }
+        },
+        UpdateExpression: 'SET #S = :S',
+        ConditionExpression: '#S = :S_cond and #TS < :TS_cond'
+      };
 
-    const updateData = itemCompleteResponse.Attributes;
-    console.log(updateData);
+      const status = await dynamodb.updateItem(params).promise();
+      console.log(status);
+    } else {
+      const ledgerProps = {
+        leagueId: leagueId,
+        ledgerId: timestamp,
+        ledgerAction: unsold ? LEDGER_ACTION.UNSOLD : LEDGER_ACTION.SALE,
+        itemId: auctionState.CurrentItemId,
+        itemTypeId: auctionState.ItemTypeId,
+        userId: auctionState.CurrentItemWinner,
+        alias: auctionState.Alias,
+        price: auctionState.CurrentItemPrice
+      };
 
-    const auctionObj = {
-      Status: updateData.Status.S,
-      CurrentItemId: updateData.CurrentItemId.N,
-      TeamLogoUrl: updateData.TeamLogoUrl.S,
-      ItemTypeId: updateData.ItemTypeId.N,
-      ItemName: updateData.ItemName.S,
-      Seed: updateData.Seed.N,
-      DisplayName: updateData.DisplayName.S,
-      CurrentItemPrice: updateData.CurrentItemPrice.N,
-      CurrentItemWinner: updateData.CurrentItemWinner.N,
-      Alias: updateData.Alias.S,
-      LastBidTimestamp: updateData.LastBidTimestamp.N
-    };
+      await updateLedger(leagueId, ledgerProps, tsCond);
+    }
+
+    const payloadData = await auctionPayload(leagueId, 'FULL');
+
+    if (payloadData.status.Status !== 'confirmed-sold') {
+      throw new Error('Unable to mark item sold');
+    }
 
     const payload = {
-      msgObj: auctionObj,
+      msgObj: payloadData,
       msgType: 'auction_sale'
     }
 
     await websocketBroadcast(leagueId, payload, event.requestContext.domainName, event.requestContext.stage);
-
-    const lambdaPayload = {
-      leagueId: leagueId,
-      itemTypeId: updateData.ItemTypeId.N,
-      itemId: updateData.CurrentItemId.N,
-      userId: updateData.CurrentItemWinner.N,
-      price: updateData.CurrentItemPrice.N
-    }
-
-    const lambdaParams = {
-      FunctionName: LAMBDAS.RDS_SET_ITEM_COMPLETE,
-      LogType: 'Tail',
-      Payload: JSON.stringify(lambdaPayload)
-    }
-
-    const lambdaResponse = await lambda.invoke(lambdaParams).promise();
-    console.log(lambdaResponse);
-
-    const itemConfirmedCompleteParams = {
-      TableName: AUCTION_TABLE,
-      ReturnValues: 'ALL_NEW',
-      Key: {
-        LeagueId: {
-          N: String(leagueId)
-        }
-      },
-      ExpressionAttributeNames: {
-        '#S': 'Status'
-      },
-      ExpressionAttributeValues: {
-        ':S': {
-          S: 'confirmed-sold'
-        }
-      },
-      UpdateExpression: 'SET #S = :S'
-    }
-
-    const itemConfirmedCompleteResponse = await dynamodb.updateItem(itemConfirmedCompleteParams).promise();
-
-    const confirmedUpdateData = itemConfirmedCompleteResponse.Attributes;
-    console.log(confirmedUpdateData);
-
-    const confirmedAuctionObj = {
-      Status: confirmedUpdateData.Status.S,
-      CurrentItemId: confirmedUpdateData.CurrentItemId.N,
-      TeamLogoUrl: confirmedUpdateData.TeamLogoUrl.S,
-      ItemTypeId: confirmedUpdateData.ItemTypeId.N,
-      ItemName: confirmedUpdateData.ItemName.S,
-      Seed: confirmedUpdateData.Seed.N,
-      DisplayName: confirmedUpdateData.DisplayName.S,
-      CurrentItemPrice: confirmedUpdateData.CurrentItemPrice.N,
-      CurrentItemWinner: confirmedUpdateData.CurrentItemWinner.N,
-      Alias: confirmedUpdateData.Alias.S,
-      LastBidTimestamp: confirmedUpdateData.LastBidTimestamp.N
-    };
-
-    const confirmedPayload = {
-      msgObj: confirmedAuctionObj,
-      msgType: 'auction_sale'
-    }
-
-    await websocketBroadcast(leagueId, confirmedPayload, event.requestContext.domainName, event.requestContext.stage);
-
-    
-    // get a full data update
-    lambdaParams.FunctionName = LAMBDAS.RDS_GET_UPDATED_AUCTION_DATA;
-    lambdaParams.Payload = JSON.stringify({ leagueId: leagueId });
-
-    const updatedData = await lambda.invoke(lambdaParams).promise();
-    console.log(updatedData);
-
-    const syncData = JSON.parse(updatedData.Payload);
-    console.log(syncData);
-
-    const dataSyncPayload = {
-      msgObj: syncData,
-      msgType: 'auction_sync'
-    };
-
-    await websocketBroadcast(leagueId, dataSyncPayload, event.requestContext.domainName, event.requestContext.stage);
 
     callback(null, {
       statusCode: 200,
@@ -176,4 +129,50 @@ export async function setItemComplete(event, context, callback) {
       body: JSON.stringify({ message: 'error selling item '})
     });
   }
+}
+
+async function updateLedger(leagueId, ledgerProps, tsCond) {
+  const ledgerSale = constructAuctionLedgerItem(ledgerProps);
+
+  const itemCompleteParams = {
+    ReturnItemCollectionMetrics: 'SIZE',
+    TransactItems: [
+      {
+        Update: {
+          TableName: AUCTION_TABLE,
+          Key: {
+            LeagueId: {
+              N: String(leagueId)
+            }
+          },
+          ExpressionAttributeNames: {
+            '#TS': 'LastBidTimestamp',
+            '#S': 'Status'
+          },
+          ExpressionAttributeValues: {
+            ':S': {
+              S: 'confirmed-sold'
+            },
+            ':S_cond': {
+              S: 'bidding'
+            },
+            ':TS_cond': {
+              N: tsCond
+            }
+          },
+          UpdateExpression: 'SET #S = :S',
+          ConditionExpression: '#S = :S_cond and #TS < :TS_cond'
+        }
+      },
+      {
+        Put: {
+          TableName: AUCTION_LEDGER_TABLE,
+          Item: ledgerSale
+        }
+      }
+    ]
+  }
+
+  const itemCompleteResponse = await dynamodb.transactWriteItems(itemCompleteParams).promise();
+  console.log(itemCompleteResponse);
 }

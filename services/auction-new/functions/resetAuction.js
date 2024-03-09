@@ -1,5 +1,7 @@
 import AWS from 'aws-sdk';
-import { DYNAMODB_TABLES, LAMBDAS } from '../utilities/constants';
+import { DYNAMODB_TABLES, DYNAMODB_INDEXES, LAMBDAS } from '../utilities/constants';
+import { auctionPayload } from './common/payload';
+import { websocketBroadcastAll } from '../utilities/websocketBroadcast';
 
 const lambda = new AWS.Lambda();
 const dynamodb = new AWS.DynamoDB();
@@ -23,9 +25,9 @@ export async function resetAuction(event, context, callback) {
 
     console.log(responsePayload);
 
-    // if (!responsePayload || !!responsePayload[0]?.Error) {
-    //   throw new Error(responsePayload[0].Error);
-    // }
+    if (Array.isArray(responsePayload) && !!responsePayload[0]?.Error) {
+      throw new Error(responsePayload[0].Error);
+    }
 
     // reset all data in dynamodb (except for the chat)
     const dynamodbLambdaParams = {
@@ -63,59 +65,21 @@ export async function dynamodbResetAuction(event, context, callback) {
     const deleteAuctionResponse = await dynamodb.deleteItem(deleteAuctionParams).promise();
     console.log(deleteAuctionResponse);
 
-    // query dynamodb for all bid history records, then delete them
-    const bidHistoryQuery = {
-      TableName: DYNAMODB_TABLES.BID_HISTORY_TABLE,
-      ExpressionAttributeValues: {
-        ':v1': {
-          N: String(leagueId)
-        }
-      },
-      KeyConditionExpression: 'LeagueId = :v1',
-      ProjectionExpression: 'LeagueId, BidId'
-    };
+    await deleteBidHistory(leagueId);
+    await deleteAuctionLedger(leagueId);
 
-    const bidHistoryResults = await dynamodb.query(bidHistoryQuery).promise();
+    // broadcast updated data to all users in the auction room (if any)
+    if (await checkConnectedUsers(leagueId)) {
+      const payload = await auctionPayload(leagueId, 'FULL');
+      payload.message = 'Auction has been reset';
 
-    const itemsToDelete = [...bidHistoryResults.Items];
+      const websocketPayload = {
+        msgObj: payload,
+        msgType: 'auction_reset'
+      };
 
-    let deleteRequests = [];
-    let deleteItemCount = 0;
-
-    while (itemsToDelete.length > 0) {
-      // can only send 25 delete requests at once
-      const item = itemsToDelete.pop();
-
-      if (item != undefined) {
-        deleteRequests.push({
-          DeleteRequest: {
-            Key: {
-              'LeagueId': {
-                N: item.LeagueId.N
-              },
-              'BidId': {
-                N: item.BidId.N
-              }
-            }
-          }
-        });
-
-        deleteItemCount++;
-      }
-
-      if (deleteItemCount > 0 && (itemsToDelete.length == 0 || deleteItemCount >= 25)) {
-        const deleteBidHistoryParams = {
-          RequestItems: {
-            [DYNAMODB_TABLES.BID_HISTORY_TABLE]: deleteRequests
-          }
-        };
-
-        const deleteResult = await dynamodb.batchWriteItem(deleteBidHistoryParams).promise();
-        console.log(deleteResult);
-
-        deleteItemCount = 0;
-        deleteRequests = [];
-      }
+      const endpoint = `https://${process.env.WEBSOCKET_ENDPOINT}`;
+      await websocketBroadcastAll(leagueId, websocketPayload, endpoint);
     }
 
     callback(null, { message: 'Auction reset successful' });
@@ -123,4 +87,138 @@ export async function dynamodbResetAuction(event, context, callback) {
     console.log(error);
     callback(null, error);
   }
+}
+
+async function deleteBidHistory(leagueId) {
+  // query dynamodb for all bid history records, then delete them
+  const bidHistoryQuery = {
+    TableName: DYNAMODB_TABLES.BID_HISTORY_TABLE,
+    ExpressionAttributeValues: {
+      ':v1': {
+        N: String(leagueId)
+      }
+    },
+    KeyConditionExpression: 'LeagueId = :v1',
+    ProjectionExpression: 'LeagueId, BidId'
+  };
+
+  const bidHistoryResults = await dynamodb.query(bidHistoryQuery).promise();
+
+  const itemsToDelete = [...bidHistoryResults.Items];
+
+  let deleteRequests = [];
+  let deleteItemCount = 0;
+
+  while (itemsToDelete.length > 0) {
+    // can only send 25 delete requests at once
+    const item = itemsToDelete.pop();
+
+    if (item != undefined) {
+      deleteRequests.push({
+        DeleteRequest: {
+          Key: {
+            'LeagueId': {
+              N: item.LeagueId.N
+            },
+            'BidId': {
+              N: item.BidId.N
+            }
+          }
+        }
+      });
+
+      deleteItemCount++;
+    }
+
+    if (deleteItemCount > 0 && (itemsToDelete.length == 0 || deleteItemCount >= 25)) {
+      const deleteBidHistoryParams = {
+        RequestItems: {
+          [DYNAMODB_TABLES.BID_HISTORY_TABLE]: deleteRequests
+        }
+      };
+
+      const deleteResult = await dynamodb.batchWriteItem(deleteBidHistoryParams).promise();
+      console.log(deleteResult);
+
+      deleteItemCount = 0;
+      deleteRequests = [];
+    }
+  }
+}
+
+async function deleteAuctionLedger(leagueId) {
+  const ledgerQuery = {
+    TableName: DYNAMODB_TABLES.AUCTION_LEDGER_TABLE,
+    ExpressionAttributeValues: {
+      ':v1': {
+        N: String(leagueId)
+      }
+    },
+    KeyConditionExpression: 'LeagueId = :v1',
+    ProjectionExpression: 'LeagueId, LedgerId'
+  };
+
+  const ledgerItems = await dynamodb.query(ledgerQuery).promise();
+  const itemsToDelete = [...ledgerItems.Items];
+
+  let deleteRequests = [];
+  let deleteItemCount = 0;
+
+  while (itemsToDelete.length > 0) {
+    // can only send 25 delete requests at once
+    const item = itemsToDelete.pop();
+
+    if (item != undefined) {
+      deleteRequests.push({
+        DeleteRequest: {
+          Key: {
+            'LeagueId': {
+              N: item.LeagueId.N
+            },
+            'LedgerId': {
+              N: item.LedgerId.N
+            }
+          }
+        }
+      });
+
+      deleteItemCount++;
+    }
+
+    if (deleteItemCount > 0 && (itemsToDelete.length == 0 || deleteItemCount >= 25)) {
+      const deleteLedgerParams = {
+        RequestItems: {
+          [DYNAMODB_TABLES.AUCTION_LEDGER_TABLE]: deleteRequests
+        }
+      };
+
+      const deleteResult = await dynamodb.batchWriteItem(deleteLedgerParams).promise();
+      console.log(deleteResult);
+
+      deleteItemCount = 0;
+      deleteRequests = [];
+    }
+  }
+}
+
+async function checkConnectedUsers(leagueId) {
+  const queryParams = {
+    TableName: DYNAMODB_TABLES.CONNECTION_TABLE,
+    IndexName: DYNAMODB_INDEXES.CONNECTION_INDEX,
+    ExpressionAttributeValues: {
+      ':v1': {
+        N: String(leagueId)
+      }
+    },
+    KeyConditionExpression: 'LeagueId = :v1',
+    ProjectionExpression: 'ConnectionId'
+  };
+
+  const result = await dynamodb.query(queryParams).promise();
+
+  const connectionIds = result.Items.map((connection) => {
+    return connection.ConnectionId.S
+  });
+
+  return connectionIds.length > 0;
 }

@@ -1,5 +1,6 @@
 import AWS from 'aws-sdk';
-import { DYNAMODB_TABLES } from './constants';
+import { AUCTION_STATUS, DYNAMODB_TABLES } from './constants';
+import { parseAuctionStatus } from '../functions/common/auctionStatus';
 
 const dynamodb = new AWS.DynamoDB();
 
@@ -9,15 +10,12 @@ const BID_HISTORY_TABLE = DYNAMODB_TABLES.BID_HISTORY_TABLE;
 /**
  * @function setNewAuctionTeam
  * @param {Number} leagueId - league's unique identifier
- * @param {Number} teamObj.CurrentItemId - the team's unique identifier
- * @param {Number} teamObj.CurrentItemPrice - current price
- * @param {Number} teamObj.CurrentItemWinner - current winner's unique identifier
- * @param {String} teamObj.Alias - current winner's alias
- * @param {String} teamObj.TeamLogoUrl - Url for the team's logo image
- * @param {Number} teamObj.ItemTypeId - identifies the type of item
- * @param {String} teamObj.ItemName - the name of the team
- * @param {Number} teamObj.Seed - team's seed, if applicable
- * @param {String} teamObj.DisplayName - team's display name, usually follows "({Seed}) {ItemName}"
+ * @param {Number} teamObj.itemId - the team's unique identifier
+ * @param {String} teamObj.teamLogoUrl - Url for the team's logo image
+ * @param {Number} teamObj.itemTypeId - identifies the type of item
+ * @param {String} teamObj.itemName - the name of the team
+ * @param {Number} teamObj.seed - team's seed, if applicable
+ * @param {String} teamObj.displayName - team's display name, usually follows "({Seed}) {ItemName}"
  * @returns an object containing the values set if successful, null if not successful
  * @description sets the new team values in dynamodb
  */
@@ -55,34 +53,39 @@ export async function setNewAuctionTeam(leagueId, teamObj) {
               N: timestamp
             },
             ':S': {
-              S: 'bidding'
+              S: AUCTION_STATUS.BIDDING
+            },
+            ':S_I': {
+              S: AUCTION_STATUS.INITIAL
+            },
+            ':S_CS': {
+              S: AUCTION_STATUS.CONFIRMED_SOLD
+            },
+            ':S_E': {
+              S: AUCTION_STATUS.END
             },
             ':CId': {
-              N: String(teamObj.CurrentItemId)
+              N: String(teamObj.itemId)
             },
             ':P': {
-              N: teamObj.CurrentItemPrice != null ? String(teamObj.CurrentItemPrice) : '0'
+              N: '0'
             },
-            ':W': teamObj.CurrentItemWinner != null ?
-              { N: teamObj.CurrentItemWinner } :
-              { NULL: true },
-            ':A': teamObj.Alias != null ?
-              { S: teamObj.Alias } :
-              { NULL: true },
-            ':L': teamObj.TeamLogoUrl != null ?
-              { S: teamObj.TeamLogoUrl } :
+            ':W': { NULL: true },
+            ':A': { NULL: true },
+            ':L': teamObj.teamLogoUrl != null ?
+              { S: teamObj.teamLogoUrl } :
               { NULL: true },
             ':IT': {
-              N: String(teamObj.ItemTypeId)
+              N: String(teamObj.itemTypeId)
             },
             ':N': {
-              S: teamObj.ItemName
+              S: teamObj.itemName
             },
-            ':Sd': teamObj.Seed != null ?
-              { N: String(teamObj.Seed) } :
+            ':Sd': teamObj.seed != null ?
+              { N: String(teamObj.seed) } :
               { NULL: true },
             ':DN': {
-              S: teamObj.DisplayName
+              S: teamObj.displayName
             },
             ':B': {
               N: timestamp // using timestamp instead of uuid because I want it to be useful in RANGE queries against the BidHistory table
@@ -91,7 +94,8 @@ export async function setNewAuctionTeam(leagueId, teamObj) {
               NULL: true
             }
           },
-          UpdateExpression: 'SET #TS = :TS, #S = :S, #CId = :CId, #P = :P, #W = :W, #A = :A, #L = :L, #IT = :IT, #N = :N, #Sd = :Sd, #DN = :DN, #B = :B, #PB = :PB'
+          UpdateExpression: 'SET #TS = :TS, #S = :S, #CId = :CId, #P = :P, #W = :W, #A = :A, #L = :L, #IT = :IT, #N = :N, #Sd = :Sd, #DN = :DN, #B = :B, #PB = :PB',
+          ConditionExpression: 'attribute_not_exists(#S) or #S = :S_I or #S = :S_CS or #S = :S_E'
         }
       },
       {
@@ -105,19 +109,15 @@ export async function setNewAuctionTeam(leagueId, teamObj) {
               N: timestamp
             },
             ItemId: {
-              N: String(teamObj.CurrentItemId)
+              N: String(teamObj.itemId)
             },
             ItemTypeId: {
-              N: String(teamObj.ItemTypeId)
+              N: String(teamObj.itemTypeId)
             },
-            UserId: teamObj.CurrentItemWinner != null ?
-              { N: teamObj.CurrentItemWinner } :
-              { NULL: true },
-            Alias: teamObj.Alias != null ?
-              { S: teamObj.Alias } :
-              { NULL: true },
+            UserId: { NULL: true },
+            Alias: { NULL: true },
             Price: {
-              N: teamObj.CurrentItemPrice != null ? String(teamObj.CurrentItemPrice) : '0'
+              N: '0'
             },
             BidId: {
               N: timestamp
@@ -142,12 +142,12 @@ export async function setNewAuctionTeam(leagueId, teamObj) {
     // send the info to all active websocket connections
     const auctionObj = {
       Status: 'bidding',
-      CurrentItemId: teamObj.CurrentItemId,
-      TeamLogoUrl: teamObj.TeamLogoUrl,
-      ItemTypeId: teamObj.ItemTypeId,
-      ItemName: teamObj.ItemName,
-      Seed: teamObj.Seed,
-      DisplayName: teamObj.DisplayName,
+      CurrentItemId: teamObj.itemId,
+      TeamLogoUrl: teamObj.teamLogoUrl,
+      ItemTypeId: teamObj.itemTypeId,
+      ItemName: teamObj.itemName,
+      Seed: teamObj.seed,
+      DisplayName: teamObj.displayName,
       CurrentItemPrice: 0,
       CurrentItemWinner: null,
       Alias: null,
@@ -228,16 +228,46 @@ export async function closeDynamoDbAuction(leagueId) {
     },
     ExpressionAttributeValues: {
       ':S': {
-        S: 'end'
+        S: AUCTION_STATUS.END
       }
     },
     UpdateExpression: 'SET #S = :S'
   }
 
   try {
-    await dynamodb.updateItem(auctionParams).promise();
+    const status = await dynamodb.updateItem(auctionParams).promise();
 
-    return true;
+    return parseAuctionStatus(status.Attributes);
+  } catch (error) {
+    console.log(error);
+    return false;
+  }
+}
+
+export async function reopenDynamoDbAuction(leagueId) {
+  const auctionParams = {
+    TableName: AUCTION_TABLE,
+    ReturnValues: 'ALL_NEW',
+    Key: {
+      LeagueId: {
+        N: String(leagueId)
+      }
+    },
+    ExpressionAttributeNames: {
+      '#S': 'Status'
+    },
+    ExpressionAttributeValues: {
+      ':S': {
+        S: AUCTION_STATUS.CONFIRMED_SOLD
+      }
+    },
+    UpdateExpression: 'SET #S = :S'
+  }
+
+  try {
+    const status = await dynamodb.updateItem(auctionParams).promise();
+
+    return parseAuctionStatus(status.Attributes);
   } catch (error) {
     console.log(error);
     return false;

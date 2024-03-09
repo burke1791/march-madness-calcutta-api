@@ -1,0 +1,220 @@
+
+service: calcutta-data-sync-service
+projectDir: ../../
+
+package:
+  individually: true
+
+plugins:
+  - serverless-bundle
+
+custom:
+  stage: ${opt:stage, self:provider.stage}
+  provider: ${file(../../common/config/provider.json)}
+
+provider:
+  name: aws
+  runtime: ${self:custom.provider.runtime}
+  timeout: ${self:custom.provider.timeout}
+  logRetentionInDays: ${self:custom.provider.logRetentionInDays}
+  region: ${self:custom.provider.region}
+  stage: ${self:custom.stage}
+  iam:
+    role: DataSyncRole
+  environment:
+    APP_ENV: ${self:custom.stage}
+    USER_POOL_ID: ${self:custom.provider.env.USER_POOL_ID}
+    USER_POOL_CLIENT_ID: ${self:custom.provider.env.USER_POOL_CLIENT_ID}
+
+functions:
+  # HTTP functions
+  joinLeague:
+    handler: functions/joinLeague.joinLeague
+    events:
+      - http:
+          path: joinLeague
+          method: post
+          integration: lambda
+          authorizer:
+            type: COGNITO_USER_POOLS
+            authorizerId:
+              Ref: ApiGatewayAuthorizer
+          cors:
+            origin: '*'
+            headers:
+              - Content-Type
+              - x-cognito-token
+
+  createLeague:
+    handler: functions/createLeague.createLeague
+    events:
+      - http:
+          path: createLeague
+          method: post
+          integration: lambda
+          authorizer:
+            type: COGNITO_USER_POOLS
+            authorizerId:
+              Ref: ApiGatewayAuthorizer
+          cors:
+            origin: '*'
+            headers:
+              - Content-Type
+              - x-cognito-token
+
+  kickLeagueMember:
+    handler: functions/kickLeagueMember.kickLeagueMember
+    events:
+      - http:
+          path: kickLeagueMember
+          method: post
+          integration: lambda
+          authorizer:
+            type: COGNITO_USER_POOLS
+            authorizerId:
+              Ref: ApiGatewayAuthorizer
+          cors:
+            origin: '*'
+            headers:
+              - Content-Type
+              - x-cognito-token
+
+  leaveLeague:
+    handler: functions/leaveLeague.leaveLeague
+    events:
+      - http:
+          path: leaveLeague/{leagueId}
+          method: post
+          integration: lambda
+          authorizer:
+            type: COGNITO_USER_POOLS
+            authorizerId:
+              Ref: ApiGatewayAuthorizer
+          cors:
+            origin: '*'
+            headers:
+              - Content-Type
+              - x-cognito-token
+
+  setLeagueMemberRole:
+    handler: functions/setLeagueMemberRole.setLeagueMemberRole
+    events:
+      - http:
+          path: setLeagueMemberRoles/{leagueId}
+          method: post
+          integration: lambda
+          authorizer:
+            type: COGNITO_USER_POOLS
+            authorizerId:
+              Ref: ApiGatewayAuthorizer
+          cors:
+            origin: '*'
+            headers:
+              - Content-Type
+              - x-cognito-token
+
+  updateLeagueSettings:
+    handler: functions/updateLeagueSettings.updateLeagueSettings
+    events:
+      - http:
+          path: updateLeagueSettings
+          method: post
+          integration: lambda
+          authorizer:
+            type: COGNITO_USER_POOLS
+            authorizerId:
+              Ref: ApiGatewayAuthorizer
+          cors:
+            origin: '*'
+            headers:
+              - Content-Type
+              - x-cognito-token
+
+  setAuctionBidRules:
+    handler: functions/setAuctionBidRules.setAuctionBidRules
+    events:
+      - http:
+          path: setAuctionBidRules/{leagueId}
+          method: post
+          integration: lambda
+          authorizer:
+            type: COGNITO_USER_POOLS
+            authorizerId:
+              Ref: ApiGatewayAuthorizer
+          cors:
+            origin: '*'
+            headers:
+              - Content-Type
+              - x-cognito-token
+
+  setAuctionTaxRules:
+    handler: functions/setAuctionTaxRules.setAuctionTaxRules
+    events:
+      - http:
+          path: auctionTaxRule/{leagueId}
+          method: post
+          integration: lambda
+          authorizer:
+            type: COGNITO_USER_POOLS
+            authorizerId:
+              Ref: ApiGatewayAuthorizer
+          cors:
+            origin: '*'
+            headers:
+              - Content-Type
+              - x-cognito-token
+
+  newLeagueSeedGroup:
+    handler: functions/newLeagueSeedGroup.newLeagueSeedGroup
+    events:
+      - http:
+          path: newLeagueSeedGroup
+          method: post
+          integration: lambda
+          authorizer:
+            type: COGNITO_USER_POOLS
+            authorizerId:
+              Ref: ApiGatewayAuthorizer
+          cors:
+            origin: '*'
+            headers:
+              - Content-Type
+              - x-cognito-token
+
+  deleteLeagueSeedGroup:
+    handler: functions/deleteLeagueSeedGroup.deleteLeagueSeedGroup
+    events:
+      - http:
+          path: deleteLeagueSeedGroup
+          method: post
+          integration: lambda
+          authorizer:
+            type: COGNITO_USER_POOLS
+            authorizerId:
+              Ref: ApiGatewayAuthorizer
+          cors:
+            origin: '*'
+            headers:
+              - Content-Type
+              - x-cognito-token
+
+  updateLeagueSeedGroup:
+    handler: functions/updateLeagueSeedGroup.updateLeagueSeedGroup
+    events:
+      - http:
+          path: updateLeagueSeedGroup/{leagueId}
+          method: post
+          integration: lambda
+          authorizer:
+            type: COGNITO_USER_POOLS
+            authorizerId:
+              Ref: ApiGatewayAuthorizer
+          cors:
+            origin: '*'
+            headers:
+              - Content-Type
+              - x-cognito-token
+
+resources:
+  - ${file(../../common/resources/api-gateway-authorizer.yml)}
+  - ${file(resources/roles.yml)}

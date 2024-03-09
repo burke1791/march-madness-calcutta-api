@@ -8,9 +8,7 @@ Resources:
       KeySchema:
         - AttributeName: LeagueId
           KeyType: HASH
-      ProvisionedThroughput:
-        ReadCapacityUnits: 10
-        WriteCapacityUnits: 10
+      BillingMode: PAY_PER_REQUEST
       TableName: ${self:custom.AUCTION_TABLE}
       TableClass: STANDARD
       Tags:
@@ -30,9 +28,7 @@ Resources:
           KeyType: HASH
         - AttributeName: BidId
           KeyType: RANGE
-      ProvisionedThroughput:
-        ReadCapacityUnits: 4
-        WriteCapacityUnits: 4
+      BillingMode: PAY_PER_REQUEST
       TableName: ${self:custom.BID_HISTORY_TABLE}
       Tags:
         - Key: Description
@@ -52,9 +48,7 @@ Resources:
         -
           AttributeName: ConnectionId
           KeyType: HASH
-      ProvisionedThroughput:
-        ReadCapacityUnits: 3
-        WriteCapacityUnits: 3
+      BillingMode: PAY_PER_REQUEST
       TableName: ${self:custom.CONNECTION_TABLE}
       TableClass: STANDARD
       GlobalSecondaryIndexes:
@@ -69,9 +63,6 @@ Resources:
             NonKeyAttributes:
               - Alias
               - UserId
-          ProvisionedThroughput:
-            ReadCapacityUnits: 4
-            WriteCapacityUnits: 4
       Tags:
         -
           Key: Description
@@ -90,8 +81,51 @@ Resources:
           KeyType: HASH
         - AttributeName: Timestamp
           KeyType: RANGE
-      ProvisionedThroughput:
-        ReadCapacityUnits: 4
-        WriteCapacityUnits: 4
+      BillingMode: PAY_PER_REQUEST
       TableName: ${self:custom.CHAT_TABLE}
+      TableClass: STANDARD
+
+  AuctionSettingsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      AttributeDefinitions:
+        - AttributeName: LeagueId
+          AttributeType: N
+      KeySchema:
+        - AttributeName: LeagueId
+          KeyType: HASH
+      BillingMode: PAY_PER_REQUEST
+      TableName: ${self:custom.AUCTION_SETTINGS_TABLE}
+      TableClass: STANDARD
+
+  AuctionLedgerTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      AttributeDefinitions:
+        - AttributeName: LeagueId
+          AttributeType: N
+        - AttributeName: LedgerId
+          AttributeType: N
+      KeySchema:
+        - AttributeName: LeagueId
+          KeyType: HASH
+        - AttributeName: LedgerId
+          KeyType: RANGE
+      BillingMode: PAY_PER_REQUEST
+      TableName: ${self:custom.AUCTION_LEDGER_TABLE}
+      Tags:
+        - Key: Description
+          Value: 'Contains the sale history for all auctions'
+
+  LeagueMembershipTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      AttributeDefinitions:
+        - AttributeName: LeagueId
+          AttributeType: N
+      KeySchema:
+        - AttributeName: LeagueId
+          KeyType: HASH
+      BillingMode: PAY_PER_REQUEST
+      TableName: ${self:custom.LEAGUE_MEMBERSHIP_TABLE}
       TableClass: STANDARD

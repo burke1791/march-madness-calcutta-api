@@ -24,12 +24,16 @@ Resources:
                   - Fn::GetAtt: [AuctionChatTable, Arn]
                   - Fn::GetAtt: [AuctionTable, Arn]
                   - Fn::GetAtt: [BidHistoryTable, Arn]
+                  - Fn::GetAtt: [AuctionSettingsTable, Arn]
+                  - Fn::GetAtt: [LeagueMembershipTable, Arn]
+                  - Fn::GetAtt: [AuctionLedgerTable, Arn]
                 Action:
                   - dynamodb:PutItem
                   - dynamodb:GetItem
                   - dynamodb:UpdateItem
                   - dynamodb:DeleteItem
                   - dynamodb:BatchWriteItem
+                  - dynamodb:ConditionCheckItem
                   - dynamodb:Query
                   - dynamodb:Scan
               - Effect: Allow

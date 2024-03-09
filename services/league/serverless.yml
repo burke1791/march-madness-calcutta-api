@@ -51,40 +51,6 @@ functions:
             origin: '*'
             headers:
               - x-cognito-token
-
-  createLeague:
-    handler: functions/createLeague.createLeague
-    events:
-      - http:
-          path: createLeague
-          method: post
-          integration: lambda
-          authorizer:
-            type: COGNITO_USER_POOLS
-            authorizerId:
-              Ref: ApiGatewayAuthorizer
-          cors:
-            origin: '*'
-            headers:
-              - Content-Type
-              - x-cognito-token
-
-  joinLeague:
-    handler: functions/joinLeague.joinLeague
-    events:
-      - http:
-          path: joinLeague
-          method: post
-          integration: lambda
-          authorizer:
-            type: COGNITO_USER_POOLS
-            authorizerId:
-              Ref: ApiGatewayAuthorizer
-          cors:
-            origin: '*'
-            headers:
-              - Content-Type
-              - x-cognito-token
   
   getLeagueSummaries:
     handler: functions/getLeagueSummaries.getLeagueSummaries
@@ -198,23 +164,6 @@ functions:
             headers:
               - x-cognito-token
 
-  updateLeagueSettings:
-    handler: functions/leagueSettings.updateLeagueSettings
-    events:
-      - http:
-          path: updateLeagueSettings
-          method: post
-          integration: lambda
-          authorizer:
-            type: COGNITO_USER_POOLS
-            authorizerId:
-              Ref: ApiGatewayAuthorizer
-          cors:
-            origin: '*'
-            headers:
-              - Content-Type
-              - x-cognito-token
-
   getLeagueSettings:
     handler: functions/leagueSettings.getLeagueSettings
     events:
@@ -280,57 +229,6 @@ functions:
             headers:
               - x-cognito-token
 
-  newLeagueSeedGroup:
-    handler: functions/updateLeagueSeedGroups.newLeagueSeedGroup
-    events:
-      - http:
-          path: newLeagueSeedGroup
-          method: post
-          integration: lambda
-          authorizer:
-            type: COGNITO_USER_POOLS
-            authorizerId:
-              Ref: ApiGatewayAuthorizer
-          cors:
-            origin: '*'
-            headers:
-              - Content-Type
-              - x-cognito-token
-
-  deleteLeagueSeedGroup:
-    handler: functions/updateLeagueSeedGroups.deleteLeagueSeedGroup
-    events:
-      - http:
-          path: deleteLeagueSeedGroup
-          method: post
-          integration: lambda
-          authorizer:
-            type: COGNITO_USER_POOLS
-            authorizerId:
-              Ref: ApiGatewayAuthorizer
-          cors:
-            origin: '*'
-            headers:
-              - Content-Type
-              - x-cognito-token
-
-  updateLeagueSeedGroup:
-    handler: functions/updateLeagueSeedGroups.updateLeagueSeedGroup
-    events:
-      - http:
-          path: updateLeagueSeedGroup/{leagueId}
-          method: post
-          integration: lambda
-          authorizer:
-            type: COGNITO_USER_POOLS
-            authorizerId:
-              Ref: ApiGatewayAuthorizer
-          cors:
-            origin: '*'
-            headers:
-              - Content-Type
-              - x-cognito-token
-
   getLeagueRoster:
     handler: functions/getLeagueRoster.getLeagueRoster
     events:
@@ -345,40 +243,6 @@ functions:
           cors:
             origin: '*'
             headers:
-              - x-cognito-token
-
-  kickLeagueMember:
-    handler: functions/leagueRoster.kickLeagueMember
-    events:
-      - http:
-          path: kickLeagueMember
-          method: post
-          integration: lambda
-          authorizer:
-            type: COGNITO_USER_POOLS
-            authorizerId:
-              Ref: ApiGatewayAuthorizer
-          cors:
-            origin: '*'
-            headers:
-              - Content-Type
-              - x-cognito-token
-
-  setLeagueMemberRole:
-    handler: functions/setLeagueMemberRoles.setLeagueMemberRole
-    events:
-      - http:
-          path: setLeagueMemberRoles/{leagueId}
-          method: post
-          integration: lambda
-          authorizer:
-            type: COGNITO_USER_POOLS
-            authorizerId:
-              Ref: ApiGatewayAuthorizer
-          cors:
-            origin: '*'
-            headers:
-              - Content-Type
               - x-cognito-token
 
   updateLeagueName:
@@ -414,23 +278,6 @@ functions:
             headers:
               - x-cognito-token
 
-  setAuctionBidRules:
-    handler: functions/auctionBidRules.setAuctionBidRules
-    events:
-      - http:
-          path: setAuctionBidRules/{leagueId}
-          method: post
-          integration: lambda
-          authorizer:
-            type: COGNITO_USER_POOLS
-            authorizerId:
-              Ref: ApiGatewayAuthorizer
-          cors:
-            origin: '*'
-            headers:
-              - Content-Type
-              - x-cognito-token
-
   getAuctionTaxRules:
     handler: functions/auctionTaxRule.getAuctionTaxRule
     events:
@@ -445,23 +292,6 @@ functions:
           cors:
             origin: '*'
             headers:
-              - x-cognito-token
-
-  setAuctionTaxRules:
-    handler: functions/auctionTaxRule.setAuctionTaxRule
-    events:
-      - http:
-          path: auctionTaxRule/{leagueId}
-          method: post
-          integration: lambda
-          authorizer:
-            type: COGNITO_USER_POOLS
-            authorizerId:
-              Ref: ApiGatewayAuthorizer
-          cors:
-            origin: '*'
-            headers:
-              - Content-Type
               - x-cognito-token
         
   getLeagueSupplementalPages:
@@ -563,23 +393,6 @@ functions:
               - Content-Type
               - x-cognito-token
 
-  leaveLeague:
-    handler: functions/leaveLeague.leaveLeague
-    events:
-      - http:
-          path: leaveLeague/{leagueId}
-          method: post
-          integration: lambda
-          authorizer:
-            type: COGNITO_USER_POOLS
-            authorizerId:
-              Ref: ApiGatewayAuthorizer
-          cors:
-            origin: '*'
-            headers:
-              - Content-Type
-              - x-cognito-token
-
   getLeagueTeams:
     handler: functions/getLeagueTeams.getLeagueTeams
     events:
@@ -595,6 +408,43 @@ functions:
             origin: '*'
             headers:
               - x-cognito-token
+
+  # Invokable by the data-sync process
+  joinLeague:
+    handler: functions/joinLeague.joinLeague
+
+  createLeague:
+    handler: functions/createLeague.createLeague
+
+  kickLeagueMember:
+    handler: functions/leagueRoster.kickLeagueMember
+
+  leaveLeague:
+    handler: functions/leaveLeague.leaveLeague
+
+  setLeagueMemberRole:
+    handler: functions/setLeagueMemberRoles.setLeagueMemberRole
+
+  updateLeagueSettings:
+    handler: functions/leagueSettings.updateLeagueSettings
+
+  setAuctionBidRules:
+    handler: functions/auctionBidRules.setAuctionBidRules
+  
+  setAuctionTaxRules:
+    handler: functions/auctionTaxRule.setAuctionTaxRule
+  
+  getAuctionSlots:
+    handler: functions/getAuctionSlots.getAuctionSlots
+  
+  newLeagueSeedGroup:
+    handler: functions/updateLeagueSeedGroups.newLeagueSeedGroup
+
+  deleteLeagueSeedGroup:
+    handler: functions/updateLeagueSeedGroups.deleteLeagueSeedGroup
+
+  updateLeagueSeedGroup:
+    handler: functions/updateLeagueSeedGroups.updateLeagueSeedGroup
 
 resources:
   - ${file(../../common/resources/api-gateway-authorizer.yml)}
