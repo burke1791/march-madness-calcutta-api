@@ -98,7 +98,7 @@ Resources:
       TableName: ${self:custom.AUCTION_SETTINGS_TABLE}
       TableClass: STANDARD
 
-  AuctionLedger:
+  AuctionLedgerTable:
     Type: AWS::DynamoDB::Table
     Properties:
       AttributeDefinitions:
@@ -115,7 +115,7 @@ Resources:
       TableName: ${self:custom.AUCTION_LEDGER_TABLE}
       Tags:
         - Key: Description
-          Value: 'Contains the sale history for all auctions'
+          Value: 'Contains the sale/refund history for all auctions'
 
   LeagueMembershipTable:
     Type: AWS::DynamoDB::Table
