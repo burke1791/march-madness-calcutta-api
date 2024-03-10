@@ -6,6 +6,7 @@ const dynamodb = new AWS.DynamoDB();
 
 /**
  * @typedef AuctionSettings
+ * @property {Number} leagueId
  * @property {Array} [settings]
  * @property {Array} [slots]
  * @property {Array} [bidRules]
