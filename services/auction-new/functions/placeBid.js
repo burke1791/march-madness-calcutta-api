@@ -213,8 +213,6 @@ async function validateBid(leagueId, bidAmount) {
   };
 
   if (!Array.isArray(bidRules) || bidRules.length == 0) {
-    console.log('Bid rules is not an array?');
-    console.log(bidRules);
     return validation;
   }
 
