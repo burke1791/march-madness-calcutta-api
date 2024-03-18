@@ -213,6 +213,8 @@ async function validateBid(leagueId, bidAmount) {
   };
 
   if (!Array.isArray(bidRules) || bidRules.length == 0) {
+    console.log('Bid rules is not an array?');
+    console.log(bidRules);
     return validation;
   }
 
@@ -223,6 +225,7 @@ async function validateBid(leagueId, bidAmount) {
   filteredRules.sort((a, b) => b.minThresholdExclusive - a.minThresholdExclusive);
 
   const rule = filteredRules.length > 0 ? bidRules[0] : null;
+  console.log(rule);
 
   if (rule == null) {
     console.log(filteredRules);
@@ -230,6 +233,9 @@ async function validateBid(leagueId, bidAmount) {
     // somehow no rules were applicable
     return validation;
   }
+
+  console.log('bid:', bidAmount);
+  console.log('rem:', (bidAmount - rule.minThresholdExclusive) % rule.minIncrement);
 
   // Now check if the proposed bid increases as a multiple of the required increment from the rule's lower bound
   if ((bidAmount - rule.minThresholdExclusive) % rule.minIncrement > 0) {
