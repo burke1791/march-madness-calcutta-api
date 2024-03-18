@@ -222,7 +222,7 @@ async function validateBid(leagueId, bidAmount) {
   const filteredRules = bidRules.filter(r => r.minThresholdExclusive <= bidAmount);
   filteredRules.sort((a, b) => b.minThresholdExclusive - a.minThresholdExclusive);
 
-  const rule = filteredRules.length > 0 ? bidRules[0] : null;
+  const rule = filteredRules.length > 0 ? filteredRules[0] : null;
 
   if (rule == null) {
     console.log(filteredRules);
