@@ -206,6 +206,7 @@ export async function placeBid(event, context, callback) {
  */
 async function validateBid(leagueId, bidAmount) {
   const { bidRules } = await getAuctionSettings(leagueId, 'LeagueId, BidRules');
+  console.log(bidRules);
 
   const validation = {
     isValid: true,
@@ -222,7 +223,9 @@ async function validateBid(leagueId, bidAmount) {
   // sort descending on the lower bound value
   // the applicable rule is the first entry in the array
   const filteredRules = bidRules.filter(r => r.minThresholdExclusive <= bidAmount);
+  console.log(filteredRules);
   filteredRules.sort((a, b) => b.minThresholdExclusive - a.minThresholdExclusive);
+  console.log(filteredRules);
 
   const rule = filteredRules.length > 0 ? bidRules[0] : null;
   console.log(rule);
